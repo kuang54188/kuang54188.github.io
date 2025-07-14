@@ -3,267 +3,641 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>王朝密码2.6 - 官方下载</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>王朝密码2.6增强版</title>
     <style>
+        /* 保留所有样式不变 */
+        :root {
+            /* 深色模式变量 */
+            --bg-gradient-start: #1a2a6c;
+            --bg-gradient-middle: #b21f1f;
+            --bg-gradient-end: #fdbb2d;
+            --container-bg: rgba(25, 25, 40, 0.85);
+            --header-bg: rgba(15, 15, 30, 0.95);
+            --header-border: #fdbb2d;
+            --title-gradient-start: #fdbb2d;
+            --title-gradient-end: #ff416c;
+            --subtitle-color: #a0a0c0;
+            --section-bg: rgba(30, 30, 50, 0.7);
+            --section-border: #4a4a8a;
+            --icon-bg: #4a4a8a;
+            --textarea-bg: rgba(20, 20, 35, 0.8);
+            --textarea-border: #4a4a8a;
+            --textarea-focus-border: #fdbb2d;
+            --rule-card-bg: rgba(40, 40, 60, 0.8);
+            --rule-card-border: #fdbb2d;
+            --rule-title: #6dd5ed;
+            --example-bg: rgba(20, 20, 35, 0.8);
+            --text-color: #fff;
+            --button-encrypt-start: #2193b0;
+            --button-encrypt-end: #6dd5ed;
+            --button-decrypt-start: #ff416c;
+            --button-decrypt-end: #ff4b2b;
+            --button-copy-start: #5d8aa8;
+            --button-copy-end: #7db9e8;
+            --button-neutral-start: #8e9eab;
+            --button-neutral-end: #eef2f3;
+            --button-neutral-color: #333;
+            --footer-color: #a0a0c0;
+        }
+
+        .light-theme {
+            /* 浅色模式变量 */
+            --bg-gradient-start: #a1c4fd;
+            --bg-gradient-middle: #c2e9fb;
+            --bg-gradient-end: #fbc2eb;
+            --container-bg: rgba(255, 255, 255, 0.92);
+            --header-bg: rgba(245, 245, 255, 0.95);
+            --header-border: #5d8aa8;
+            --title-gradient-start: #5d8aa8;
+            --title-gradient-end: #4682b4;
+            --subtitle-color: #5d5d7a;
+            --section-bg: rgba(240, 248, 255, 0.85);
+            --section-border: #b0c4de;
+            --icon-bg: #b0c4de;
+            --textarea-bg: rgba(255, 255, 255, 0.9);
+            --textarea-border: #b0c4de;
+            --textarea-focus-border: #5d8aa8;
+            --rule-card-bg: rgba(240, 248, 255, 0.9);
+            --rule-card-border: #5d8aa8;
+            --rule-title: #4682b4;
+            --example-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #333;
+            --button-encrypt-start: #4ca1af;
+            --button-encrypt-end: #89d0ca;
+            --button-decrypt-start: #ff7e5f;
+            --button-decrypt-end: #feb47b;
+            --button-copy-start: #5d8aa8;
+            --button-copy-end: #89d0ca;
+            --button-neutral-start: #b0c4de;
+            --button-neutral-end: #e6e9f0;
+            --button-neutral-color: #333;
+            --footer-color: #5d5d7a;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         body {
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-middle), var(--bg-gradient-end));
             min-height: 100vh;
-            background: linear-gradient(135deg, #1a2980, #26d0ce, #1a2980);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: #fff;
-            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 20px;
+            color: var(--text-color);
         }
         
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: var(--container-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
         }
         
         header {
+            background: var(--header-bg);
+            padding: 20px 25px;
             text-align: center;
-            padding: 40px 0;
-            max-width: 800px;
-            width: 100%;
+            border-bottom: 2px solid var(--header-border);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .logo {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            color: #ffcc00;
-            text-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+        .header-content {
+            flex: 1;
         }
         
         h1 {
             font-size: 2.8rem;
             margin-bottom: 10px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, var(--title-gradient-start), var(--title-gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         .subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            opacity: 0.9;
+            font-size: 1.2rem;
+            color: var(--subtitle-color);
+            margin-top: 10px;
         }
         
-        .version {
-            display: inline-block;
-            background: rgba(255, 204, 0, 0.2);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: #ffcc00;
+        .theme-switcher {
+            background: var(--section-bg);
+            border: 2px solid var(--section-border);
+            border-radius: 50px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .theme-switcher:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .theme-icon {
+            margin-right: 8px;
+            font-size: 1.2rem;
         }
         
         .content {
-            max-width: 1000px;
-            width: 100%;
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-        
-        .download-card {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
             padding: 30px;
-            width: 100%;
-            max-width: 450px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
+            gap: 30px;
         }
         
-        .download-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        .input-section, .output-section {
+            flex: 1;
+            min-width: 300px;
+            background: var(--section-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            position: relative;
         }
         
-        .platform {
+        .section-title {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--section-border);
         }
         
-        .platform i {
-            font-size: 2.5rem;
-            margin-right: 15px;
+        .section-title h2 {
+            font-size: 1.8rem;
+            color: var(--title-gradient-start);
+            margin-left: 10px;
         }
         
-        .windows .platform i {
-            color: #00adef;
-        }
-        
-        .android .platform i {
-            color: #3ddc84;
-        }
-        
-        .platform h2 {
-            font-size: 2rem;
-        }
-        
-        .description {
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.6;
-            margin: 20px 0;
-            min-height: 100px;
-        }
-        
-        .download-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            border-radius: 8px;
-            background: rgba(255, 204, 0, 0.25);
-            color: #ffcc00;
-            font-weight: bold;
-            font-size: 1.2rem;
-            text-align: center;
-            text-decoration: none;
-            margin-top: 15px;
-            border: 2px solid #ffcc00;
-            transition: all 0.3s ease;
-        }
-        
-        .download-btn:hover {
-            background: rgba(255, 204, 0, 0.4);
-            transform: scale(1.03);
-            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 30px;
-        }
-        
-        .feature {
+        .icon {
+            font-size: 24px;
+            background: var(--icon-bg);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
         
-        .feature i {
-            color: #ffcc00;
-            font-size: 1.2rem;
-            margin-right: 10px;
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 15px;
+            border-radius: 10px;
+            background: var(--textarea-bg);
+            border: 2px solid var(--textarea-border);
+            color:极text-color);
+            font-size: 1.1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--textarea-focus-border);
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #encryptBtn {
+            background: linear-gradient(to right, var(--button-encrypt-start), var(--button-encrypt-end));
+            color: white;
+        }
+        
+        #decryptBtn {
+            background: linear-gradient(to right, var(--button-decrypt-start), var(--button-decrypt-end));
+            color: white;
+        }
+        
+        #clearBtn {
+            background: linear-gradient(to right, var(--button-neutral-start), var(--button-neutral-end));
+            color: var(--button-neutral-color);
+        }
+        
+        .copy-btn {
+            background: linear-gradient(to right, var(--button-copy-start), var(--button-copy-end));
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.极);
+        }
+        
+        button:active {
+            transform: translateY(1px);
         }
         
         footer {
             text-align: center;
-            padding: 20px;
-            width: 100%;
-            color: rgba(255, 255, 255, 0.7);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 30px;
-            max-width: 800px;
+            padding: 30px;
+            color: var(--footer-color);
+            margin-top: 20px;
+            font-size: 0.95rem;
         }
         
-        .copyright {
-            margin-bottom: 10px;
+        .copy-feedback {
+            position: absolute;
+            top: -30px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
             font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s, top 0.5s;
+            pointer-events: none;
         }
         
-        .warning {
-            background: rgba(255, 50, 50, 0.2);
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            border: 1px solid rgba(255, 50, 50, 0.5);
+        .copy-feedback.show {
+            opacity: 1;
+            top: 10px;
         }
         
         @media (max-width: 768px) {
             .content {
                 flex-direction: column;
-                align-items: center;
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
             }
             
             h1 {
                 font-size: 2.2rem;
             }
             
-            .download-card {
-                padding: 20px;
+            button {
+                min-width: calc(50% - 10px);
+                margin-bottom: 10px;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .theme-switcher {
+                margin-top: 15px;
+                align-self: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            button {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <i class="fas fa-crown"></i>
-        </div>
-        <h1>王朝密码 2.6</h1>
-        <p class="subtitle">官方下载中心 <span class="version">v2.6 最新版</span></p>
-        <p>安全加密 | 极速体验 | 多平台支持</p>
-    </header>
-    
-    <div class="content">
-        <div class="download-card windows">
-            <div class="platform">
-                <i class="fab fa-windows"></i>
-                <h2>Windows 版下载</h2>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>王朝密码2.6</h1>
+                <p class="subtitle">高级加密解密系统
             </div>
-            <div class="description">
-                适用于 Windows 10/11 的桌面版本，提供高级加密功能。包含直观的用户界面和全面的安全保护。
+            <div class="theme-switcher" id="themeSwitcher">
+                <span class="theme-icon">🌙</span>
+                <span>深色模式</span>
             </div>
-            <a href="https://www.123865.com/s/jE4Fjv-wnYeh" class="download-btn">
-                下载 Windows 版 (64位) <i class="fas fa-download"></i>
-            </a>
-            <div class="features">
-                <div class="feature"><i class="fas fa-check-circle"></i> 256位高级加密</div>
-                <div class="feature"><i class="fas fa-check-circle"></i> 文件安全保护</div>
-                <div class="feature"><i class="fas fa-check-circle"></i> 云同步功能</div>
-                <div class="feature"><i class="fas fa-check-circle"></i> 密码自动管理</div>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <div class="copy-feedback" id="inputCopyFeedback">已复制输入内容!</div>
+                <div class="section-title">
+                    <div class="icon">🔒</div>
+                    <h2>输入文本</h2>
+                </div>
+                <textarea id="inputText" placeholder="请输入要加密的文本..."></textarea>
+                <div class="buttons">
+                    <button id="encryptBtn">加密</button>
+                    <button id="clearBtn">清空</button>
+                    <button class="copy-btn" id="copyInputBtn">复制输入</button>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <div class="copy-feedback" id="outputCopyFeedback">已复制结果!</div>
+                <div class="section-title">
+                    <div class="icon">🔓</div>
+                    <h2>加密/解密结果</h2>
+                </div>
+                <textarea id="outputText" readonly placeholder="加密/解密结果将显示在这里..."></textarea>
+                <div class="buttons">
+                    <button id="decryptBtn">解密</button>
+                    <button class="copy-btn" id="copyOutputBtn">复制结果</button>
+                </div>
             </div>
         </div>
         
-        <div class="download-card android">
-            <div class="platform">
-                <i class="fab fa-android"></i>
-                <h2>Android 版下载</h2>
-            </div>
-            <div class="description">
-                移动版王朝密码，让您随时随地管理加密信息。支持指纹解锁，与桌面版数据同步。
-            </div>
-            <a href="https://www.123865.com/s/jE4Fjv-InYeh" class="download-btn">
-                下载 Android APK <i class="fas fa-download"></i>
-            </a>
-            <div class="features">
-                <div class="feature"><i class="fas fa-check-circle"></i> 生物识别解锁</div>
-                <div class="feature"><i class="fas fa-check-circle"></i> 移动端优化</div>
-                <div class="feature"><i class="fas fa-check-circle"></i> 跨设备同步</div>
-                <div class="feature"><i class="fas fa-check-circle"></i> 紧急锁定功能</div>
-            </div>
-        </div>
+        <footer>
+            <p>王朝密码2.6丨kuang</p>
+        </footer>
     </div>
-    
-    <footer>
-        <div class="copyright">
-            © 2025 王朝密码科技 - 官方下载平台 | v2.6.0.2121
-        </div>
-        <p>请通过官方渠道下载软件以确保安全</p>
-        <div class="warning">
-            <i class="fas fa-exclamation-triangle"></i>        </div>
-    </footer>
+
+    <script>
+        // 扩展字区映射表支持中文
+        const charMap = {
+            // X区
+            'a': 'X1', 'b': 'X2', 'c': 'X3', 'd': 'X4', 'e': 'X5',
+            'f': 'X6', 'g': 'X7', 'h': 'X8', 'i': 'X9',
+            
+            // Y区
+            'j': 'Y1', 'k': 'Y2', 'l': 'Y3', 'm': 'Y4', 'n': 'Y5',
+            'o': 'Y6', 'p': 'Y7', 'q': 'Y8', 'r': 'Y9',
+            
+            // Z区
+            's': 'Z1', 't': 'Z2', 'u': 'Z3', 'v': 'Z4', 'w': 'Z5',
+            'x': 'Z6', 'y': 'Z7', 'z': 'Z8',
+            
+            // M区 (数字)
+            '0': 'M1', '1': 'M9', '2': 'M2', '3': 'M8', '4': 'M7',
+            '5': 'M6', '6': 'M5', '7': 'M4', '8': 'M3', '9': 'M2',
+            
+            // 特殊符号区
+            '?': 'N3', '!': 'N4', '"': 'N7', '”': 'N8',
+            
+            // 中文拼音映射
+            'zh': 'Z8', 'ch': 'X3X8', 'sh': 'Z1X8', 
+            'ong': 'Y6Y5X7', 'ang': 'X1Y5X7', 'eng': 'X5Y5X7', 'ing': 'X9Y5X7',
+            'an': 'X1Y5', 'en': 'X5Y5', 'in': 'X9Y5', 'ai': 'X19', 'ei': 'X59',
+            'ao': 'X1Y6', 'ou': 'Y6Z4', 'er': 'X5Y9', 'uo': 'Z3Y6', 'ua': 'Z3X1',
+            'ui': '极3X9', 'ia': 'X9X1', 'ie': 'X9X5', 'iu': 'X9Z3', 've': 'Z4X5',
+            
+            // 常用中文字符
+            '我': 'W3', '你': 'N3', '他': 'T1', '是': 'S4', '的': 'D5',
+            '中': 'Z8X8Y6Y5X7', '国': 'X7Z4Y6', '人': 'R9', '民': 'M4',
+            '爱': 'A1', '恨': 'H5', '好': 'H3', '坏': 'H4', '上': 'S3',
+            '下': 'X4', '左': 'Z2', '右': 'Y7', '前': 'Q2', '后': 'H6',
+            '大': 'D4', '小': 'X3', '多': 'D6', '少': 'S2', '有': 'Y3',
+            '无': 'W5', '来': 'L1', '去': 'Q8', '生': 'S5', '死': 'S4'
+        };
+
+        // 操作符
+        const operators = {
+            'L4': 'á',  // 声调a
+            'L5': ' ',  // 空格
+            'L6': '',   // 大写标记（处理方式特殊）
+            'L1': 'ā',  // 一声
+            'L2': 'á',  // 二声
+            'L3': 'ǎ',  // 三声
+            'L4': 'à'   // 四声
+        };
+
+        // 主题切换功能
+        const themeSwitcher = document.getElementById('themeSwitcher');
+        const themeIcon = themeSwitcher.querySelector('.theme-icon');
+        const themeText = themeSwitcher.querySelector('span:last-child');
+        
+        // 检查系统主题偏好
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        let isDarkMode = localStorage.getItem('theme') === 'dark' || 
+                         (localStorage.getItem('theme') === null && prefersDarkScheme.matches);
+        
+        // 应用初始主题
+        updateTheme();
+        
+        themeSwitcher.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            updateTheme();
+        });
+        
+        function updateTheme() {
+            if (isDarkMode) {
+                document.documentElement.classList.remove('light-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = '深色模式';
+            } else {
+                document.documentElement.classList.add('light-theme');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = '浅色模式';
+            }
+        }
+        
+        // 复制功能
+        function showFeedback(element, message) {
+            const feedback = element.querySelector('.copy-feedback');
+            feedback.textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 2000);
+        }
+        
+        function copyToClipboard(text, feedbackElement) {
+            if (!text) {
+                showFeedback(feedbackElement, '内容为空!');
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showFeedback(feedbackElement, '已复制!');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showFeedback(feedbackElement, '复制失败!');
+            });
+        }
+        
+        document.getElementById('copyInputBtn').addEventListener('click', () => {
+            const inputText = document.getElementById('inputText').value;
+            copyToClipboard(inputText, document.querySelector('.input-section'));
+        });
+        
+        document.getElementById('copyOutputBtn').addEventListener('click', () => {
+            const outputText = document.getElementById('outputText').value;
+            copyToClipboard(outputText, document.querySelector('.output-section'));
+        });
+        
+        // 原有功能
+        document.getElementById('encryptBtn').addEventListener('click', encryptText);
+        document.getElementById('decryptBtn').addEventListener('click', decryptText);
+        document.getElementById('clearBtn').addEventListener('click', clearText);
+
+        // 加密函数（支持中文）
+        function encryptText() {
+            const input = document.getElementById('inputText').value;
+            let output = '';
+            let lastZone = null;
+            let uppercaseNext = false;
+            let currentTone = '';
+            
+            for (let i = 0; i < input.length; i++) {
+                const char = input[i];
+                
+                // 处理空格
+                if (char === ' ') {
+                    output += 'L5';
+                    lastZone = null;
+                    continue;
+                }
+                
+                // 处理大写字母
+                if (/[A-Z]/.test(char)) {
+                    const lowerChar = char.toLowerCase();
+                    if (charMap[lowerChar]) {
+                        output += charMap[lowerChar] + 'L6';
+                    } else {
+                        output += char;
+                    }
+                    lastZone = null;
+                    continue;
+                }
+                
+                // 处理中文字符
+                if (/[\u4e00-\u9fa5]/.test(char)) {
+                    if (charMap[char]) {
+                        output += charMap[char];
+                        lastZone = null;
+                    } else {
+                        // 如果不在映射表中，直接保留
+                        output += char;
+                    }
+                    continue;
+                }
+                
+                // 处理已知字符
+                if (charMap[char]) {
+                    const [zone, index] = [charMap[char][0], charMap[char].substring(1)];
+                    
+                    if (zone === lastZone) {
+                        output += index;
+                    } else {
+                        output += charMap[char];
+                        lastZone = zone;
+                    }
+                } 
+                // 处理未知字符（直接保留）
+                else {
+                    output += char;
+                    lastZone = null;
+                }
+            }
+            
+            document.getElementById('outputText').value = output;
+        }
+
+        // 解密函数（支持中文）
+        function decryptText() {
+            const input = document.getElementById('inputText').value;
+            let output = '';
+            let currentZone = null;
+            let buffer = '';
+            let uppercaseNext = false;
+            
+            for (let i = 0; i < input.length; i++) {
+                const char = input[i];
+                
+                // 处理操作符
+                if (char === 'L' && i+1 < input.length) {
+                    const op = input.substring(i, i+2);
+                    i++;
+                    
+                    if (operators[op]) {
+                        output += operators[op];
+                    } else if (op === 'L5') {
+                        output += ' ';
+                    } else if (op === 'L6') {
+                        // 处理大写 - 将最后一个字符大写
+                        if (output.length > 0) {
+                            const lastChar = output.slice(-1);
+                            output = output.slice(0, -1) + lastChar.toUpperCase();
+                        }
+                    }
+                    
+                    currentZone = null;
+                    continue;
+                }
+                
+                // 处理字区标识
+                if (['X', 'Y', 'Z', 'M', 'N', 'W', 'T', 'D', 'S', 'H', 'Q', 'R', 'A'].includes(char)) {
+                    currentZone = char;
+                    buffer = '';
+                    continue;
+                }
+                
+                // 处理数字索引
+                if (currentZone && /[0-9]/.test(char)) {
+                    buffer += char;
+                    
+                    // 检查是否到达序列末尾
+                    if (i+1 >= input.length || !/[0-9]/.test(input[i+1])) {
+                        for (let j = 0; j < buffer.length; j++) {
+                            const code = currentZone + buffer[j];
+                            const charFromMap = Object.keys(charMap).find(key => charMap[key] === code);
+                            
+                            if (charFromMap) {
+                                output += charFromMap;
+                            } else {
+                                // 处理特殊映射
+                                if (code === 'Y6') output += 'o';
+                                else if (code === 'M1') output += '0';
+                                else output += `?${code}?`;
+                            }
+                        }
+                        
+                        currentZone = null;
+                        buffer = '';
+                    }
+                } 
+                // 处理非字区字符
+                else {
+                    output += char;
+                    currentZone = null;
+                }
+            }
+            
+            document.getElementById('outputText').value = output;
+        }
+
+        // 清空文本
+        function clearText() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+        }
+    </script>
 </body>
 </html>
