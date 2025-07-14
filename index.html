@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>王朝密码2.6增强版</title>
+    <title>王朝密码2.6</title>
     <style>
-        /* 保留所有样式不变 */
+        /* 保留所有原有样式不变 */
         :root {
             /* 深色模式变量 */
             --bg-gradient-start: #1a2a6c;
@@ -148,7 +148,7 @@
         
         .theme-switcher:hover {
             transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba极, 0, 0, 0.2);
         }
         
         .theme-icon {
@@ -205,7 +205,7 @@
             border-radius: 10px;
             background: var(--textarea-bg);
             border: 2px solid var(--textarea-border);
-            color:极text-color);
+            color: var(--text-color);
             font-size: 1.1rem;
             resize: vertical;
             transition: border-color 0.3s;
@@ -260,7 +260,7 @@
         
         button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.极);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
         
         button:active {
@@ -294,6 +294,107 @@
             top: 10px;
         }
         
+        /* 新添加的下载区域样式 */
+        .download-section {
+            padding: 0 30px 30px;
+        }
+        
+        .download-container {
+            background: linear-gradient(135deg, var(--title-gradient-start), var(--title-gradient-end));
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+            animation: shine 4s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: rotate(30deg) translateX(-25%); }
+            100% { transform: rotate(30deg) translateX(25%); }
+        }
+        
+        .download-title {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            background: linear-gradient(to right, white, #e0e0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .download-btn {
+            min-width: 220px;
+            padding: 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-btn.windows {
+            background: linear-gradient(135deg, #00a4ef, #0078d7);
+            color: white;
+        }
+        
+        .download-btn.android {
+            background: linear-gradient(135deg, #3ddc84, #0f9d58);
+            color: white;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .download-btn:active {
+            transform: translateY(2px);
+        }
+        
+        .download-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .download-info {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
         @media (max-width: 768px) {
             .content {
                 flex-direction: column;
@@ -317,6 +418,15 @@
                 margin-top: 15px;
                 align-self: center;
             }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .download-btn {
+                min-width: 280px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -327,6 +437,10 @@
             h1 {
                 font-size: 1.8rem;
             }
+            
+            .download-btn {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
@@ -335,7 +449,7 @@
         <header>
             <div class="header-content">
                 <h1>王朝密码2.6</h1>
-                <p class="subtitle">高级加密解密系统
+                <p class="subtitle">高级加密解密系统</p>
             </div>
             <div class="theme-switcher" id="themeSwitcher">
                 <span class="theme-icon">🌙</span>
@@ -372,6 +486,25 @@
             </div>
         </div>
         
+        <!-- 新添加的下载区域 -->
+        <div class="download-section">
+            <div class="download-container">
+                <h2 class="download-title">下载王朝密码2.6增强版</h2>
+                <div class="download-buttons">
+                    <button class="download-btn windows" id="windowsDownload">
+                        <span class="download-icon">💻</span>
+                        Windows 版下载
+                        <span class="download-info">最新版 | 2.6</span>
+                    </button>
+                    <button class="download-btn android" id="androidDownload">
+                        <span class="download-icon">📱</span>
+                        Android 版下载
+                        <span class="download-info">最新版 | 2.6</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <footer>
             <p>王朝密码2.6丨kuang</p>
         </footer>
@@ -404,7 +537,7 @@
             'ong': 'Y6Y5X7', 'ang': 'X1Y5X7', 'eng': 'X5Y5X7', 'ing': 'X9Y5X7',
             'an': 'X1Y5', 'en': 'X5Y5', 'in': 'X9Y5', 'ai': 'X19', 'ei': 'X59',
             'ao': 'X1Y6', 'ou': 'Y6Z4', 'er': 'X5Y9', 'uo': 'Z3Y6', 'ua': 'Z3X1',
-            'ui': '极3X9', 'ia': 'X9X1', 'ie': 'X9X5', 'iu': 'X9Z3', 've': 'Z4X5',
+            'ui': 'Z3X9', 'ia': 'X9X1', 'ie': 'X9X5', 'iu': 'X9Z3', 've': 'Z4X5',
             
             // 常用中文字符
             '我': 'W3', '你': 'N3', '他': 'T1', '是': 'S4', '的': 'D5',
@@ -449,11 +582,11 @@
             if (isDarkMode) {
                 document.documentElement.classList.remove('light-theme');
                 themeIcon.textContent = '🌙';
-                themeText.textContent = '深色模式';
+                themeText.textContent = '';
             } else {
                 document.documentElement.classList.add('light-theme');
                 themeIcon.textContent = '☀️';
-                themeText.textContent = '浅色模式';
+                themeText.textContent = '';
             }
         }
         
@@ -496,6 +629,15 @@
         document.getElementById('encryptBtn').addEventListener('click', encryptText);
         document.getElementById('decryptBtn').addEventListener('click', decryptText);
         document.getElementById('clearBtn').addEventListener('click', clearText);
+
+        // 新增的下载功能
+        document.getElementById('windowsDownload').addEventListener('click', () => {
+            window.open('https://www.123865.com/s/jE4Fjv-wnYeh');
+        });
+        
+        document.getElementById('androidDownload').addEventListener('click', () => {
+            window.open('https://www.123865.com/s/jE4Fjv-InYeh');
+        });
 
         // 加密函数（支持中文）
         function encryptText() {
