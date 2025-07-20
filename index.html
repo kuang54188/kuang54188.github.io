@@ -3,234 +3,426 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欢迎来到王朝密码官方网站</title>
+    <title>Meow & 王朝密码</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            /* 深色模式变量 */
-            --bg-primary: #1a2a6c;
-            --bg-secondary: #b21f1f;
-            --bg-tertiary: #fdbb2d;
-            --container-bg: rgba(25, 25, 40, 0.85);
-            --header-bg: rgba(15, 15, 30, 0.95);
-            --header-border: #fdbb2d;
-            --title-gradient-start: #fdbb2d;
-            --title-gradient-end: #ff416c;
-            --subtitle-color: #a0a0c0;
-            --section-bg: rgba(30, 30, 50, 0.7);
-            --section-border: #4a4a8a;
-            --icon-bg: #4a4a8a;
-            --textarea-bg: rgba(20, 20, 35, 0.8);
-            --textarea-border: #4a4a8a;
-            --textarea-focus-border: #fdbb2d;
-            --rule-card-bg: rgba(40, 40, 60, 0.8);
-            --rule-card-border: #fdbb2d;
-            --rule-title: #6dd5ed;
-            --example-bg: rgba(20, 20, 35, 0.8);
-            --text-color: #fff;
-            --button-encrypt-start: #2193b0;
-            --button-encrypt-end: #6dd5ed;
-            --button-decrypt-start: #ff416c;
-            --button-decrypt-end: #ff4b2b;
-            --button-copy-start: #5d8aa8;
-            --button-copy-end: #7db9e8;
-            --button-neutral-start: #8e9eab;
-            --button-neutral-end: #eef2f3;
-            --button-neutral-color: #333;
-            --footer-color: #a0a0c0;
-            --download-win-start: #2193b0;
-            --download-win-end: #6dd5ed;
-            --download-android-start: #38ef7d;
-            --download-android-end: #11998e;
+            --primary-color: #FF0080;
+            --secondary-color: #FF8C00;
+            --accent-color: #40E0D0;
+            --text-color: #333;
+            --bg-color: #ffffff;
+            --card-bg: #ffffff;
+            --border-color: rgba(255,255,255,0.2);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --button-bg: linear-gradient(90deg, #FF0080, #FF8C00);
+            --button-hover: linear-gradient(90deg, #FF4D94, #FFB347);
+            --success-color: #66FF99;
+            --dynasty-primary: #1a2a6c;
+            --dynasty-secondary: #b21f1f;
+            --dynasty-tertiary: #fdbb2d;
+            --meow-gradient: linear-gradient(90deg, #FF0080, #FF8C00, #FFD400);
+            --dynasty-gradient: linear-gradient(90deg, #1a2a6c, #b21f1f, #fdbb2d);
         }
 
-        .light-theme {
-            /* 浅色模式变量 */
-            --bg-primary: #e6f7ff;
-            --bg-secondary: #bae7ff;
-            --bg-tertiary: #91d5ff;
-            --container-bg: rgba(255, 255, 255, 0.92);
-            --header-bg: rgba(240, 240, 245, 0.95);
-            --header-border: #5d8aa8;
-            --title-gradient-start: #5d8aa8;
-            --title-gradient-end: #4682b4;
-            --subtitle-color: #5d5d7a;
-            --section-bg: rgba(245, 245, 250, 0.9);
-            --section-border: #d1d1e0;
-            --icon-bg: #b0c4de;
-            --textarea-bg: rgba(255, 255, 255, 0.95);
-            --textarea-border: #d1d1e0;
-            --textarea-focus-border: #5d8aa8;
-            --rule-card-bg: rgba(230, 230, 240, 0.9);
-            --rule-card-border: #5d8aa8;
-            --rule-title: #4682b4;
-            --example-bg: rgba(255, 255, 255, 0.85);
-            --text-color: #333;
-            --button-encrypt-start: #36D1DC;
-            --button-encrypt-end: #5B86E5;
-            --button-decrypt-start: #FF416C;
-            --button-decrypt-end: #FF4B2B;
-            --button-copy-start: #8A2387;
-            --button-copy-end: #E94057;
-            --button-neutral-start: #c2e59c;
-            --button-neutral-end: #64b3f4;
-            --button-neutral-color: #333;
-            --footer-color: #666;
-            --download-win-start: #36D1DC;
-            --download-win-end: #5B86E5;
-            --download-android-start: #56ab2f;
-            --download-android-end: #a8e063;
+        .dark-mode {
+            --text-color: #f0e6ff;
+            --bg-color: #121212;
+            --card-bg: rgba(30, 10, 30, 0.9);
+            --border-color: rgba(255,255,255,0.1);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --button-bg: linear-gradient(90deg, #FF4D94, #FF8C42);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s, color 0.3s;
         }
-        
+
         body {
-            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary), var(--bg-tertiary));
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(125deg, 
+                #FF0080, #FF512F, #FFD400, #40E0D0, #0093E9, #7A3DDA, #FF00FF);
+            background-size: 300% 300%;
+            animation: rainbow-gradient 12s ease infinite;
             color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
         }
-        
+
+        @keyframes rainbow-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .container {
-            max-width: 1000px;
-            width: 100%;
-            background: var(--container-bg);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            margin-top: 20px;
-            backdrop-filter: blur(10px);
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        
+
         header {
-            background: var(--header-bg);
-            padding: 20px 25px;
             text-align: center;
-            border-bottom: 2px solid var(--header-border);
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px 0;
         }
-        
-        .header-content {
-            flex: 1;
-        }
-        
+
         h1 {
             font-size: 2.8rem;
             margin-bottom: 10px;
-            background: linear-gradient(to right, var(--title-gradient-start), var(--title-gradient-end));
+            background: linear-gradient(45deg, 
+                #FF0080, #FF8C00, #FFD400, #40E0D0, #0093E9, #7A3DDA, #FF00FF);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            animation: rainbow-text 10s ease infinite;
+            background-size: 300% 300%;
         }
-        
-        .subtitle {
+
+        @keyframes rainbow-text {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .description {
+            color: white;
             font-size: 1.2rem;
-            color: var(--subtitle-color);
-            margin-top: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
         }
-        
-        .theme-switcher {
-            background: var(--section-bg);
-            border: 2px solid var(--section-border);
+
+        /* 新增下载按钮样式 */
+        .download-container {
+            margin: 20px auto;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 16px 35px;
             border-radius: 50px;
-            padding: 5px 15px;
+            background: linear-gradient(90deg, 
+                #FF0080, #FF512F, #FFD400, #40E0D0, #0093E9, #7A3DDA, #FF00FF);
+            background-size: 300% 300%;
+            animation: rainbow-text 8s ease infinite;
+            color: white;
+            font-weight: 700;
+            font-size: 1.4rem;
+            text-decoration: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            margin: 15px 0;
+        }
+
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: -1;
+            transition: all 0.4s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            animation: rainbow-text 4s ease infinite;
+        }
+
+        .download-btn i {
+            margin-right: 10px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .download-btn span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .download-btn:hover::before {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tabs {
             display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.2);
+            max-width: 800px;
+            margin: 0 auto 25px;
         }
-        
-        .theme-switcher:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        .theme-icon {
-            margin-right: 8px;
-            font-size: 1.2rem;
-        }
-        
-        .content {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 30px;
-            gap: 30px;
-        }
-        
-        .input-section, .output-section {
+
+        .tab {
             flex: 1;
-            min-width: 300px;
-            background: var(--section-bg);
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--meow-gradient);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tab[data-tab="dynasty"]::before {
+            background: var(--dynasty-gradient);
+        }
+
+        .tab.active::before {
+            opacity: 1;
+        }
+
+        .tab.active {
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-            position: relative;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
         }
-        
-        .section-title {
-            display: flex;
-            align-items: center;
+
+        .input-group {
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--section-border);
         }
-        
-        .section-title h2 {
-            font-size: 1.8rem;
-            color: var(--title-gradient-start);
-            margin-left: 10px;
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1.1rem;
         }
-        
-        .icon {
-            font-size: 24px;
-            background: var(--icon-bg);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(64, 224, 208, 0.4);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            background: var(--button-bg);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
-        
-        textarea {
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            min-height: 180px;
-            padding: 15px;
-            border-radius: 10px;
-            background: var(--textarea-bg);
-            border: 2px solid var(--textarea-border);
-            color: var(--text-color);
-            font-size: 1.1rem;
-            resize: vertical;
-            transition: border-color 0.3s;
+            height: 100%;
+            background: var(--button-hover);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        
-        textarea:focus {
-            outline: none;
-            border-color: var(--textarea-focus-border);
+
+        button:hover::before {
+            opacity: 1;
         }
-        
-        .buttons {
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button i {
+            margin-right: 8px;
+        }
+
+        .success {
+            background: var(--success-color);
+            color: #000;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .result-container {
+            margin-bottom: 15px;
+        }
+
+        .result-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .copy-btn {
+            padding: 12px 25px;
+            background: var(--button-bg);
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .copy-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--button-hover);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .copy-btn:hover::before {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .char-set {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+        }
+
+        .char-set span {
+            font-family: monospace;
+            font-size: 1.1rem;
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .char-set span:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,0.3);
+        }
+
+        .dynasty-buttons {
+            display: flex;
+            flex-wrap: wrap;
             gap: 15px;
             margin-top: 20px;
-            flex-wrap: wrap;
         }
-        
-        button {
+
+        .dynasty-btn {
             flex: 1;
             min-width: 140px;
             padding: 14px;
@@ -242,591 +434,726 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
             color: white;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .dynasty-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .dynasty-btn-encrypt {
+            background: linear-gradient(to right, #2193b0, #6dd5ed);
         }
         
-        #encryptBtn {
-            background: linear-gradient(to right, var(--button-encrypt-start), var(--button-encrypt-end));
+        .dynasty-btn-encrypt::before {
+            background: linear-gradient(to right, #1a2a6c, #2193b0);
         }
         
-        #decryptBtn {
-            background: linear-gradient(to right, var(--button-decrypt-start), var(--button-decrypt-end));
+        .dynasty-btn-decrypt {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
         }
         
-        #clearBtn {
-            background: linear-gradient(to right, var(--button-neutral-start), var(--button-neutral-end));
-            color: var(--button-neutral-color);
+        .dynasty-btn-decrypt::before {
+            background: linear-gradient(to right, #b21f1f, #ff416c);
         }
         
-        .copy-btn {
-            background: linear-gradient(to right, var(--button-copy-start), var(--button-copy-end));
+        .dynasty-btn-clear {
+            background: linear-gradient(to right, #8e9eab, #eef2f3);
+            color: #333;
         }
         
-        button:hover {
+        .dynasty-btn-clear::before {
+            background: linear-gradient(to right, #fdbb2d, #eef2f3);
+        }
+        
+        .dynasty-btn-copy {
+            background: linear-gradient(to right, #5d8aa8, #7db9e8);
+        }
+        
+        .dynasty-btn-copy::before {
+            background: linear-gradient(to right, #1a2a6c, #5d8aa8);
+        }
+
+        .dynasty-btn:hover::before {
+            opacity: 1;
+        }
+
+        .dynasty-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
-        
-        button:active {
-            transform: translateY(1px);
-        }
-        
-        /* 下载区域样式 */
-        .download-section {
+
+        footer {
+            text-align: center;
             margin-top: 30px;
-            background: var(--section-bg);
-            border-radius: 15px;
-            padding: 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .honey-icon {
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
         }
         
-        .download-header {
-            padding: 20px 25px;
-            cursor: pointer;
+        .dynasty-output-group {
+            margin-top: 25px;
+        }
+        
+        .dynasty-section-title {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-        
-        .download-header h2 {
-            color: var(--title-gradient-start);
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .download-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding: 0 25px;
-        }
-        
-        .download-content.expanded {
-            max-height: 500px;
-            padding: 0 25px 30px;
-        }
-        
-        .download-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            width: 100%;
-            margin-top: 15px;
-        }
-        
-        .download-btn {
-            min-width: 220px;
-            padding: 25px 20px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .download-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25);
-        }
-        
-        .download-btn:active {
-            transform: translateY(2px);
-        }
-        
-        .windows-btn {
-            background: linear-gradient(135deg, var(--download-win-start), var(--download-win-end));
-        }
-        
-        .android-btn {
-            background: linear-gradient(135deg, var(--download-android-start), var(--download-android-end));
-        }
-        
-        .download-icon {
-            font-size: 3.5rem;
             margin-bottom: 15px;
         }
         
-        .download-subtitle {
-            font-size: 1rem;
-            font-weight: 400;
-            opacity: 0.9;
-            margin-top: 5px;
+        .dynasty-section-title h3 {
+            font-size: 1.4rem;
+            background: var(--dynasty-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-left: 10px;
         }
         
-        .toggle-icon {
-            transition: transform 0.3s ease;
-            font-size: 1.5rem;
+        .dynasty-char-set {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
         }
         
-        .toggle-icon.rotated {
-            transform: rotate(180deg);
-        }
-        
-        footer {
+        .dynasty-char-set span {
+            font-family: monospace;
+            font-size: 1.1rem;
+            padding: 8px 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
             text-align: center;
-            padding: 30px;
-            color: var(--footer-color);
-            margin-top: 20px;
-            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .dynasty-char-set span:hover {
+            background: linear-gradient(90deg, rgba(26,42,108,0.3), rgba(178,31,31,0.3), rgba(253,187,45,0.3));
+            transform: translateY(-3px);
         }
         
-        .copy-feedback {
-            position: absolute;
-            top: -30px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: opacity 0.3s, top 0.5s;
-            pointer-events: none;
-        }
-        
-        .copy-feedback.show {
-            opacity: 1;
-            top: 10px;
+        .dynasty-char-set .zone-label {
+            grid-column: 1 / -1;
+            font-weight: bold;
+            background: rgba(255,255,255,0.3);
+            margin-top: 10px;
+            margin-bottom: 5px;
+            padding: 8px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, rgba(26,42,108,0.3), rgba(178,31,31,0.3), rgba(253,187,45,0.3));
         }
         
         @media (max-width: 768px) {
-            .content {
-                flex-direction: column;
+            .container {
+                padding: 10px;
             }
             
             h1 {
                 font-size: 2.2rem;
             }
             
-            button {
-                min-width: calc(50% - 10px);
-                margin-bottom: 10px;
-            }
-            
-            header {
+            .tabs {
                 flex-direction: column;
-                text-align: center;
             }
             
-            .theme-switcher {
-                margin-top: 15px;
-                align-self: center;
-            }
-            
-            .download-buttons {
+            .button-group, .result-buttons, .dynasty-buttons {
                 flex-direction: column;
-                align-items: center;
+            }
+            
+            button, .copy-btn, .dynasty-btn {
+                width: 100%;
             }
             
             .download-btn {
-                min-width: 280px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            button {
-                min-width: 100%;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .download-btn {
-                min-width: 100%;
-                padding: 20px 15px;
-                font-size: 1.3rem;
-            }
-            
-            .download-icon {
-                font-size: 2.5rem;
+                padding: 14px 25px;
+                font-size: 1.2rem;
             }
         }
     </style>
 </head>
 <body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
     <div class="container">
         <header>
-            <div class="header-content">
-                <h1>王朝密码</h1>
-                <p class="subtitle">kuang54188.github.io</p>
+            <h1>Meow & 王朝密码</h1>
+            <div class="download-container">
+                <a href="https://www.123865.com/s/jE4Fjv-bsYeh" class="download-btn">
+                    <i class="fas fa-download"></i>
+                    <span>下载应用</span>
+                </a>
             </div>
-            <div class="theme-switcher" id="themeSwitcher">
-                <span class="theme-icon">🌙</span>
-                <span>深色模式</span>
-            </div>
+            <p class="description">
+                <i class="fas fa-rainbow honey-icon"></i> 
+                一站式体验
+                <i class="fas fa-lock honey-icon"></i>
+            </p>
         </header>
-        
-        <div class="content">
-            <div class="input-section">
-                <div class="copy-feedback" id="inputCopyFeedback">已复制输入内容!</div>
-                <div class="section-title">
-                    <div class="icon">🔒</div>
-                    <h2>输入文本</h2>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="meow">Meow</div>
+            <div class="tab" data-tab="dynasty">王朝密码</div>
+        </div>
+
+        <!-- 七彩加密部分 -->
+        <div id="meow" class="tab-content active">
+            <div class="card">
+                <div class="input-group">
+                    <label for="inputText"><i class="fas fa-pen"></i> 加点"七彩蜜"</label>
+                    <textarea id="inputText" placeholder="输入你的甜蜜内容..."></textarea>
                 </div>
-                <textarea id="inputText" placeholder="请输入要加密的文本...&#10;示例: wo na na ge kuai zi&#10;"></textarea>
-                <div class="buttons">
-                    <button id="encryptBtn">加密</button>
-                    <button id="clearBtn">清空</button>
-                    <button class="copy-btn" id="copyInputBtn">复制输入</button>
+
+                <div class="button-group">
+                    <button id="encryptBtn"><i class="fas fa-lock"></i> 加点"蜜"</button>
+                    <button id="decryptBtn"><i class="fas fa-lock-open"></i> 接点"蜜"</button>
+                    <button id="clearBtn"><i class="fas fa-trash-alt"></i> 全部吃掉</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="input-group">
+                    <label for="resultText"><i class="fas fa-key"></i> 接点"蜜"</label>
+                    <div class="result-container">
+                        <textarea id="resultText" readonly placeholder="甜蜜结果将在这里显示..."></textarea>
+                    </div>
+                </div>
+                <div class="result-buttons">
+                    <button class="copy-btn" id="copyBtn"><i class="fas fa-copy"></i> 传递甜蜜</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-honey-pot"></i> 支持的内容：</h3>
+                <div class="char-set">
+                    <span>A-Z</span>
+                    <span>a-z</span>
+                    <span>0-9</span>
+                    <span>! @ # $ %</span>
+                    <span>^ & * ( )</span>
+                    <span>- _ + =</span>
+                    <span>{ } [ ]</span>
+                    <span>: ; " '</span>
+                    <span>, . ? /</span>
+                    <span>\ | ~ `</span>
+                    <span>中文</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 王朝密码部分 -->
+        <div id="dynasty" class="tab-content">
+            <div class="card">
+                <div class="input-group">
+                    <label for="dynastyInputText"><i class="fas fa-pen"></i> 输入文本</label>
+                    <textarea id="dynastyInputText" placeholder="请输入要加密的文本..."></textarea>
+                </div>
+
+                <div class="dynasty-buttons">
+                    <button class="dynasty-btn dynasty-btn-encrypt" id="dynastyEncryptBtn">加密</button>
+                    <button class="dynasty-btn dynasty-btn-decrypt" id="dynastyDecryptBtn">解密</button>
+                    <button class="dynasty-btn dynasty-btn-clear" id="dynastyClearBtn">清空</button>
+                    <button class="dynasty-btn dynasty-btn-copy" id="dynastyCopyInputBtn">复制输入</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="input-group">
+                    <label for="dynastyOutputText"><i class="fas fa-key"></i> 加密/解密结果</label>
+                    <div class="result-container">
+                        <textarea id="dynastyOutputText" readonly placeholder="加密/解密结果将显示在这里..."></textarea>
+                    </div>
+                </div>
+                <div class="result-buttons">
+                    <button class="dynasty-btn dynasty-btn-copy" id="dynastyCopyOutputBtn">复制结果</button>
                 </div>
             </div>
             
-            <div class="output-section">
-                <div class="copy-feedback" id="outputCopyFeedback">已复制结果!</div>
-                <div class="section-title">
-                    <div class="icon">🔓</div>
-                    <h2>加密/解密结果</h2>
-                </div>
-                <textarea id="outputText" readonly placeholder="加密/解密结果将显示在这里..."></textarea>
-                <div class="buttons">
-                    <button id="decryptBtn">解密</button>
-                    <button class="copy-btn" id="copyOutputBtn">复制结果</button>
+            <div class="card">
+                <h3><i class="fas fa-key"></i> 王朝密码字符对照表</h3>
+                <div class="dynasty-char-set">
+                    <div class="zone-label">X 区</div>
+                    <span>a → X1</span>
+                    <span>b → X2</span>
+                    <span>c → X3</span>
+                    <span>d → X4</span>
+                    <span>e → X5</span>
+                    <span>f → X6</span>
+                    <span>g → X7</span>
+                    <span>h → X8</span>
+                    <span>i → X9</span>
+                    
+                    <div class="zone-label">Y 区</div>
+                    <span>j → Y1</span>
+                    <span>k → Y2</span>
+                    <span>l → Y3</span>
+                    <span>m → Y4</span>
+                    <span>n → Y5</span>
+                    <span>o → Y6</span>
+                    <span>p → Y7</span>
+                    <span>q → Y8</span>
+                    <span>r → Y9</span>
+                    
+                    <div class="zone-label">Z 区</div>
+                    <span>s → Z1</span>
+                    <span>t → Z2</span>
+                    <span>u → Z3</span>
+                    <span>v → Z4</span>
+                    <span>w → Z5</span>
+                    <span>x → Z6</span>
+                    <span>y → Z7</span>
+                    <span>z → Z8</span>
+                    
+                    <div class="zone-label">特殊功能</div>
+                    <span>空格 → L5</span>
+                    <span>大写 → L6</span>
+                    <span>ā → L1</span>
+                    <span>á → L2</span>
+                    <span>ǎ → L3</span>
+                    <span>à → L4</span>
                 </div>
             </div>
         </div>
-        
-        <!-- 下载区域 -->
-        <div class="download-section">
-            <div class="download-header" id="downloadHeader">
-                <h2>下载王朝密码增强版 <span class="toggle-icon" id="toggleIcon">▼</span></h2>
-            </div>
-            <div class="download-content" id="downloadContent">
-                <p>选择您的平台下载最新版本</p>
-                <div class="download-buttons">
-                    <button class="download-btn windows-btn" id="windowsBtn">
-                        <div class="download-icon">💻</div>
-                        Windows 版下载
-                        <div class="download-subtitle">王朝密码.exe</div>
-                    </button>
-                    <button class="download-btn android-btn" id="androidBtn">
-                        <div class="download-icon">📱</div>
-                        Android 版下载
-                        <div class="download-subtitle">王朝.apk</div>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
+
         <footer>
-            <p>王朝密码2.6 | kuang</p>
+            <p>七彩密码 <i class="fas fa-rainbow honey-icon"></i> 王朝密码 <i class="fas fa-lock honey-icon"></i> 安全加密工具</p>
         </footer>
     </div>
 
     <script>
-        // 扩展字区映射表支持中文和符号
-        const charMap = {
-            // X区
-            'a': 'X1', 'b': 'X2', 'c': 'X3', 'd': 'X4', 'e': 'X5',
-            'f': 'X6', 'g': 'X7', 'h': 'X8', 'i': 'X9',
-            
-            // Y区
-            'j': 'Y1', 'k': 'Y2', 'l': 'Y3', 'm': 'Y4', 'n': 'Y5',
-            'o': 'Y6', 'p': 'Y7', 'q': 'Y8', 'r': 'Y9',
-            
-            // Z区
-            's': 'Z1', 't': 'Z2', 'u': 'Z3', 'v': 'Z4', 'w': 'Z5',
-            'x': 'Z6', 'y': 'Z7', 'z': 'Z8',
-            
-            // M区 (数字)
-            '0': 'M1', '1': 'M9', '2': 'M2', '3': 'M8', '4': 'M7',
-            '5': 'M6', '6': 'M5', '7': 'M4', '8': 'M3', '9': 'M2',
-            
-            // 特殊符号区
-            '?': 'N3', '!': 'N4', '"': 'N7', '”': 'N8',
-            ',': 'N1', '.': 'N2', ';': 'N5', ':': 'N6',
-            '(': 'N9', ')': 'N0', '[': 'N01', ']': 'N02',
-            '{': 'N03', '}': 'N04', '<': 'N05', '>': 'N06',
-            '/': 'N07', '\\': 'N08', '|': 'N09', '-': 'N10',
-            '_': 'N11', '+': 'N12', '=': 'N13', '*': 'N14',
-            '&': 'N15', '^': 'N16', '%': 'N17', '$': 'N18',
-            '#': 'N19', '@': 'N20', '`': 'N21', '~': 'N22',
-            
-            // 中文拼音映射
-            'zh': 'Z8', 'ch': 'X3X8', 'sh': 'Z1X8', 
-            'ong': 'Y6Y5X7', 'ang': 'X1Y5X7', 'eng': 'X5Y5X7', 'ing': 'X9Y5X7',
-            'an': 'X1Y5', 'en': 'X5Y5', 'in': 'X9Y5', 'ai': 'X19', 'ei': 'X59',
-            'ao': 'X1Y6', 'ou': 'Y6Z4', 'er': 'X5Y9', 'uo': 'Z3Y6', 'ua': 'Z3X1',
-            'ui': 'Z3X9', 'ia': 'X9X1', 'ie': 'X9X5', 'iu': 'X9Z3', 've': 'Z4X5',
-            
-            // 常用中文字符
-            '我': 'W3', '你': 'N3', '他': 'T1', '是': 'S4', '的': 'D5',
-            '中': 'Z8X8Y6Y5X7', '国': 'X7Z4Y6', '人': 'R9', '民': 'M4',
-            '爱': 'A1', '恨': 'H5', '好': 'H3', '坏': 'H4', '上': 'S3',
-            '下': 'X4', '左': 'Z2', '右': 'Y7', '前': 'Q2', '后': 'H6',
-            '大': 'D4', '小': 'X3', '多': 'D6', '少': 'S2', '有': 'Y3',
-            '无': 'W5', '来': 'L1', '去': 'Q8', '生': 'S5', '死': 'S4'
-        };
-
-        // 操作符
-        const operators = {
-            'L5': ' ',  // 空格
-            'L6': '',   // 大写标记（处理方式特殊）
-            'L1': 'ā',  // 一声
-            'L2': 'á',  // 二声
-            'L3': 'ǎ',  // 三声
-            'L4': 'à'   // 四声
-        };
-
-        // DOM元素
-        const inputText = document.getElementById('inputText');
-        const outputText = document.getElementById('outputText');
-        const encryptBtn = document.getElementById('encryptBtn');
-        const decryptBtn = document.getElementById('decryptBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const copyInputBtn = document.getElementById('copyInputBtn');
-        const copyOutputBtn = document.getElementById('copyOutputBtn');
-        const themeSwitcher = document.getElementById('themeSwitcher');
-        const inputCopyFeedback = document.getElementById('inputCopyFeedback');
-        const outputCopyFeedback = document.getElementById('outputCopyFeedback');
-        const downloadHeader = document.getElementById('downloadHeader');
-        const downloadContent = document.getElementById('downloadContent');
-        const toggleIcon = document.getElementById('toggleIcon');
-        const windowsBtn = document.getElementById('windowsBtn');
-        const androidBtn = document.getElementById('androidBtn');
-
-        // 主题切换功能
-        let isDarkMode = true;
-
-        themeSwitcher.addEventListener('click', () => {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('light-theme', !isDarkMode);
-            const themeIcon = themeSwitcher.querySelector('.theme-icon');
-            const themeText = themeSwitcher.querySelector('span:last-child');
-            
-            if (isDarkMode) {
-                themeIcon.textContent = '🌙';
-                themeText.textContent = '深';
+        // 切换主题
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.className = 'fas fa-sun';
             } else {
-                themeIcon.textContent = '☀️';
-                themeText.textContent = '浅';
+                themeIcon.className = 'fas fa-moon';
             }
         });
 
-        // 复制功能
-        function showFeedback(element, message) {
-            element.textContent = message;
-            element.classList.add('show');
+        // 选项卡切换
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有活动状态
+                tabs.forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // 激活当前选项卡
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ================= 七彩加密功能 =================
+        function encrypt(text) {
+            if (!text) return '';
             
-            setTimeout(() => {
-                element.classList.remove('show');
-            }, 2000);
-        }
-        
-        copyInputBtn.addEventListener('click', () => {
-            const text = inputText.value;
-            if (text) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showFeedback(inputCopyFeedback, '已复制输入内容!');
-                });
-            }
-        });
-        
-        copyOutputBtn.addEventListener('click', () => {
-            const text = outputText.value;
-            if (text) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showFeedback(outputCopyFeedback, '已复制结果!');
-                });
-            }
-        });
-
-        // 加密函数
-        function encryptText() {
-            const text = inputText.value;
-            let output = '';
-            let lastZone = null;
+            const meowSequence = ['m', 'e', 'o', 'w'];
+            let result = '';
+            let meowIndex = 0;
             
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
+                const meowChar = meowSequence[meowIndex];
                 
-                // 处理空格
-                if (char === ' ') {
-                    output += 'L5';
-                    lastZone = null;
-                    continue;
+                // 获取字符的ASCII码
+                const charCode = char.charCodeAt(0);
+                
+                // 应用meow字符的偏移量
+                const offset = meowChar.charCodeAt(0) - 97; // a=97 in ASCII
+                let newCharCode = charCode + offset;
+                
+                // 处理超出可打印字符范围的情况
+                if (charCode >= 32 && charCode <= 126) {
+                    // 可打印字符范围
+                    while (newCharCode > 126) {
+                        newCharCode = 32 + (newCharCode - 127);
+                    }
                 }
+                
+                result += String.fromCharCode(newCharCode);
+                
+                // 更新meow索引
+                meowIndex = (meowIndex + 1) % meowSequence.length;
+            }
+            
+            return result;
+        }
+
+        function decrypt(text) {
+            if (!text) return '';
+            
+            const meowSequence = ['m', 'e', 'o', 'w'];
+            let result = '';
+            let meowIndex = 0;
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const meowChar = meowSequence[meowIndex];
+                
+                // 获取字符的ASCII码
+                const charCode = char.charCodeAt(0);
+                
+                // 应用meow字符的偏移量（反向）
+                const offset = meowChar.charCodeAt(0) - 97; // a=97 in ASCII
+                let newCharCode = charCode - offset;
+                
+                // 处理超出可打印字符范围的情况
+                if (charCode >= 32 && charCode <= 126) {
+                    // 可打印字符范围
+                    while (newCharCode < 32) {
+                        newCharCode = 127 - (32 - newCharCode);
+                    }
+                }
+                
+                result += String.fromCharCode(newCharCode);
+                
+                // 更新meow索引
+                meowIndex = (meowIndex + 1) % meowSequence.length;
+            }
+            
+            return result;
+        }
+
+        // 七彩加密DOM元素
+        const inputText = document.getElementById('inputText');
+        const resultText = document.getElementById('resultText');
+        const encryptBtn = document.getElementById('encryptBtn');
+        const decryptBtn = document.getElementById('decryptBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+
+        // 七彩加密按钮事件
+        encryptBtn.addEventListener('click', () => {
+            const text = inputText.value;
+            resultText.value = encrypt(text);
+            showFeedback('加密成功!');
+        });
+
+        decryptBtn.addEventListener('click', () => {
+            const text = inputText.value;
+            resultText.value = decrypt(text);
+            showFeedback('解密成功!');
+        });
+
+        clearBtn.addEventListener('click', () => {
+            inputText.value = '';
+            resultText.value = '';
+            inputText.focus();
+            showFeedback('内容已清空');
+        });
+
+        // 七彩加密复制按钮事件
+        copyBtn.addEventListener('click', () => {
+            if (resultText.value) {
+                resultText.select();
+                document.execCommand('copy');
+                
+                // 显示复制成功反馈
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制甜蜜';
+                copyBtn.classList.add('success');
+                
+                // 添加动画效果
+                copyBtn.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    copyBtn.style.transform = 'scale(1)';
+                }, 300);
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('success');
+                }, 2000);
+                
+                showFeedback('已复制到剪贴板');
+            }
+        });
+
+        // ================= 王朝密码功能 =================
+        // 字符到字区的映射
+        const charToZone = {
+            // X区
+            'a': ['X', '1'], 'b': ['X', '2'], 'c': ['X', '3'], 'd': ['X', '4'], 'e': ['X', '5'],
+            'f': ['X', '6'], 'g': ['X', '7'], 'h': ['X', '8'], 'i': ['X', '9'],
+            // Y区
+            'j': ['Y', '1'], 'k': ['Y', '2'], 'l': ['Y', '3'], 'm': ['Y', '4'], 'n': ['Y', '5'],
+            'o': ['Y', '6'], 'p': ['Y', '7'], 'q': ['Y', '8'], 'r': ['Y', '9'],
+            // Z区
+            's': ['Z', '1'], 't': ['Z', '2'], 'u': ['Z', '3'], 'v': ['Z', '4'], 'ü': ['Z', '4'],
+            'w': ['Z', '5'], 'x': ['Z', '6'], 'y': ['Z', '7'], 'z': ['Z', '8'],
+            // M区 (数字倒序)
+            '0': ['M', '0'], '1': ['M', '9'], '2': ['M', '8'], '3': ['M', '7'], '4': ['M', '6'],
+            '5': ['M', '5'], '6': ['M', '4'], '7': ['M', '3'], '8': ['M', '2'], '9': ['M', '1'],
+            // N区
+            '，': ['N', '1'], '。': ['N', '2'], '？': ['N', '3'], '！': ['N', '4'],
+            '@': ['N', '5'], '．': ['N', '6'], '"': ['N', '7'],
+            // 空格
+            ' ': ['L', '5']
+        };
+
+        // 声调映射
+        const toneMap = {
+            'ā': 'L1', 'á': 'L2', 'ǎ': 'L3', 'à': 'L4'
+        };
+
+        // 王朝密码加密
+        function dynastyEncrypt(text) {
+            if (!text) return '';
+            
+            let result = '';
+            let currentZone = null;
+            let inUpperCase = false;
+            let uppercaseSequence = false;
+            
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
                 
                 // 处理大写字母
                 if (/[A-Z]/.test(char)) {
-                    const lowerChar = char.toLowerCase();
-                    if (charMap[lowerChar]) {
-                        output += charMap[lowerChar] + 'L6';
-                    } else {
-                        output += char;
+                    if (!inUpperCase) {
+                        result += 'L6';
+                        inUpperCase = true;
+                        uppercaseSequence = true;
                     }
-                    lastZone = null;
+                    char = char.toLowerCase();
+                } else if (inUpperCase && /[^a-zA-Z]/.test(char)) {
+                    result += 'L6';
+                    inUpperCase = false;
+                }
+                
+                // 处理带声调字符
+                if (toneMap[char]) {
+                    result += toneMap[char];
+                    currentZone = null;
                     continue;
                 }
                 
-                // 处理已知字符（包括符号）
-                if (charMap[char]) {
-                    const [zone, index] = [charMap[char][0], charMap[char].substring(1)];
+                // 查找字符映射
+                const mapping = charToZone[char] || 
+                               charToZone[char.toLowerCase()] || 
+                               [null, null];
+                
+                const [zone, seq] = mapping;
+                
+                if (zone && seq) {
+                    // 同区优化
+                    if (zone === currentZone && !uppercaseSequence) {
+                        result += seq;
+                    } else {
+                        result += zone + seq;
+                        currentZone = zone;
+                    }
                     
-                    if (zone === lastZone) {
-                        output += index;
-                    } else {
-                        output += charMap[char];
-                        lastZone = zone;
+                    // 结束大写序列
+                    if (uppercaseSequence) {
+                        uppercaseSequence = false;
                     }
-                    continue;
+                } else {
+                    // 不在映射表中的字符直接保留
+                    result += char;
+                    currentZone = null;
                 }
-                
-                // 处理中文字符
-                if (/[\u4e00-\u9fa5]/.test(char)) {
-                    if (charMap[char]) {
-                        output += charMap[char];
-                        lastZone = null;
-                    } else {
-                        output += char;
-                    }
-                    continue;
-                }
-                
-                // 处理未知字符（直接保留）
-                output += char;
-                lastZone = null;
             }
             
-            outputText.value = output;
+            // 结束大写序列
+            if (inUpperCase) {
+                result += 'L6';
+            }
+            
+            return result;
         }
 
-        // 解密函数
-        function decryptText() {
-            const encrypted = inputText.value;
-            let output = '';
-            let currentZone = null;
-            let buffer = '';
+        // 王朝密码解密
+        function dynastyDecrypt(text) {
+            if (!text) return '';
             
-            for (let i = 0; i < encrypted.length; i++) {
-                const char = encrypted[i];
+            let result = '';
+            let i = 0;
+            let currentZone = null;
+            let inUpperCase = false;
+            
+            // 区号到字符的映射
+            const zoneToChar = {
+                'X': { 
+                    '1': 'a', '2': 'b', '3': 'c', '4': 'd', '5': 'e',
+                    '6': 'f', '7': 'g', '8': 'h', '9': 'i'
+                },
+                'Y': {
+                    '1': 'j', '2': 'k', '3': 'l', '4': 'm', '5': 'n',
+                    '6': 'o', '7': 'p', '8': 'q', '9': 'r'
+                },
+                'Z': {
+                    '1': 's', '2': 't', '3': 'u', '4': 'v', '5': 'w',
+                    '6': 'x', '7': 'y', '8': 'z'
+                },
+                'M': {
+                    '0': '0', '1': '9', '2': '8', '3': '7', '4': '6',
+                    '5': '5', '6': '4', '7': '3', '8': '2', '9': '1'
+                },
+                'N': {
+                    '1': '，', '2': '。', '3': '？', '4': '！',
+                    '5': '@', '6': '．', '7': '"'
+                },
+                'L': {
+                    '1': 'ā', '2': 'á', '3': 'ǎ', '4': 'à', '5': ' ', 
+                    '6': function() { inUpperCase = !inUpperCase; return ''; }
+                }
+            };
+            
+            while (i < text.length) {
+                const char = text[i];
                 
-                // 处理操作符
-                if (char === 'L' && i+1 < encrypted.length) {
-                    const op = encrypted.substring(i, i+2);
+                // 处理L区控制符
+                if (char === 'L') {
+                    const nextChar = text[i + 1];
+                    i += 2;
+                    
+                    if (nextChar === '5') {
+                        result += ' ';
+                    } else if (nextChar === '6') {
+                        inUpperCase = !inUpperCase;
+                    } else if (nextChar) {
+                        const toneChar = zoneToChar['L'][nextChar];
+                        if (toneChar) {
+                            result += toneChar;
+                        }
+                    }
+                    continue;
+                }
+                
+                // 处理区号
+                if (['X', 'Y', 'Z', 'M', 'N'].includes(char)) {
+                    currentZone = char;
                     i++;
                     
-                    if (operators[op]) {
-                        output += operators[op];
-                    } else if (op === 'L5') {
-                        output += ' ';
-                    } else if (op === 'L6') {
-                        // 处理大写 - 将最后一个字符大写
-                        if (output.length > 0) {
-                            const lastChar = output.slice(-1);
-                            output = output.slice(0, -1) + lastChar.toUpperCase();
+                    // 处理区号后的数字序列
+                    while (i < text.length && /\d/.test(text[i])) {
+                        const seq = text[i];
+                        i++;
+                        
+                        const charMap = zoneToChar[currentZone];
+                        if (charMap && charMap[seq]) {
+                            let decryptedChar = charMap[seq];
+                            
+                            // 处理大写转换
+                            if (inUpperCase && typeof decryptedChar === 'string' && /[a-z]/.test(decryptedChar)) {
+                                decryptedChar = decryptedChar.toUpperCase();
+                            }
+                            
+                            result += decryptedChar;
                         }
                     }
-                    
-                    currentZone = null;
                     continue;
                 }
                 
-                // 处理字区标识（包含符号区N）
-                if (['X', 'Y', 'Z', 'M', 'N', 'W', 'T', 'D', 'S', 'H', 'Q', 'R', 'A'].includes(char)) {
-                    currentZone = char;
-                    buffer = '';
-                    
-                    // 处理多位数区标识（如N10）
-                    if (i+1 < encrypted.length && /[0-9]/.test(encrypted[i+1])) {
-                        continue;
-                    }
-                }
-                
-                // 处理数字索引
-                if (currentZone && /[0-9]/.test(char)) {
-                    buffer += char;
-                    
-                    // 检查是否到达序列末尾
-                    if (i+1 >= encrypted.length || !/[0-9]/.test(encrypted[i+1])) {
-                        // 处理多位数区标识（如N10）
-                        if (buffer.length > 1 && currentZone === 'N') {
-                            const code = currentZone + buffer;
-                            const charFromMap = Object.keys(charMap).find(key => charMap[key] === code);
-                            
-                            if (charFromMap) {
-                                output += charFromMap;
-                            } else {
-                                output += `?${code}?`;
-                            }
-                        } 
-                        // 处理标准情况
-                        else {
-                            for (let j = 0; j < buffer.length; j++) {
-                                const code = currentZone + buffer[j];
-                                const charFromMap = Object.keys(charMap).find(key => charMap[key] === code);
-                                
-                                if (charFromMap) {
-                                    output += charFromMap;
-                                } else {
-                                    // 处理特殊映射
-                                    if (code === 'Y6') output += 'o';
-                                    else if (code === 'M1') output += '0';
-                                    else output += `?${code}?`;
-                                }
-                            }
-                        }
-                        
-                        currentZone = null;
-                        buffer = '';
-                    }
-                } 
-                // 处理非字区字符
-                else {
-                    output += char;
-                    currentZone = null;
-                }
+                // 处理普通字符
+                result += char;
+                i++;
             }
             
-            outputText.value = output;
+            return result;
         }
 
-        // 下载区域功能
-        downloadHeader.addEventListener('click', () => {
-            downloadContent.classList.toggle('expanded');
-            toggleIcon.classList.toggle('rotated');
+        // 王朝密码DOM元素
+        const dynastyInputText = document.getElementById('dynastyInputText');
+        const dynastyOutputText = document.getElementById('dynastyOutputText');
+        const dynastyEncryptBtn = document.getElementById('dynastyEncryptBtn');
+        const dynastyDecryptBtn = document.getElementById('dynastyDecryptBtn');
+        const dynastyClearBtn = document.getElementById('dynastyClearBtn');
+        const dynastyCopyInputBtn = document.getElementById('dynastyCopyInputBtn');
+        const dynastyCopyOutputBtn = document.getElementById('dynastyCopyOutputBtn');
+
+        // 王朝密码按钮事件
+        dynastyEncryptBtn.addEventListener('click', () => {
+            const text = dynastyInputText.value;
+            dynastyOutputText.value = dynastyEncrypt(text);
+            showFeedback('加密成功!');
         });
 
-        // 下载按钮功能
-        windowsBtn.addEventListener('click', () => {
-            // 打开Windows下载链接
-            window.open('https://www.123865.com/s/jE4Fjv-UnYeh', '_blank');
+        dynastyDecryptBtn.addEventListener('click', () => {
+            const text = dynastyInputText.value;
+            dynastyOutputText.value = dynastyDecrypt(text);
+            showFeedback('解密成功!');
         });
 
-        androidBtn.addEventListener('click', () => {
-            // 打开Android下载链接
-            window.open('https://www.123865.com/s/jE4Fjv-InYeh', '_blank');
+        dynastyClearBtn.addEventListener('click', () => {
+            dynastyInputText.value = '';
+            dynastyOutputText.value = '';
+            dynastyInputText.focus();
+            showFeedback('内容已清空');
         });
 
-        // 清空文本
-        clearBtn.addEventListener('click', () => {
-            inputText.value = '';
-            outputText.value = '';
+        // 王朝密码复制按钮事件
+        dynastyCopyInputBtn.addEventListener('click', () => {
+            if (dynastyInputText.value) {
+                dynastyInputText.select();
+                document.execCommand('copy');
+                showFeedback('输入内容已复制');
+            }
         });
 
-        // 事件监听
-        encryptBtn.addEventListener('click', encryptText);
-        decryptBtn.addEventListener('click', decryptText);
-        clearBtn.addEventListener('click', () => {
-            inputText.value = '';
-            outputText.value = '';
+        dynastyCopyOutputBtn.addEventListener('click', () => {
+            if (dynastyOutputText.value) {
+                dynastyOutputText.select();
+                document.execCommand('copy');
+                showFeedback('结果已复制');
+            }
         });
 
-      
+        function showFeedback(message) {
+            const feedback = document.createElement('div');
+            feedback.textContent = message;
+            feedback.style.position = 'fixed';
+            feedback.style.bottom = '20px';
+            feedback.style.right = '20px';
+            feedback.style.background = 'rgba(0,0,0,0.7)';
+            feedback.style.color = 'white';
+            feedback.style.padding = '10px 20px';
+            feedback.style.borderRadius = '5px';
+            feedback.style.zIndex = '1000';
+            feedback.style.transition = 'opacity 0.3s';
+            feedback.style.opacity = '1';
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(feedback);
+                }, 300);
+            }, 2000);
+        }
+
+        // 初始焦点在输入框
+        inputText.focus();
     </script>
 </body>
 </html>
