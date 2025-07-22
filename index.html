@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meow & 王朝密码</title>
+    <title>Meow & 王朝密码 & 摩斯密码</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* 原有样式保持不变 */
         :root {
             --primary-color: #FF0080;
             --secondary-color: #FF8C00;
@@ -23,6 +24,7 @@
             --dynasty-tertiary: #fdbb2d;
             --meow-gradient: linear-gradient(90deg, #FF0080, #FF8C00, #FFD400);
             --dynasty-gradient: linear-gradient(90deg, #1a2a6c, #b21f1f, #fdbb2d);
+            --morse-gradient: linear-gradient(90deg, #2b5876, #4e4376);
         }
 
         .dark-mode {
@@ -99,65 +101,6 @@
             backdrop-filter: blur(5px);
         }
 
-        /* 新增下载按钮样式 */
-        .download-container {
-            margin: 20px auto;
-            max-width: 800px;
-            text-align: center;
-        }
-
-        .download-btn {
-            display: inline-block;
-            padding: 16px 35px;
-            border-radius: 50px;
-            background: linear-gradient(90deg, 
-                #FF0080, #FF512F, #FFD400, #40E0D0, #0093E9, #7A3DDA, #FF00FF);
-            background-size: 300% 300%;
-            animation: rainbow-text 8s ease infinite;
-            color: white;
-            font-weight: 700;
-            font-size: 1.4rem;
-            text-decoration: none;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            margin: 15px 0;
-        }
-
-        .download-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            z-index: -1;
-            transition: all 0.4s;
-        }
-
-        .download-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
-            animation: rainbow-text 4s ease infinite;
-        }
-
-        .download-btn i {
-            margin-right: 10px;
-            animation: float 2s ease-in-out infinite;
-        }
-
-        .download-btn span {
-            position: relative;
-            z-index: 2;
-        }
-
-        .download-btn:hover::before {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
         .tabs {
             display: flex;
             gap: 10px;
@@ -198,6 +141,10 @@
 
         .tab[data-tab="dynasty"]::before {
             background: var(--dynasty-gradient);
+        }
+        
+        .tab[data-tab="morse"]::before {
+            background: var(--morse-gradient);
         }
 
         .tab.active::before {
@@ -483,6 +430,14 @@
         .dynasty-btn-copy::before {
             background: linear-gradient(to right, #1a2a6c, #5d8aa8);
         }
+        
+        .morse-btn {
+            background: linear-gradient(to right, #2b5876, #4e4376);
+        }
+        
+        .morse-btn::before {
+            background: linear-gradient(to right, #1a2a6c, #2b5876);
+        }
 
         .dynasty-btn:hover::before {
             opacity: 1;
@@ -567,6 +522,49 @@
             background: linear-gradient(90deg, rgba(26,42,108,0.3), rgba(178,31,31,0.3), rgba(253,187,45,0.3));
         }
         
+        .morse-char-set {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+        }
+        
+        .morse-char-set div {
+            font-family: monospace;
+            font-size: 1.1rem;
+            padding: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .morse-char-set div:hover {
+            background: linear-gradient(90deg, rgba(43,88,118,0.3), rgba(78,67,118,0.3));
+            transform: translateY(-3px);
+        }
+        
+        .morse-char-set .char {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .morse-char-set .code {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        
+        .dark-mode .morse-char-set .code {
+            color: #aaa;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -588,9 +586,8 @@
                 width: 100%;
             }
             
-            .download-btn {
-                padding: 14px 25px;
-                font-size: 1.2rem;
+            .morse-char-set {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
         }
     </style>
@@ -602,13 +599,7 @@
 
     <div class="container">
         <header>
-            <h1>Meow & 王朝密码</h1>
-            <div class="download-container">
-                <a href="https://www.123865.com/s/jE4Fjv-bsYeh" class="download-btn">
-                    <i class="fas fa-download"></i>
-                    <span>下载应用</span>
-                </a>
-            </div>
+            <h1>Meow & 王朝密码 & 摩斯密码</h1>
             <p class="description">
                 <i class="fas fa-rainbow honey-icon"></i> 
                 一站式体验
@@ -619,6 +610,7 @@
         <div class="tabs">
             <div class="tab active" data-tab="meow">Meow</div>
             <div class="tab" data-tab="dynasty">王朝密码</div>
+            <div class="tab" data-tab="morse">摩斯密码</div>
         </div>
 
         <!-- 七彩加密部分 -->
@@ -739,9 +731,96 @@
                 </div>
             </div>
         </div>
+        
+        <!-- 新增的摩斯密码部分 -->
+        <div id="morse" class="tab-content">
+            <div class="card">
+                <div class="input-group">
+                    <label for="morseInputText"><i class="fas fa-pen"></i> 输入文本</label>
+                    <textarea id="morseInputText" placeholder="输入要加密的文本（字母、数字、空格）..."></textarea>
+                </div>
+
+                <div class="dynasty-buttons">
+                    <button class="dynasty-btn morse-btn" id="morseEncryptBtn"><i class="fas fa-lock"></i> 摩斯加密</button>
+                    <button class="dynasty-btn morse-btn" id="morseDecryptBtn"><i class="fas fa-lock-open"></i> 摩斯解密</button>
+                    <button class="dynasty-btn dynasty-btn-clear" id="morseClearBtn"><i class="fas fa-trash-alt"></i> 清空</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="input-group">
+                    <label for="morseOutputText"><i class="fas fa-key"></i> 加密/解密结果</label>
+                    <div class="result-container">
+                        <textarea id="morseOutputText" readonly placeholder="摩斯密码结果将显示在这里..."></textarea>
+                    </div>
+                </div>
+                <div class="result-buttons">
+                    <button class="dynasty-btn dynasty-btn-copy" id="morseCopyBtn"><i class="fas fa-copy"></i> 复制结果</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3><i class="fas fa-key"></i> 摩斯密码对照表</h3>
+                <div class="morse-char-set">
+                    <div><span class="char">A</span><span class="code">.-</span></div>
+                    <div><span class="char">B</span><span class="code">-...</span></div>
+                    <div><span class="char">C</span><span class="code">-.-.</span></div>
+                    <div><span class="char">D</span><span class="code">-..</span></div>
+                    <div><span class="char">E</span><span class="code">.</span></div>
+                    <div><span class="char">F</span><span class="code">..-.</span></div>
+                    <div><span class="char">G</span><span class="code">--.</span></div>
+                    <div><span class="char">H</span><span class="code">....</span></div>
+                    <div><span class="char">I</span><span class="code">..</span></div>
+                    <div><span class="char">J</span><span class="code">.---</span></div>
+                    <div><span class="char">K</span><span class="code">-.-</span></div>
+                    <div><span class="char">L</span><span class="code">.-..</span></div>
+                    <div><span class="char">M</span><span class="code">--</span></div>
+                    <div><span class="char">N</span><span class="code">-.</span></div>
+                    <div><span class="char">O</span><span class="code">---</span></div>
+                    <div><span class="char">P</span><span class="code">.--.</span></div>
+                    <div><span class="char">Q</span><span class="code">--.-</span></div>
+                    <div><span class="char">R</span><span class="code">.-.</span></div>
+                    <div><span class="char">S</span><span class="code">...</span></div>
+                    <div><span class="char">T</span><span class="code">-</span></div>
+                    <div><span class="char">U</span><span class="code">..-</span></div>
+                    <div><span class="char">V</span><span class="code">...-</span></div>
+                    <div><span class="char">W</span><span class="code">.--</span></div>
+                    <div><span class="char">X</span><span class="code">-..-</span></div>
+                    <div><span class="char">Y</span><span class="code">-.--</span></div>
+                    <div><span class="char">Z</span><span class="code">--..</span></div>
+                    <div><span class="char">0</span><span class="code">-----</span></div>
+                    <div><span class="char">1</span><span class="code">.----</span></div>
+                    <div><span class="char">2</span><span class="code">..---</span></div>
+                    <div><span class="char">3</span><span class="code">...--</span></div>
+                    <div><span class="char">4</span><span class="code">....-</span></div>
+                    <div><span class="char">5</span><span class="code">.....</span></div>
+                    <div><span class="char">6</span><span class="code">-....</span></div>
+                    <div><span class="char">7</span><span class="code">--...</span></div>
+                    <div><span class="char">8</span><span class="code">---..</span></div>
+                    <div><span class="char">9</span><span class="code">----.</span></div>
+                    <div><span class="char">.</span><span class="code">.-.-.-</span></div>
+                    <div><span class="char">,</span><span class="code">--..--</span></div>
+                    <div><span class="char">?</span><span class="code">..--..</span></div>
+                    <div><span class="char">'</span><span class="code">.----.</span></div>
+                    <div><span class="char">!</span><span class="code">-.-.--</span></div>
+                    <div><span class="char">/</span><span class="code">-..-.</span></div>
+                    <div><span class="char">(</span><span class="code">-.--.</span></div>
+                    <div><span class="char">)</span><span class="code">-.--.-</span></div>
+                    <div><span class="char">&</span><span class="code">.-...</span></div>
+                    <div><span class="char">:</span><span class="code">---...</span></div>
+                    <div><span class="char">;</span><span class="code">-.-.-.</span></div>
+                    <div><span class="char">=</span><span class="code">-...-</span></div>
+                    <div><span class="char">+</span><span class="code">.-.-.</span></div>
+                    <div><span class="char">-</span><span class="code">-....-</span></div>
+                    <div><span class="char">"</span><span class="code">.-..-.</span></div>
+                    <div><span class="char">@</span><span class="code">.--.-.</span></div>
+                    <div><span class="char">空格</span><span class="code">/</span></div>
+                </div>
+            </div>
+        </div>
 
         <footer>
-            <p>七彩密码 <i class="fas fa-rainbow honey-icon"></i> 王朝密码 <i class="fas fa-lock honey-icon"></i> 安全加密工具</p>
+            <p>七彩密码 <i class="fas fa-rainbow honey-icon"></i> 王朝密码 <i class="fas fa-lock honey-icon"></i> 摩斯密码 <i class="fas fa-wifi honey-icon"></i> 安全加密工具</p>
         </footer>
     </div>
 
@@ -856,20 +935,17 @@
         encryptBtn.addEventListener('click', () => {
             const text = inputText.value;
             resultText.value = encrypt(text);
-            showFeedback('加密成功!');
         });
 
         decryptBtn.addEventListener('click', () => {
             const text = inputText.value;
             resultText.value = decrypt(text);
-            showFeedback('解密成功!');
         });
 
         clearBtn.addEventListener('click', () => {
             inputText.value = '';
             resultText.value = '';
             inputText.focus();
-            showFeedback('内容已清空');
         });
 
         // 七彩加密复制按钮事件
@@ -893,8 +969,6 @@
                     copyBtn.innerHTML = originalText;
                     copyBtn.classList.remove('success');
                 }, 2000);
-                
-                showFeedback('已复制到剪贴板');
             }
         });
 
@@ -1024,8 +1098,7 @@
                     '5': '@', '6': '．', '7': '"'
                 },
                 'L': {
-                    '1': 'ā', '2': 'á', '3': 'ǎ', '4': 'à', '5': ' ', 
-                    '6': function() { inUpperCase = !inUpperCase; return ''; }
+                    '1': 'ā', '2': 'á', '3': 'ǎ', '4': 'à', '5': ' '
                 }
             };
             
@@ -1037,15 +1110,13 @@
                     const nextChar = text[i + 1];
                     i += 2;
                     
-                    if (nextChar === '5') {
-                        result += ' ';
-                    } else if (nextChar === '6') {
+                    if (nextChar === '6') {
                         inUpperCase = !inUpperCase;
+                    } else if (nextChar === '5') {
+                        result += ' ';
                     } else if (nextChar) {
                         const toneChar = zoneToChar['L'][nextChar];
-                        if (toneChar) {
-                            result += toneChar;
-                        }
+                        if (toneChar) result += toneChar;
                     }
                     continue;
                 }
@@ -1063,12 +1134,9 @@
                         const charMap = zoneToChar[currentZone];
                         if (charMap && charMap[seq]) {
                             let decryptedChar = charMap[seq];
-                            
-                            // 处理大写转换
-                            if (inUpperCase && typeof decryptedChar === 'string' && /[a-z]/.test(decryptedChar)) {
+                            if (inUpperCase && /[a-z]/.test(decryptedChar)) {
                                 decryptedChar = decryptedChar.toUpperCase();
                             }
-                            
                             result += decryptedChar;
                         }
                     }
@@ -1109,7 +1177,6 @@
             dynastyInputText.value = '';
             dynastyOutputText.value = '';
             dynastyInputText.focus();
-            showFeedback('内容已清空');
         });
 
         // 王朝密码复制按钮事件
@@ -1129,6 +1196,117 @@
             }
         });
 
+        // ================= 新增的摩斯密码功能 =================
+        // 摩斯密码对照表
+        const morseCodeMap = {
+            'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+            'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+            'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+            'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+            'Y': '-.--', 'Z': '--..',
+            '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
+            '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+            '.': '.-.-.-', ',': '--..--', '?': '..--..', "'": '.----.', '!': '-.-.--',
+            '/': '-..-.', '(': '-.--.', ')': '-.--.-', '&': '.-...', ':': '---...',
+            ';': '-.-.-.', '=': '-...-', '+': '.-.-.', '-': '-....-', '"': '.-..-.',
+            '@': '.--.-.', ' ': '/'
+        };
+        
+        // 反转映射用于解密
+        const morseReverseMap = {};
+        for (const char in morseCodeMap) {
+            morseReverseMap[morseCodeMap[char]] = char;
+        }
+        
+        // 摩斯密码加密
+        function morseEncrypt(text) {
+            if (!text) return '';
+            
+            const upperText = text.toUpperCase();
+            let result = '';
+            
+            for (let i = 0; i < upperText.length; i++) {
+                const char = upperText[i];
+                
+                if (char in morseCodeMap) {
+                    result += morseCodeMap[char] + ' ';
+                } else {
+                    result += char + ' ';
+                }
+            }
+            
+            return result.trim();
+        }
+        
+        // 摩斯密码解密
+        function morseDecrypt(text) {
+            if (!text) return '';
+            
+            // 分割摩斯码，支持空格和斜杠作为分隔符
+            const morseWords = text.trim().split('/');
+            let result = '';
+            
+            for (let i = 0; i < morseWords.length; i++) {
+                const word = morseWords[i].trim();
+                if (!word) continue;
+                
+                const morseChars = word.split(' ');
+                
+                for (let j = 0; j < morseChars.length; j++) {
+                    const code = morseChars[j].trim();
+                    if (!code) continue;
+                    
+                    if (code in morseReverseMap) {
+                        result += morseReverseMap[code];
+                    } else {
+                        result += code;
+                    }
+                }
+                
+                if (i < morseWords.length - 1) {
+                    result += ' ';
+                }
+            }
+            
+            return result;
+        }
+        
+        // 摩斯密码DOM元素
+        const morseInputText = document.getElementById('morseInputText');
+        const morseOutputText = document.getElementById('morseOutputText');
+        const morseEncryptBtn = document.getElementById('morseEncryptBtn');
+        const morseDecryptBtn = document.getElementById('morseDecryptBtn');
+        const morseClearBtn = document.getElementById('morseClearBtn');
+        const morseCopyBtn = document.getElementById('morseCopyBtn');
+        
+        // 摩斯密码按钮事件
+        morseEncryptBtn.addEventListener('click', () => {
+            const text = morseInputText.value;
+            morseOutputText.value = morseEncrypt(text);
+            showFeedback('摩斯加密成功!');
+        });
+
+        morseDecryptBtn.addEventListener('click', () => {
+            const text = morseInputText.value;
+            morseOutputText.value = morseDecrypt(text);
+            showFeedback('摩斯解密成功!');
+        });
+
+        morseClearBtn.addEventListener('click', () => {
+            morseInputText.value = '';
+            morseOutputText.value = '';
+            morseInputText.focus();
+        });
+        
+        morseCopyBtn.addEventListener('click', () => {
+            if (morseOutputText.value) {
+                morseOutputText.select();
+                document.execCommand('copy');
+                showFeedback('摩斯密码已复制');
+            }
+        });
+
+        // ================= 通用功能 =================
         function showFeedback(message) {
             const feedback = document.createElement('div');
             feedback.textContent = message;
@@ -1140,8 +1318,6 @@
             feedback.style.padding = '10px 20px';
             feedback.style.borderRadius = '5px';
             feedback.style.zIndex = '1000';
-            feedback.style.transition = 'opacity 0.3s';
-            feedback.style.opacity = '1';
             document.body.appendChild(feedback);
             
             setTimeout(() => {
