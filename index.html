@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meow & 王朝密码 & 摩斯密码</title>
+    <title>增强密码工具集 | Meow & 王朝密码 & 摩斯密码</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        /* 原有样式保持不变 */
         :root {
             --primary-color: #FF0080;
             --secondary-color: #FF8C00;
@@ -25,6 +25,9 @@
             --meow-gradient: linear-gradient(90deg, #FF0080, #FF8C00, #FFD400);
             --dynasty-gradient: linear-gradient(90deg, #1a2a6c, #b21f1f, #fdbb2d);
             --morse-gradient: linear-gradient(90deg, #2b5876, #4e4376);
+            --base64-gradient: linear-gradient(90deg, #4A00E0, #8E2DE2);
+            --aes-gradient: linear-gradient(90deg, #11998e, #38ef7d);
+            --sha-gradient: linear-gradient(90deg, #f46b45, #eea849);
         }
 
         .dark-mode {
@@ -40,7 +43,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.3s, color 0.3s, max-height 0.5s ease, opacity 0.3s, transform 0.3s;
         }
 
         body {
@@ -76,12 +79,13 @@
             font-size: 2.8rem;
             margin-bottom: 10px;
             background: linear-gradient(45deg, 
-                #FF0080, #FF8C00, #FFD400, #40E0D0, #0093E9, #7A3DDA, #FF00FF);
+                #FF0080, #FF8C00, #FFD400, #40E0D0, #0093E9, #7A3DDA, #FF00FF,
+                #4A00E0, #8E2DE2, #11998e, #38ef7d, #f46b45, #eea849);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            animation: rainbow-text 10s ease infinite;
-            background-size: 300% 300%;
+            animation: rainbow-text 12s ease infinite;
+            background-size: 400% 400%;
         }
 
         @keyframes rainbow-text {
@@ -101,15 +105,19 @@
             backdrop-filter: blur(5px);
         }
 
+        .tabs-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
         .tabs {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
             border-radius: 15px;
-            overflow: hidden;
             background: rgba(255, 255, 255, 0.2);
-            max-width: 800px;
-            margin: 0 auto 25px;
+            min-width: 800px;
+            margin: 0 auto 15px;
         }
 
         .tab {
@@ -124,6 +132,7 @@
             position: relative;
             overflow: hidden;
             z-index: 1;
+            min-width: 120px;
         }
 
         .tab::before {
@@ -133,18 +142,33 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--meow-gradient);
             z-index: -1;
             opacity: 0;
             transition: opacity 0.3s;
         }
 
+        .tab[data-tab="meow"]::before {
+            background: var(--meow-gradient);
+        }
+        
         .tab[data-tab="dynasty"]::before {
             background: var(--dynasty-gradient);
         }
         
         .tab[data-tab="morse"]::before {
             background: var(--morse-gradient);
+        }
+        
+        .tab[data-tab="base64"]::before {
+            background: var(--base64-gradient);
+        }
+        
+        .tab[data-tab="aes"]::before {
+            background: var(--aes-gradient);
+        }
+        
+        .tab[data-tab="sha"]::before {
+            background: var(--sha-gradient);
         }
 
         .tab.active::before {
@@ -155,14 +179,6 @@
             color: white;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
         .card {
             background: var(--card-bg);
             border-radius: 15px;
@@ -171,6 +187,52 @@
             margin-bottom: 25px;
             border: 1px solid var(--border-color);
             backdrop-filter: blur(10px);
+        }
+
+        .collapsible-card {
+            overflow: hidden;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card-header h2 {
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+        }
+        
+        .card-header h2 i {
+            margin-right: 10px;
+            transition: transform 0.3s;
+        }
+        
+        .card-header .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+        
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+        }
+        
+        .card.expanded .card-content {
+            max-height: 2000px;
+            opacity: 1;
+        }
+        
+        .card.expanded .card-header .toggle-icon {
+            transform: rotate(180deg);
         }
 
         .input-group {
@@ -185,20 +247,27 @@
             font-size: 1.1rem;
         }
 
-        textarea {
+        textarea, input {
             width: 100%;
-            min-height: 120px;
             padding: 15px;
             border: 2px solid var(--border-color);
             border-radius: 12px;
             background: var(--card-bg);
             color: var(--text-color);
             font-size: 1rem;
-            resize: vertical;
             transition: all 0.3s;
         }
 
-        textarea:focus {
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        input {
+            margin-bottom: 15px;
+        }
+
+        textarea:focus, input:focus {
             outline: none;
             border-color: var(--accent-color);
             box-shadow: 0 0 0 3px rgba(64, 224, 208, 0.4);
@@ -281,11 +350,30 @@
             transition: all 0.3s;
         }
 
-        .theme-toggle:hover {
+        /* 新增下载按钮样式 */
+        .download-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px; /* 左上角位置 */
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover, .download-toggle:hover {
             transform: scale(1.1);
         }
 
-        .theme-toggle i {
+        .theme-toggle i, .download-toggle i {
             font-size: 1.5rem;
             color: white;
         }
@@ -362,130 +450,6 @@
             background: rgba(255,255,255,0.3);
         }
 
-        .dynasty-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .dynasty-btn {
-            flex: 1;
-            min-width: 140px;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-            color: white;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .dynasty-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .dynasty-btn-encrypt {
-            background: linear-gradient(to right, #2193b0, #6dd5ed);
-        }
-        
-        .dynasty-btn-encrypt::before {
-            background: linear-gradient(to right, #1a2a6c, #2193b0);
-        }
-        
-        .dynasty-btn-decrypt {
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-        }
-        
-        .dynasty-btn-decrypt::before {
-            background: linear-gradient(to right, #b21f1f, #ff416c);
-        }
-        
-        .dynasty-btn-clear {
-            background: linear-gradient(to right, #8e9eab, #eef2f3);
-            color: #333;
-        }
-        
-        .dynasty-btn-clear::before {
-            background: linear-gradient(to right, #fdbb2d, #eef2f3);
-        }
-        
-        .dynasty-btn-copy {
-            background: linear-gradient(to right, #5d8aa8, #7db9e8);
-        }
-        
-        .dynasty-btn-copy::before {
-            background: linear-gradient(to right, #1a2a6c, #5d8aa8);
-        }
-        
-        .morse-btn {
-            background: linear-gradient(to right, #2b5876, #4e4376);
-        }
-        
-        .morse-btn::before {
-            background: linear-gradient(to right, #1a2a6c, #2b5876);
-        }
-
-        .dynasty-btn:hover::before {
-            opacity: 1;
-        }
-
-        .dynasty-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 1rem;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .honey-icon {
-            display: inline-block;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        .dynasty-output-group {
-            margin-top: 25px;
-        }
-        
-        .dynasty-section-title {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .dynasty-section-title h3 {
-            font-size: 1.4rem;
-            background: var(--dynasty-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-left: 10px;
-        }
-        
         .dynasty-char-set {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -565,6 +529,295 @@
             color: #aaa;
         }
         
+        .cipher-info {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .cipher-info-card {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .cipher-info-card h3 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .cipher-info-card h3 i {
+            margin-right: 10px;
+        }
+        
+        .cipher-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: none;
+            color: white;
+        }
+        
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .action-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .action-btn.encrypt {
+            background: linear-gradient(90deg, #2193b0, #6dd5ed);
+        }
+        
+        .action-btn.encrypt::before {
+            background: linear-gradient(90deg, #1a2a6c, #2193b0);
+        }
+        
+        .action-btn.decrypt {
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+        }
+        
+        .action-btn.decrypt::before {
+            background: linear-gradient(90deg, #b21f1f, #ff416c);
+        }
+        
+        .action-btn.clear {
+            background: linear-gradient(90deg, #8e9eab, #eef2f3);
+            color: #333;
+        }
+        
+        .action-btn.clear::before {
+            background: linear-gradient(90deg, #fdbb2d, #eef2f3);
+        }
+        
+        .action-btn.copy {
+            background: linear-gradient(90deg, #5d8aa8, #7db9e8);
+        }
+        
+        .action-btn.copy::before {
+            background: linear-gradient(90deg, #1a2a6c, #5d8aa8);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .mode-toggle {
+            display: flex;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .mode-btn.active {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .mode-btn.encrypt.active {
+            background: linear-gradient(90deg, #2193b0, #6dd5ed);
+        }
+        
+        .mode-btn.decrypt.active {
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+        }
+        
+        .charset-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .charset-panel {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .charset-panel h3 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .charset-panel h3 i {
+            margin-right: 10px;
+        }
+        
+        .charset-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        
+        .charset-panel.active .charset-content {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .charset-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .charset-toggle i {
+            transition: transform 0.3s;
+        }
+        
+        .charset-panel.active .charset-toggle i {
+            transform: rotate(180deg);
+        }
+        
+        .key-input-group {
+            margin-bottom: 20px;
+        }
+        
+        .key-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+        
+        .key-input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .key-input-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(64, 224, 208, 0.4);
+        }
+        
+        .cipher-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .cipher-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            flex: 1;
+            min-width: 120px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .hash-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        
+        .expand-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+        
+        .card.expanded .expand-indicator {
+            background: rgba(255,255,255,0.4);
+        }
+        
+        .collapsed-summary {
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .collapsed-summary i {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -576,251 +829,378 @@
             
             .tabs {
                 flex-direction: column;
+                min-width: 100%;
             }
             
-            .button-group, .result-buttons, .dynasty-buttons {
+            .button-group, .result-buttons, .cipher-actions {
                 flex-direction: column;
             }
             
-            button, .copy-btn, .dynasty-btn {
+            button, .copy-btn, .action-btn {
                 width: 100%;
             }
             
             .morse-char-set {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
+            
+            .cipher-info {
+                flex-direction: column;
+            }
+            
+            .charset-panel {
+                min-width: 100%;
+            }
+            
+            .cipher-info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* 移动端调整按钮位置 */
+            .theme-toggle {
+                top: 80px; /* 降低位置避免重叠 */
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 新增的下载按钮 -->
+    <a href="https://www.123865.com/s/jE4Fjv-V9Geh" class="download-toggle" id="downloadBtn" target="_blank">
+        <i class="fas fa-download"></i>
+    </a>
+    
     <div class="theme-toggle" id="themeToggle">
         <i class="fas fa-moon"></i>
     </div>
 
     <div class="container">
         <header>
-            <h1>Meow & 王朝密码 & 摩斯密码</h1>
+            <h1>增强密码工具集</h1>
             <p class="description">
-                <i class="fas fa-rainbow honey-icon"></i> 
-                一站式体验
-                <i class="fas fa-lock honey-icon"></i>
+                <i class="fas fa-shield-alt honey-icon"></i> 
+                Meow & 王朝 & 摩斯 & Base64 & AES & SHA-256 一站式加密解决方案
             </p>
         </header>
 
-        <div class="tabs">
-            <div class="tab active" data-tab="meow">Meow</div>
-            <div class="tab" data-tab="dynasty">王朝密码</div>
-            <div class="tab" data-tab="morse">摩斯密码</div>
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="meow">Meow密码</div>
+                <div class="tab" data-tab="dynasty">王朝密码</div>
+                <div class="tab" data-tab="morse">摩斯密码</div>
+                <div class="tab" data-tab="base64">Base64</div>
+                <div class="tab" data-tab="aes">AES</div>
+                <div class="tab" data-tab="sha">SHA-256</div>
+            </div>
         </div>
 
-        <!-- 七彩加密部分 -->
-        <div id="meow" class="tab-content active">
-            <div class="card">
-                <div class="input-group">
-                    <label for="inputText"><i class="fas fa-pen"></i> 加点"七彩蜜"</label>
-                    <textarea id="inputText" placeholder="输入你的甜蜜内容..."></textarea>
-                </div>
-
-                <div class="button-group">
-                    <button id="encryptBtn"><i class="fas fa-lock"></i> 加点"蜜"</button>
-                    <button id="decryptBtn"><i class="fas fa-lock-open"></i> 接点"蜜"</button>
-                    <button id="clearBtn"><i class="fas fa-trash-alt"></i> 全部吃掉</button>
+        <!-- 统一输入输出区域 -->
+        <div class="card collapsible-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><i class="fas fa-keyboard"></i> 加密/解密操作</h2>
+                <div class="expand-indicator">
+                    <i class="fas fa-chevron-down toggle-icon"></i>
                 </div>
             </div>
-
-            <div class="card">
+            <div class="card-content">
                 <div class="input-group">
-                    <label for="resultText"><i class="fas fa-key"></i> 接点"蜜"</label>
-                    <div class="result-container">
-                        <textarea id="resultText" readonly placeholder="甜蜜结果将在这里显示..."></textarea>
-                    </div>
+                    <label for="inputText"><i class="fas fa-pen"></i> 输入内容</label>
+                    <textarea id="inputText" placeholder="输入要加密/解密的内容..."></textarea>
                 </div>
-                <div class="result-buttons">
-                    <button class="copy-btn" id="copyBtn"><i class="fas fa-copy"></i> 传递甜蜜</button>
+                
+                <!-- 密钥输入区域（AES需要） -->
+                <div class="key-input-group" id="keyInputGroup" style="display: none;">
+                    <label for="keyInput"><i class="fas fa-key"></i> 密钥</label>
+                    <input type="text" id="keyInput" placeholder="输入AES加密密钥...">
                 </div>
-            </div>
+                
+                <div class="mode-toggle">
+                    <div class="mode-btn encrypt active">加密模式</div>
+                    <div class="mode-btn decrypt">解密模式</div>
+                </div>
 
-            <div class="card">
-                <h3><i class="fas fa-honey-pot"></i> 支持的内容：</h3>
-                <div class="char-set">
-                    <span>A-Z</span>
-                    <span>a-z</span>
-                    <span>0-9</span>
-                    <span>! @ # $ %</span>
-                    <span>^ & * ( )</span>
-                    <span>- _ + =</span>
-                    <span>{ } [ ]</span>
-                    <span>: ; " '</span>
-                    <span>, . ? /</span>
-                    <span>\ | ~ `</span>
-                    <span>中文</span>
+                <div class="cipher-actions">
+                    <button class="action-btn encrypt" id="processBtn">
+                        <i class="fas fa-lock"></i> 执行操作
+                    </button>
+                    <button class="action-btn clear" id="clearBtn">
+                        <i class="fas fa-trash-alt"></i> 清空
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- 王朝密码部分 -->
-        <div id="dynasty" class="tab-content">
-            <div class="card">
-                <div class="input-group">
-                    <label for="dynastyInputText"><i class="fas fa-pen"></i> 输入文本</label>
-                    <textarea id="dynastyInputText" placeholder="请输入要加密的文本..."></textarea>
-                </div>
-
-                <div class="dynasty-buttons">
-                    <button class="dynasty-btn dynasty-btn-encrypt" id="dynastyEncryptBtn">加密</button>
-                    <button class="dynasty-btn dynasty-btn-decrypt" id="dynastyDecryptBtn">解密</button>
-                    <button class="dynasty-btn dynasty-btn-clear" id="dynastyClearBtn">清空</button>
-                    <button class="dynasty-btn dynasty-btn-copy" id="dynastyCopyInputBtn">复制输入</button>
+        <div class="card collapsible-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><i class="fas fa-lock"></i> 结果输出</h2>
+                <div class="expand-indicator">
+                    <i class="fas fa-chevron-down toggle-icon"></i>
                 </div>
             </div>
-
-            <div class="card">
+            <div class="card-content">
                 <div class="input-group">
-                    <label for="dynastyOutputText"><i class="fas fa-key"></i> 加密/解密结果</label>
+                    <label for="resultText"><i class="fas fa-key"></i> 结果</label>
                     <div class="result-container">
-                        <textarea id="dynastyOutputText" readonly placeholder="加密/解密结果将显示在这里..."></textarea>
+                        <textarea id="resultText" readonly placeholder="加密/解密结果将在这里显示..."></textarea>
                     </div>
                 </div>
                 <div class="result-buttons">
-                    <button class="dynasty-btn dynasty-btn-copy" id="dynastyCopyOutputBtn">复制结果</button>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3><i class="fas fa-key"></i> 王朝密码字符对照表</h3>
-                <div class="dynasty-char-set">
-                    <div class="zone-label">X 区</div>
-                    <span>a → X1</span>
-                    <span>b → X2</span>
-                    <span>c → X3</span>
-                    <span>d → X4</span>
-                    <span>e → X5</span>
-                    <span>f → X6</span>
-                    <span>g → X7</span>
-                    <span>h → X8</span>
-                    <span>i → X9</span>
-                    
-                    <div class="zone-label">Y 区</div>
-                    <span>j → Y1</span>
-                    <span>k → Y2</span>
-                    <span>l → Y3</span>
-                    <span>m → Y4</span>
-                    <span>n → Y5</span>
-                    <span>o → Y6</span>
-                    <span>p → Y7</span>
-                    <span>q → Y8</span>
-                    <span>r → Y9</span>
-                    
-                    <div class="zone-label">Z 区</div>
-                    <span>s → Z1</span>
-                    <span>t → Z2</span>
-                    <span>u → Z3</span>
-                    <span>v → Z4</span>
-                    <span>w → Z5</span>
-                    <span>x → Z6</span>
-                    <span>y → Z7</span>
-                    <span>z → Z8</span>
-                    
-                    <div class="zone-label">特殊功能</div>
-                    <span>空格 → L5</span>
-                    <span>大写 → L6</span>
-                    <span>ā → L1</span>
-                    <span>á → L2</span>
-                    <span>ǎ → L3</span>
-                    <span>à → L4</span>
+                    <button class="action-btn copy" id="copyBtn">
+                        <i class="fas fa-copy"></i> 复制结果
+                    </button>
                 </div>
             </div>
         </div>
         
-        <!-- 新增的摩斯密码部分 -->
-        <div id="morse" class="tab-content">
-            <div class="card">
-                <div class="input-group">
-                    <label for="morseInputText"><i class="fas fa-pen"></i> 输入文本</label>
-                    <textarea id="morseInputText" placeholder="输入要加密的文本（字母、数字、空格）..."></textarea>
-                </div>
-
-                <div class="dynasty-buttons">
-                    <button class="dynasty-btn morse-btn" id="morseEncryptBtn"><i class="fas fa-lock"></i> 摩斯加密</button>
-                    <button class="dynasty-btn morse-btn" id="morseDecryptBtn"><i class="fas fa-lock-open"></i> 摩斯解密</button>
-                    <button class="dynasty-btn dynasty-btn-clear" id="morseClearBtn"><i class="fas fa-trash-alt"></i> 清空</button>
+        <!-- 密码信息区域 -->
+        <div class="card collapsible-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><i class="fas fa-info-circle"></i> 密码信息</h2>
+                <div class="expand-indicator">
+                    <i class="fas fa-chevron-down toggle-icon"></i>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="input-group">
-                    <label for="morseOutputText"><i class="fas fa-key"></i> 加密/解密结果</label>
-                    <div class="result-container">
-                        <textarea id="morseOutputText" readonly placeholder="摩斯密码结果将显示在这里..."></textarea>
+            <div class="card-content">
+                <div class="cipher-info">
+                    <div class="cipher-info-card">
+                        <h3><i class="fas fa-info-circle"></i> 当前密码信息</h3>
+                        <div id="cipherDescription">
+                            <p>Meow密码是一种基于ASCII偏移的轻量级加密算法，使用"meow"序列作为密钥。</p>
+                            <p>支持字母、数字、符号和中文内容加密。</p>
+                        </div>
+                        <div class="cipher-stats">
+                            <div class="stat-card">
+                                <div class="value" id="inputLength">0</div>
+                                <div class="label">输入长度</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="value" id="outputLength">0</div>
+                                <div class="label">输出长度</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="value" id="processTime">0ms</div>
+                                <div class="label">处理时间</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cipher-info-card">
+                        <h3><i class="fas fa-bolt"></i> 操作说明</h3>
+                        <ul>
+                            <li>选择上方选项卡切换密码类型</li>
+                            <li>选择加密/解密模式</li>
+                            <li>输入内容并点击"执行操作"</li>
+                            <li>结果将显示在下方区域</li>
+                            <li>AES加密需要提供密钥</li>
+                            <li>使用"复制结果"按钮分享</li>
+                        </ul>
                     </div>
                 </div>
-                <div class="result-buttons">
-                    <button class="dynasty-btn dynasty-btn-copy" id="morseCopyBtn"><i class="fas fa-copy"></i> 复制结果</button>
+            </div>
+        </div>
+        
+        <!-- 字符集说明区域 -->
+        <div class="card collapsible-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><i class="fas fa-book"></i> 字符集参考</h2>
+                <div class="expand-indicator">
+                    <i class="fas fa-chevron-down toggle-icon"></i>
                 </div>
             </div>
-            
-            <div class="card">
-                <h3><i class="fas fa-key"></i> 摩斯密码对照表</h3>
-                <div class="morse-char-set">
-                    <div><span class="char">A</span><span class="code">.-</span></div>
-                    <div><span class="char">B</span><span class="code">-...</span></div>
-                    <div><span class="char">C</span><span class="code">-.-.</span></div>
-                    <div><span class="char">D</span><span class="code">-..</span></div>
-                    <div><span class="char">E</span><span class="code">.</span></div>
-                    <div><span class="char">F</span><span class="code">..-.</span></div>
-                    <div><span class="char">G</span><span class="code">--.</span></div>
-                    <div><span class="char">H</span><span class="code">....</span></div>
-                    <div><span class="char">I</span><span class="code">..</span></div>
-                    <div><span class="char">J</span><span class="code">.---</span></div>
-                    <div><span class="char">K</span><span class="code">-.-</span></div>
-                    <div><span class="char">L</span><span class="code">.-..</span></div>
-                    <div><span class="char">M</span><span class="code">--</span></div>
-                    <div><span class="char">N</span><span class="code">-.</span></div>
-                    <div><span class="char">O</span><span class="code">---</span></div>
-                    <div><span class="char">P</span><span class="code">.--.</span></div>
-                    <div><span class="char">Q</span><span class="code">--.-</span></div>
-                    <div><span class="char">R</span><span class="code">.-.</span></div>
-                    <div><span class="char">S</span><span class="code">...</span></div>
-                    <div><span class="char">T</span><span class="code">-</span></div>
-                    <div><span class="char">U</span><span class="code">..-</span></div>
-                    <div><span class="char">V</span><span class="code">...-</span></div>
-                    <div><span class="char">W</span><span class="code">.--</span></div>
-                    <div><span class="char">X</span><span class="code">-..-</span></div>
-                    <div><span class="char">Y</span><span class="code">-.--</span></div>
-                    <div><span class="char">Z</span><span class="code">--..</span></div>
-                    <div><span class="char">0</span><span class="code">-----</span></div>
-                    <div><span class="char">1</span><span class="code">.----</span></div>
-                    <div><span class="char">2</span><span class="code">..---</span></div>
-                    <div><span class="char">3</span><span class="code">...--</span></div>
-                    <div><span class="char">4</span><span class="code">....-</span></div>
-                    <div><span class="char">5</span><span class="code">.....</span></div>
-                    <div><span class="char">6</span><span class="code">-....</span></div>
-                    <div><span class="char">7</span><span class="code">--...</span></div>
-                    <div><span class="char">8</span><span class="code">---..</span></div>
-                    <div><span class="char">9</span><span class="code">----.</span></div>
-                    <div><span class="char">.</span><span class="code">.-.-.-</span></div>
-                    <div><span class="char">,</span><span class="code">--..--</span></div>
-                    <div><span class="char">?</span><span class="code">..--..</span></div>
-                    <div><span class="char">'</span><span class="code">.----.</span></div>
-                    <div><span class="char">!</span><span class="code">-.-.--</span></div>
-                    <div><span class="char">/</span><span class="code">-..-.</span></div>
-                    <div><span class="char">(</span><span class="code">-.--.</span></div>
-                    <div><span class="char">)</span><span class="code">-.--.-</span></div>
-                    <div><span class="char">&</span><span class="code">.-...</span></div>
-                    <div><span class="char">:</span><span class="code">---...</span></div>
-                    <div><span class="char">;</span><span class="code">-.-.-.</span></div>
-                    <div><span class="char">=</span><span class="code">-...-</span></div>
-                    <div><span class="char">+</span><span class="code">.-.-.</span></div>
-                    <div><span class="char">-</span><span class="code">-....-</span></div>
-                    <div><span class="char">"</span><span class="code">.-..-.</span></div>
-                    <div><span class="char">@</span><span class="code">.--.-.</span></div>
-                    <div><span class="char">空格</span><span class="code">/</span></div>
+            <div class="card-content">
+                <div class="charset-container">
+                    <div class="charset-panel" id="meow-charset">
+                        <div class="charset-toggle">
+                            <h3><i class="fas fa-honey-pot"></i> Meow密码字符集</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="charset-content">
+                            <div class="char-set">
+                                <span>A-Z</span>
+                                <span>a-z</span>
+                                <span>0-9</span>
+                                <span>! @ # $ %</span>
+                                <span>^ & * ( )</span>
+                                <span>- _ + =</span>
+                                <span>{ } [ ]</span>
+                                <span>: ; " '</span>
+                                <span>, . ? /</span>
+                                <span>\ | ~ `</span>
+                                <span>中文</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="charset-panel" id="dynasty-charset">
+                        <div class="charset-toggle">
+                            <h3><i class="fas fa-key"></i> 王朝密码字符集</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="charset-content">
+                            <div class="dynasty-char-set">
+                                <div class="zone-label">X 区</div>
+                                <span>a → X1</span>
+                                <span>b → X2</span>
+                                <span>c → X3</span>
+                                <span>d → X4</span>
+                                <span>e → X5</span>
+                                <span>f → X6</span>
+                                <span>g → X7</span>
+                                <span>h → X8</span>
+                                <span>i → X9</span>
+                                
+                                <div class="zone-label">Y 区</div>
+                                <span>j → Y1</span>
+                                <span>k → Y2</span>
+                                <span>l → Y3</span>
+                                <span>m → Y4</span>
+                                <span>n → Y5</span>
+                                <span>o → Y6</span>
+                                <span>p → Y7</span>
+                                <span>q → Y8</span>
+                                <span>r → Y9</span>
+                                
+                                <div class="zone-label">Z 区</div>
+                                <span>s → Z1</span>
+                                <span>t → Z2</span>
+                                <span>u → Z3</span>
+                                <span>v → Z4</span>
+                                <span>w → Z5</span>
+                                <span>x → Z6</span>
+                                <span>y → Z7</span>
+                                <span>z → Z8</span>
+                                
+                                <div class="zone-label">特殊功能</div>
+                                <span>空格 → L5</span>
+                                <span>大写 → L6</span>
+                                <span>ā → L1</span>
+                                <span>á → L2</span>
+                                <span>ǎ → L3</span>
+                                <span>à → L4</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="charset-panel" id="morse-charset">
+                        <div class="charset-toggle">
+                            <h3><i class="fas fa-wifi"></i> 摩斯密码字符集</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="charset-content">
+                            <div class="morse-char-set">
+                                <div><span class="char">A</span><span class="code">.-</span></div>
+                                <div><span class="char">B</span><span class="code">-...</span></div>
+                                <div><span class="char">C</span><span class="code">-.-.</span></div>
+                                <div><span class="char">D</span><span class="code">-..</span></div>
+                                <div><span class="char">E</span><span class="code">.</span></div>
+                                <div><span class="char">F</span><span class="code">..-.</span></div>
+                                <div><span class="char">G</span><span class="code">--.</span></div>
+                                <div><span class="char">H</span><span class="code">....</span></div>
+                                <div><span class="char">I</span><span class="code">..</span></div>
+                                <div><span class="char">J</span><span class="code">.---</span></div>
+                                <div><span class="char">K</span><span class="code">-.-</span></div>
+                                <div><span class="char">L</span><span class="code">.-..</span></div>
+                                <div><span class="char">M</span><span class="code">--</span></div>
+                                <div><span class="char">N</span><span class="code">-.</span></div>
+                                <div><span class="char">O</span><span class="code">---</span></div>
+                                <div><span class="char">P</span><span class="code">.--.</span></div>
+                                <div><span class="char">Q</span><span class="code">--.-</span></div>
+                                <div><span class="char">R</span><span class="code">.-.</span></div>
+                                <div><span class="char">S</span><span class="code">...</span></div>
+                                <div><span class="char">T</span><span class="code">-</span></div>
+                                <div><span class="char">U</span><span class="code">..-</span></div>
+                                <div><span class="char">V</span><span class="code">...-</span></div>
+                                <div><span class="char">W</span><span class="code">.--</span></div>
+                                <div><span class="char">X</span><span class="code">-..-</span></div>
+                                <div><span class="char">Y</span><span class="code">-.--</span></div>
+                                <div><span class="char">Z</span><span class="code">--..</span></div>
+                                <div><span class="char">0</span><span class="code">-----</span></div>
+                                <div><span class="char">1</span><span class="code">.----</span></div>
+                                <div><span class="char">2</span><span class="code">..---</span></div>
+                                <div><span class="char">3</span><span class="code">...--</span></div>
+                                <div><span class="char">4</span><span class="code">....-</span></div>
+                                <div><span class="char">5</span><span class="code">.....</span></div>
+                                <div><span class="char">6</span><span class="code">-....</span></div>
+                                <div><span class="char">7</span><span class="code">--...</span></div>
+                                <div><span class="char">8</span><span class="code">---..</span></div>
+                                <div><span class="char">9</span><span class="code">----.</span></div>
+                                <div><span class="char">.</span><span class="code">.-.-.-</span></div>
+                                <div><span class="char">,</span><span class="code">--..--</span></div>
+                                <div><span class="char">?</span><span class="code">..--..</span></div>
+                                <div><span class="char">'</span><span class="code">.----.</span></div>
+                                <div><span class="char">!</span><span class="code">-.-.--</span></div>
+                                <div><span class="char">/</span><span class="code">-..-.</span></div>
+                                <div><span class="char">(</span><span class="code">-.--.</span></div>
+                                <div><span class="char">)</span><span class="code">-.--.-</span></div>
+                                <div><span class="char">&</span><span class="code">.-...</span></div>
+                                <div><span class="char">:</span><span class="code">---...</span></div>
+                                <div><span class="char">;</span><span class="code">-.-.-.</span></div>
+                                <div><span class="char">=</span><span class="code">-...-</span></div>
+                                <div><span class="char">+</span><span class="code">.-.-.</span></div>
+                                <div><span class="char">-</span><span class="code">-....-</span></div>
+                                <div><span class="char">"</span><span class="code">.-..-.</span></div>
+                                <div><span class="char">@</span><span class="code">.--.-.</span></div>
+                                <div><span class="char">空格</span><span class="code">/</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 新增的加密算法信息 -->
+        <div class="card collapsible-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><i class="fas fa-lock"></i> 加密算法信息</h2>
+                <div class="expand-indicator">
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="cipher-info-grid">
+                    <div class="card">
+                        <h3><i class="fas fa-lock"></i> Base64 加密</h3>
+                        <p>Base64是一种基于64个可打印字符来表示二进制数据的编码方法。</p>
+                        <div class="hash-info">
+                            <p><strong>特点：</strong></p>
+                            <ul>
+                                <li>将二进制数据转换为可打印的ASCII字符</li>
+                                <li>常用于在HTTP环境下传输二进制数据</li>
+                                <li>编码后数据比原始数据大约33%</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><i class="fas fa-shield-alt"></i> AES 加密</h3>
+                        <p>AES（高级加密标准）是一种对称加密算法，被广泛用于保护敏感数据。</p>
+                        <div class="hash-info">
+                            <p><strong>特点：</strong></p>
+                            <ul>
+                                <li>支持128、192和256位密钥长度</li>
+                                <li>被美国政府选为保护最高机密信息的标准</li>
+                                <li>快速且在各种硬件上高效实现</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><i class="fas fa-fingerprint"></i> SHA-256 哈希</h3>
+                        <p>SHA-256是SHA-2系列中的一种加密哈希函数，生成256位（32字节）哈希值。</p>
+                        <div class="hash-info">
+                            <p><strong>特点：</strong></p>
+                            <ul>
+                                <li>用于区块链技术（如比特币）</li>
+                                <li>抗碰撞性 - 很难找到两个不同的输入产生相同哈希值</li>
+                                <li>单向函数 - 无法从哈希值反推原始数据</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <footer>
-            <p>七彩密码 <i class="fas fa-rainbow honey-icon"></i> 王朝密码 <i class="fas fa-lock honey-icon"></i> 摩斯密码 <i class="fas fa-wifi honey-icon"></i> 安全加密工具</p>
+            <p>增强密码工具集 <i class="fas fa-shield-alt honey-icon"></i> 专业安全加密工具 <i class="fas fa-lock honey-icon"></i> © 2023</p>
         </footer>
     </div>
 
@@ -838,21 +1218,128 @@
             }
         });
 
+        // 卡片折叠/展开功能
+        function toggleCard(element) {
+            const card = element.closest('.card');
+            card.classList.toggle('expanded');
+        }
+        
+        // 默认折叠所有卡片
+        document.querySelectorAll('.collapsible-card').forEach(card => {
+            card.classList.remove('expanded');
+        });
+
         // 选项卡切换
         const tabs = document.querySelectorAll('.tab');
+        let currentCipher = 'meow';
+        const keyInputGroup = document.getElementById('keyInputGroup');
+        
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 // 移除所有活动状态
                 tabs.forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // 激活当前选项卡
                 tab.classList.add('active');
-                document.getElementById(tab.dataset.tab).classList.add('active');
+                currentCipher = tab.dataset.tab;
+                
+                // 更新描述
+                updateCipherDescription();
+                
+                // 更新字符集面板
+                updateCharsetPanels();
+                
+                // 显示/隐藏密钥输入
+                if (currentCipher === 'aes') {
+                    keyInputGroup.style.display = 'block';
+                } else {
+                    keyInputGroup.style.display = 'none';
+                }
+            });
+        });
+        
+        // 更新密码描述
+        function updateCipherDescription() {
+            const descElement = document.getElementById('cipherDescription');
+            switch(currentCipher) {
+                case 'meow':
+                    descElement.innerHTML = `
+                        <p>Meow密码是一种基于ASCII偏移的轻量级加密算法，使用"meow"序列作为密钥。</p>
+                        <p>支持字母、数字、符号和中文内容加密。</p>
+                    `;
+                    break;
+                case 'dynasty':
+                    descElement.innerHTML = `
+                        <p>王朝密码是一种基于分区映射的加密系统，将字母映射到不同的王朝区域。</p>
+                        <p>支持字母、数字、基本符号和特殊控制功能。</p>
+                    `;
+                    break;
+                case 'morse':
+                    descElement.innerHTML = `
+                        <p>摩斯密码是一种国际通用的信号编码系统，使用点和划的组合表示字符。</p>
+                        <p>支持字母、数字和常用符号，空格用斜杠(/)表示。</p>
+                    `;
+                    break;
+                case 'base64':
+                    descElement.innerHTML = `
+                        <p>Base64是一种基于64个可打印字符来表示二进制数据的编码方法。</p>
+                        <p>常用于在文本环境中传输二进制数据，如电子邮件附件。</p>
+                    `;
+                    break;
+                case 'aes':
+                    descElement.innerHTML = `
+                        <p>AES（高级加密标准）是一种对称加密算法，被广泛用于保护敏感数据。</p>
+                        <p>需要提供密钥进行加密和解密操作，支持128、192和256位密钥长度。</p>
+                    `;
+                    break;
+                case 'sha':
+                    descElement.innerHTML = `
+                        <p>SHA-256是SHA-2系列中的一种加密哈希函数，生成256位（32字节）哈希值。</p>
+                        <p>常用于数据完整性验证和数字签名，是一种单向加密函数。</p>
+                    `;
+                    break;
+            }
+        }
+        
+        // 更新字符集面板
+        function updateCharsetPanels() {
+            document.querySelectorAll('.charset-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(`${currentCipher}-charset`).classList.add('active');
+        }
+        
+        // 字符集面板切换
+        document.querySelectorAll('.charset-toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const panel = toggle.closest('.charset-panel');
+                panel.classList.toggle('active');
+            });
+        });
+        
+        // 模式切换
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        let currentMode = 'encrypt';
+        
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.classList.contains('encrypt') ? 'encrypt' : 'decrypt';
+                
+                // 更新处理按钮文本
+                const processBtn = document.getElementById('processBtn');
+                processBtn.innerHTML = currentMode === 'encrypt' 
+                    ? '<i class="fas fa-lock"></i> 加密' 
+                    : '<i class="fas fa-lock-open"></i> 解密';
+                
+                // 对于SHA-256，解密模式不可用
+                if (currentCipher === 'sha' && currentMode === 'decrypt') {
+                    showFeedback('SHA-256是单向哈希函数，不支持解密操作');
+                }
             });
         });
 
-        // ================= 七彩加密功能 =================
+        // ================= 加密解密函数 =================
+        // Meow密码
         function encrypt(text) {
             if (!text) return '';
             
@@ -923,83 +1410,25 @@
             return result;
         }
 
-        // 七彩加密DOM元素
-        const inputText = document.getElementById('inputText');
-        const resultText = document.getElementById('resultText');
-        const encryptBtn = document.getElementById('encryptBtn');
-        const decryptBtn = document.getElementById('decryptBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const copyBtn = document.getElementById('copyBtn');
-
-        // 七彩加密按钮事件
-        encryptBtn.addEventListener('click', () => {
-            const text = inputText.value;
-            resultText.value = encrypt(text);
-        });
-
-        decryptBtn.addEventListener('click', () => {
-            const text = inputText.value;
-            resultText.value = decrypt(text);
-        });
-
-        clearBtn.addEventListener('click', () => {
-            inputText.value = '';
-            resultText.value = '';
-            inputText.focus();
-        });
-
-        // 七彩加密复制按钮事件
-        copyBtn.addEventListener('click', () => {
-            if (resultText.value) {
-                resultText.select();
-                document.execCommand('copy');
-                
-                // 显示复制成功反馈
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制甜蜜';
-                copyBtn.classList.add('success');
-                
-                // 添加动画效果
-                copyBtn.style.transform = 'scale(1.05)';
-                setTimeout(() => {
-                    copyBtn.style.transform = 'scale(1)';
-                }, 300);
-                
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.classList.remove('success');
-                }, 2000);
-            }
-        });
-
-        // ================= 王朝密码功能 =================
-        // 字符到字区的映射
+        // 王朝密码
         const charToZone = {
-            // X区
             'a': ['X', '1'], 'b': ['X', '2'], 'c': ['X', '3'], 'd': ['X', '4'], 'e': ['X', '5'],
             'f': ['X', '6'], 'g': ['X', '7'], 'h': ['X', '8'], 'i': ['X', '9'],
-            // Y区
             'j': ['Y', '1'], 'k': ['Y', '2'], 'l': ['Y', '3'], 'm': ['Y', '4'], 'n': ['Y', '5'],
             'o': ['Y', '6'], 'p': ['Y', '7'], 'q': ['Y', '8'], 'r': ['Y', '9'],
-            // Z区
             's': ['Z', '1'], 't': ['Z', '2'], 'u': ['Z', '3'], 'v': ['Z', '4'], 'ü': ['Z', '4'],
             'w': ['Z', '5'], 'x': ['Z', '6'], 'y': ['Z', '7'], 'z': ['Z', '8'],
-            // M区 (数字倒序)
             '0': ['M', '0'], '1': ['M', '9'], '2': ['M', '8'], '3': ['M', '7'], '4': ['M', '6'],
             '5': ['M', '5'], '6': ['M', '4'], '7': ['M', '3'], '8': ['M', '2'], '9': ['M', '1'],
-            // N区
             '，': ['N', '1'], '。': ['N', '2'], '？': ['N', '3'], '！': ['N', '4'],
             '@': ['N', '5'], '．': ['N', '6'], '"': ['N', '7'],
-            // 空格
             ' ': ['L', '5']
         };
 
-        // 声调映射
         const toneMap = {
             'ā': 'L1', 'á': 'L2', 'ǎ': 'L3', 'à': 'L4'
         };
 
-        // 王朝密码加密
         function dynastyEncrypt(text) {
             if (!text) return '';
             
@@ -1066,7 +1495,6 @@
             return result;
         }
 
-        // 王朝密码解密
         function dynastyDecrypt(text) {
             if (!text) return '';
             
@@ -1151,53 +1579,7 @@
             return result;
         }
 
-        // 王朝密码DOM元素
-        const dynastyInputText = document.getElementById('dynastyInputText');
-        const dynastyOutputText = document.getElementById('dynastyOutputText');
-        const dynastyEncryptBtn = document.getElementById('dynastyEncryptBtn');
-        const dynastyDecryptBtn = document.getElementById('dynastyDecryptBtn');
-        const dynastyClearBtn = document.getElementById('dynastyClearBtn');
-        const dynastyCopyInputBtn = document.getElementById('dynastyCopyInputBtn');
-        const dynastyCopyOutputBtn = document.getElementById('dynastyCopyOutputBtn');
-
-        // 王朝密码按钮事件
-        dynastyEncryptBtn.addEventListener('click', () => {
-            const text = dynastyInputText.value;
-            dynastyOutputText.value = dynastyEncrypt(text);
-            showFeedback('加密成功!');
-        });
-
-        dynastyDecryptBtn.addEventListener('click', () => {
-            const text = dynastyInputText.value;
-            dynastyOutputText.value = dynastyDecrypt(text);
-            showFeedback('解密成功!');
-        });
-
-        dynastyClearBtn.addEventListener('click', () => {
-            dynastyInputText.value = '';
-            dynastyOutputText.value = '';
-            dynastyInputText.focus();
-        });
-
-        // 王朝密码复制按钮事件
-        dynastyCopyInputBtn.addEventListener('click', () => {
-            if (dynastyInputText.value) {
-                dynastyInputText.select();
-                document.execCommand('copy');
-                showFeedback('输入内容已复制');
-            }
-        });
-
-        dynastyCopyOutputBtn.addEventListener('click', () => {
-            if (dynastyOutputText.value) {
-                dynastyOutputText.select();
-                document.execCommand('copy');
-                showFeedback('结果已复制');
-            }
-        });
-
-        // ================= 新增的摩斯密码功能 =================
-        // 摩斯密码对照表
+        // 摩斯密码
         const morseCodeMap = {
             'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
             'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
@@ -1218,7 +1600,6 @@
             morseReverseMap[morseCodeMap[char]] = char;
         }
         
-        // 摩斯密码加密
         function morseEncrypt(text) {
             if (!text) return '';
             
@@ -1238,7 +1619,6 @@
             return result.trim();
         }
         
-        // 摩斯密码解密
         function morseDecrypt(text) {
             if (!text) return '';
             
@@ -1271,42 +1651,160 @@
             return result;
         }
         
-        // 摩斯密码DOM元素
-        const morseInputText = document.getElementById('morseInputText');
-        const morseOutputText = document.getElementById('morseOutputText');
-        const morseEncryptBtn = document.getElementById('morseEncryptBtn');
-        const morseDecryptBtn = document.getElementById('morseDecryptBtn');
-        const morseClearBtn = document.getElementById('morseClearBtn');
-        const morseCopyBtn = document.getElementById('morseCopyBtn');
+        // ================= 新增加密算法 =================
+        // Base64编码/解码
+        function base64Encrypt(text) {
+            return btoa(unescape(encodeURIComponent(text)));
+        }
         
-        // 摩斯密码按钮事件
-        morseEncryptBtn.addEventListener('click', () => {
-            const text = morseInputText.value;
-            morseOutputText.value = morseEncrypt(text);
-            showFeedback('摩斯加密成功!');
+        function base64Decrypt(text) {
+            try {
+                return decodeURIComponent(escape(atob(text)));
+            } catch (e) {
+                return "Base64解码错误: 输入格式无效";
+            }
+        }
+        
+        // AES加密/解密
+        function aesEncrypt(text, key) {
+            if (!key) return "错误: 需要提供密钥";
+            
+            try {
+                const encrypted = CryptoJS.AES.encrypt(text, key);
+                return encrypted.toString();
+            } catch (e) {
+                return "AES加密错误: " + e.message;
+            }
+        }
+        
+        function aesDecrypt(text, key) {
+            if (!key) return "错误: 需要提供密钥";
+            
+            try {
+                const decrypted = CryptoJS.AES.decrypt(text, key);
+                return decrypted.toString(CryptoJS.enc.Utf8) || "解密失败: 密钥可能不正确";
+            } catch (e) {
+                return "AES解密错误: " + e.message;
+            }
+        }
+        
+        // SHA-256哈希
+        function sha256Hash(text) {
+            return CryptoJS.SHA256(text).toString(CryptoJS.enc.Hex);
+        }
+
+        // ================= DOM操作 =================
+        const inputText = document.getElementById('inputText');
+        const resultText = document.getElementById('resultText');
+        const keyInput = document.getElementById('keyInput');
+        const processBtn = document.getElementById('processBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const inputLength = document.getElementById('inputLength');
+        const outputLength = document.getElementById('outputLength');
+        const processTime = document.getElementById('processTime');
+
+        // 输入长度统计
+        inputText.addEventListener('input', () => {
+            inputLength.textContent = inputText.value.length;
         });
 
-        morseDecryptBtn.addEventListener('click', () => {
-            const text = morseInputText.value;
-            morseOutputText.value = morseDecrypt(text);
-            showFeedback('摩斯解密成功!');
+        // 处理按钮事件
+        processBtn.addEventListener('click', () => {
+            const startTime = performance.now();
+            const text = inputText.value;
+            const key = keyInput.value;
+            let result = '';
+            
+            // SHA-256不支持解密
+            if (currentCipher === 'sha' && currentMode === 'decrypt') {
+                showFeedback('SHA-256是单向哈希函数，不支持解密操作');
+                return;
+            }
+            
+            if (currentMode === 'encrypt') {
+                switch(currentCipher) {
+                    case 'meow':
+                        result = encrypt(text);
+                        break;
+                    case 'dynasty':
+                        result = dynastyEncrypt(text);
+                        break;
+                    case 'morse':
+                        result = morseEncrypt(text);
+                        break;
+                    case 'base64':
+                        result = base64Encrypt(text);
+                        break;
+                    case 'aes':
+                        result = aesEncrypt(text, key);
+                        break;
+                    case 'sha':
+                        result = sha256Hash(text);
+                        break;
+                }
+            } else {
+                switch(currentCipher) {
+                    case 'meow':
+                        result = decrypt(text);
+                        break;
+                    case 'dynasty':
+                        result = dynastyDecrypt(text);
+                        break;
+                    case 'morse':
+                        result = morseDecrypt(text);
+                        break;
+                    case 'base64':
+                        result = base64Decrypt(text);
+                        break;
+                    case 'aes':
+                        result = aesDecrypt(text, key);
+                        break;
+                }
+            }
+            
+            resultText.value = result;
+            outputLength.textContent = result.length;
+            
+            const endTime = performance.now();
+            processTime.textContent = `${(endTime - startTime).toFixed(2)}ms`;
+            
+            showFeedback(`${currentMode === 'encrypt' ? '加密' : '解密'}成功!`);
         });
 
-        morseClearBtn.addEventListener('click', () => {
-            morseInputText.value = '';
-            morseOutputText.value = '';
-            morseInputText.focus();
+        clearBtn.addEventListener('click', () => {
+            inputText.value = '';
+            resultText.value = '';
+            keyInput.value = '';
+            inputLength.textContent = '0';
+            outputLength.textContent = '0';
+            inputText.focus();
+            showFeedback('已清空内容');
         });
-        
-        morseCopyBtn.addEventListener('click', () => {
-            if (morseOutputText.value) {
-                morseOutputText.select();
+
+        copyBtn.addEventListener('click', () => {
+            if (resultText.value) {
+                resultText.select();
                 document.execCommand('copy');
-                showFeedback('摩斯密码已复制');
+                
+                // 显示复制成功反馈
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制';
+                copyBtn.classList.add('success');
+                
+                // 添加动画效果
+                copyBtn.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    copyBtn.style.transform = 'scale(1)';
+                }, 300);
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('success');
+                }, 2000);
             }
         });
 
-        // ================= 通用功能 =================
         function showFeedback(message) {
             const feedback = document.createElement('div');
             feedback.textContent = message;
@@ -1318,6 +1816,7 @@
             feedback.style.padding = '10px 20px';
             feedback.style.borderRadius = '5px';
             feedback.style.zIndex = '1000';
+            feedback.style.fontSize = '1rem';
             document.body.appendChild(feedback);
             
             setTimeout(() => {
@@ -1330,6 +1829,7 @@
 
         // 初始焦点在输入框
         inputText.focus();
+        updateCipherDescription();
     </script>
 </body>
 </html>
