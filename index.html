@@ -416,13 +416,26 @@
         <button class="bottom-btn" id="favBtn" style="padding: 8px 16px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;">
             <span>收藏</span>
         </button>
-        <button class="bottom-btn" id="officialBtn" style="padding: 8px 16px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;" onclick="window.open('https://image.cursorhub.org/user-upload/1774787888662-a461fa46-6691-472c-b2ac-0e4381634930.html', '_blank')">
+        <button class="bottom-btn" id="officialBtn" style="padding: 8px 16px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;" onclick="window.open('https://image.cursorhub.org/user-upload/1774788986232-f07bf938-9222-4248-b2ea-687ac6e5a977.html', '_blank')">
             <span>官网</span>
         </button>
     </div>
 
     <!-- Search Engine Selector (hidden by default) -->
     <div class="search-engine-selector" id="engineSelector" style="display: none;">
+        <div class="engine-grid">
+            <div class="engine-item active" data-engine="baidu" data-url="https://www.baidu.com/s?wd=">百度</div>
+            <div class="engine-item" data-engine="sogou" data-url="https://www.sogou.com/web?query=">搜狗</div>
+            <div class="engine-item" data-engine="so360" data-url="https://www.so.com/s?q=">360</div>
+            <div class="engine-item" data-engine="quark" data-url="https://quark.sm.cn/s?q=">夸克</div>
+            <div class="engine-item" data-engine="bingcn" data-url="https://cn.bing.com/search?q=">必应中国</div>
+            <div class="engine-item" data-engine="google" data-url="https://www.google.com/search?q=">Google</div>
+            <div class="engine-item" data-engine="bing" data-url="https://www.bing.com/search?q=">Bing</div>
+            <div class="engine-item" data-engine="yandex" data-url="https://yandex.com/search/?text=">Yandex</div>
+            <div class="engine-item" data-engine="naver" data-url="https://search.naver.com/search.naver?query=">Naver</div>
+            <div class="engine-item" data-engine="duckduckgo" data-url="https://duckduckgo.com/?q=">DuckDuckGo</div>
+        </div>
+    </div>
 
     <!-- QR Scanner Modal -->
     <div id="scannerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #f0f0f0; z-index: 10000;">
@@ -617,9 +630,6 @@
             // Hide suggestions and search history
             hideSuggestions();
             searchHistoryList.style.display = 'none';
-            
-            // Clear search box
-            input.value = '';
             
             // Handle .xxx format -> www.xxx.com
             if (query.startsWith('.') && !query.includes(' ')) {
