@@ -21,20 +21,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
             padding: 20px;
             flex-direction: column;
-        }
-
-        @keyframes emojiPopup {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-50px) scale(1.5);
-            }
         }
 
         .search-container {
@@ -49,7 +38,7 @@
         .search-box {
             padding: 12px 95px 12px 55px;
             font-size: 14px;
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
             border: 2px solid #000000;
             border-radius: 10px;
             outline: none;
@@ -64,7 +53,7 @@
         input[type="email"],
         input[type="url"],
         textarea {
-            transition: color 0.2s ease;
+            transition: none;
         }
 
         input.typing {
@@ -85,7 +74,7 @@
             top: 50%;
             transform: translateY(-50%);
             padding: 0;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: none;
             opacity: 1;
         }
 
@@ -110,7 +99,7 @@
             font-size: 14px;
             font-weight: normal;
             color: #000000;
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
         }
 
         .bottom-btn:hover {
@@ -119,12 +108,6 @@
 
         .bottom-btn svg {
             stroke-width: 2;
-        }
-
-        /* Scanner Modal Styles */
-        #scannerModal .scan-frame {
-            width: 400px;
-            height: 400px;
         }
 
         /* Mobile responsive styles */
@@ -159,15 +142,50 @@
             .search-engine-selector {
                 position: relative;
             }
-
-            /* Scanner modal mobile responsive */
-            #scannerModal .scan-frame {
-                width: 300px !important;
-                height: 300px !important;
+            
+            /* Favorites modal mobile responsive */
+            #favoritesModal .modal-close-btn {
+                top: 15px !important;
+                right: 15px !important;
+                font-size: 35px !important;
             }
             
-            #scannerModal .scan-text {
-                font-size: 14px !important;
+            #favoritesModal > div:first-child {
+                padding: 18px 15px 6px 15px !important;
+            }
+            
+            #favTabBtn,
+            #kgTabBtn,
+            #officialTabBtn,
+            #engineTabBtn {
+                max-width: none !important;
+                padding: 12px 15px !important;
+                font-size: 16px !important;
+                width: calc(25% - 8px) !important;
+            }
+            
+            .favorites-header {
+                flex-wrap: wrap;
+                padding: 18px 15px 6px 15px !important;
+            }
+            
+            .fav-search-input {
+                font-size: 16px !important;
+                padding: 12px 15px !important;
+                min-width: 200px;
+                flex: 1 1 100%;
+            }
+            
+            .fav-add-btn {
+                padding: 12px 20px !important;
+                font-size: 16px !important;
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            #kgSearchInput {
+                font-size: 16px !important;
+                padding: 12px 15px !important;
             }
         }
 
@@ -179,7 +197,7 @@
             background-color: #f0f0f0;
             font-size: 13px;
             line-height: 1.6;
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
         }
 
         .search-hint-title {
@@ -215,8 +233,8 @@
             padding: 10px 15px;
             cursor: pointer;
             font-size: 14px;
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-            transition: background-color 0.2s;
+            font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
+            transition: none;
         }
 
         .suggestions li:hover {
@@ -247,7 +265,7 @@
             padding: 10px 35px 10px 15px;
             cursor: pointer;
             font-size: 14px;
-            transition: background-color 0.2s;
+            transition: none;
             position: relative;
         }
 
@@ -264,8 +282,8 @@
             font-size: 18px;
             cursor: pointer;
             padding: 0 5px;
-            opacity: 0;
-            transition: opacity 0.2s;
+            opacity: 1;
+            transition: none;
         }
 
         .search-history li:hover .delete-btn {
@@ -306,7 +324,7 @@
             max-width: 100%;
             opacity: 0;
             transform: translateY(-10px);
-            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: none;
         }
 
         .search-engine-selector[style*="display: block"] {
@@ -326,10 +344,10 @@
             border: 2px solid #000000;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: none;
             background-color: #f0f0f0;
             font-size: 13px;
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
         }
 
         .engine-item:hover {
@@ -380,8 +398,8 @@
 </head>
 <body>
     <div class="search-container" style="position: relative; background: #f0f0f0;">
-        <!-- Scan QR code button (left side) -->
-        <button class="search-button" id="scanBtn" style="left: 7px;">
+        <!-- Scan QR code button - link to external site -->
+        <button class="search-button" id="scanBtn" onclick="window.open('https://mazhuren.com/saoma/', '_blank')" style="left: 7px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
                 <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
@@ -408,16 +426,10 @@
         <ul id="suggestions" class="suggestions"></ul>
     </div>
     
-    <!-- KG and Favorites buttons below search box -->
-    <div class="bottom-buttons-container" style="display: flex; justify-content: center; gap: 15px; margin-top: 12px;">
-        <button class="bottom-btn" id="kgBtn" style="padding: 8px 16px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;">
-            <span>KG</span>
-        </button>
-        <button class="bottom-btn" id="favBtn" style="padding: 8px 16px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;">
-            <span>收藏</span>
-        </button>
-        <button class="bottom-btn" id="officialBtn" style="padding: 8px 16px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;" onclick="window.open('https://image.cursorhub.org/user-upload/1774788986232-f07bf938-9222-4248-b2ea-687ac6e5a977.html', '_blank')">
-            <span>官网</span>
+    <!-- Favorites button at bottom -->
+    <div class="bottom-buttons-container" style="display: flex; justify-content: center; gap: 15px; margin-top: 12px; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;">
+        <button class="bottom-btn" id="favBtn" onclick="openFavorites()" style="padding: 8px 16px; border: none; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;">
+            <span id="favBtnText">古诗</span>
         </button>
     </div>
 
@@ -438,56 +450,101 @@
     </div>
 
     <!-- QR Scanner Modal -->
-    <div id="scannerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #f0f0f0; z-index: 10000;">
-        <div style="position: absolute; top: 20px; right: 20px; color: #000000; font-size: 30px; cursor: pointer; z-index: 10001;" onclick="closeScanner()">×</div>
-        <div class="scan-frame" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 3px solid #000000; border-radius: 10px; overflow: hidden;">
-            <video id="video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
-            <canvas id="canvas" style="display: none;"></canvas>
-        </div>
-    </div>
-
-    <!-- Favorites Modal -->
+    <!-- Favorites Modal (with KG integration) -->
     <div id="favoritesModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #f0f0f0; z-index: 10000; overflow-y: auto; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
-        <!-- Close button (top right) -->
-        <div style="position: absolute; top: 20px; right: 20px; color: #000000; font-size: 30px; cursor: pointer; z-index: 10001;" onclick="closeFavorites()">×</div>
-        
-        <!-- Header with search and add new -->
-        <div style="padding: 60px 20px 20px 20px; display: flex; gap: 10px; align-items: center;">
-            <input type="text" id="favSearchInput" placeholder="搜索收藏网页..." style="flex: 1; padding: 10px 15px; border: 2px solid #000000; border-radius: 6px; font-size: 14px; outline: none; background: #f0f0f0;">
-            <button id="addFavBtn" style="padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; transition: all 0.2s; font-weight: bold;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 5px;">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                添加
-            </button>
+        <!-- Header with close button and tabs -->
+        <div style="display: flex; justify-content: center; align-items: center; position: relative; padding: 20px 20px 0 20px;">
+            <!-- Tab Navigation (centered) -->
+            <div style="display: flex; gap: 10px;">
+                <button id="favTabBtn" onclick="switchToFavoritesTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: 2px solid #000000; border-radius: 6px; background: #000000; color: white; cursor: pointer; font-weight: bold;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </button>
+                <button id="kgTabBtn" onclick="switchToKGTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; color: #000000; cursor: pointer; font-weight: bold;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                </button>
+                <button id="officialTabBtn" onclick="window.open('https://image.cursorhub.org/user-upload/1775216603705-cb96f9fc-3f38-4dc1-86c6-1ca48e70ebcf.html', '_blank')" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; color: #000000; cursor: pointer; font-weight: bold;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </button>
+                <button id="engineTabBtn" onclick="switchToEngineTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; color: #000000; cursor: pointer; font-weight: bold;">
+                    <img id="engineTabIcon" src="" style="width: 24px; height: 24px; object-fit: contain; display: none;" alt="引擎">
+                    <span id="engineTabText" style="font-size: 20px; font-weight: bold;">引</span>
+                </button>
+            </div>
+            
+            <!-- Close button (right side, same line as tabs) -->
+            <div class="modal-close-btn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #000000; font-size: 30px; cursor: pointer; z-index: 10001;" onclick="closeFavorites()">×</div>
         </div>
         
-        <!-- Favorites list -->
-        <div id="favoritesList" style="padding: 0 20px 40px 20px;"></div>
-    </div>
-
-    <!-- KG Modal -->
-    <div id="kgModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #f0f0f0; z-index: 10000; overflow-y: auto; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
-        <!-- Close button (top right) -->
-        <div style="position: absolute; top: 20px; right: 20px; color: #000000; font-size: 30px; cursor: pointer; z-index: 10001;" onclick="closeKG()">×</div>
-        
-        <!-- Header with search only -->
-        <div style="padding: 60px 20px 20px 20px;">
-            <input type="text" id="kgSearchInput" placeholder="搜索 KG 网页..." style="width: 100%; padding: 10px 15px; border: 2px solid #000000; border-radius: 6px; font-size: 14px; outline: none; background: #f0f0f0;">
+        <!-- Favorites Content -->
+        <div id="favoritesContent" style="display: block;">
+            <div class="favorites-header" style="padding: 20px 20px 0 20px; display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="favSearchInput" placeholder="搜索收藏网页..." class="fav-search-input" style="flex: 1; padding: 10px 15px; border: 2px solid #000000; border-radius: 6px; font-size: 14px; outline: none; background: #f0f0f0; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+                <button id="addFavBtn" class="fav-add-btn" style="padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-weight: bold; white-space: nowrap; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 5px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    添加
+                </button>
+            </div>
+            <div id="favoritesList" style="padding: 20px;"></div>
         </div>
         
-        <!-- KG list -->
-        <div id="kgList" style="padding: 0 20px 40px 20px;"></div>
+        <!-- KG Content -->
+        <div id="kgContent" style="display: none;">
+            <div style="padding: 20px 20px 0 20px;">
+                <input type="text" id="kgSearchInput" placeholder="搜索 KG 网页..." style="width: 100%; padding: 10px 15px; border: 2px solid #000000; border-radius: 6px; font-size: 14px; outline: none; background: #f0f0f0; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+            </div>
+            <div id="kgList" style="padding: 20px;"></div>
+        </div>
+        
+        <!-- Engine Selector Content -->
+        <div id="engineContent" style="display: none;">
+            <div style="padding: 20px 20px 0 20px;">
+                <div class="search-engine-selector" id="engineSelectorInTab" style="display: block; position: static; width: 100%; max-width: 600px; margin: 0 auto; border: none; box-shadow: none; background: transparent; opacity: 1; transform: none;">
+                    <div class="engine-item" data-engine="baidu" data-url="https://www.baidu.com/s?wd=">百度</div>
+                    <div class="engine-item" data-engine="sogou" data-url="https://www.sogou.com/web?query=">搜狗</div>
+                    <div class="engine-item" data-engine="so360" data-url="https://www.so.com/s?q=">360</div>
+                    <div class="engine-item" data-engine="bing" data-url="https://cn.bing.com/search?q=">必应</div>
+                    <div class="engine-item" data-engine="shenma" data-url="https://m.sm.cn/s?q=">神马</div>
+                    <div class="engine-item" data-engine="toutiao" data-url="https://www.toutiao.com/search/?keyword=">头条</div>
+                    <div class="engine-item" data-engine="douyin" data-url="https://www.douyin.com/search/">抖音</div>
+                    <div class="engine-item" data-engine="quark" data-url="https://quark.sm.cn/s?q=">夸克</div>
+                    <div class="engine-item" data-engine="zhongguo" data-url="https://www.chinaso.com/search?q=">中国搜索</div>
+                    <div class="engine-item" data-engine="jike" data-url="https://www.jike.com/search?q=">即刻搜索</div>
+                    <div class="engine-item" data-engine="wechat" data-url="https://weixin.sogou.com/weixin?type=2&q=">微信搜一搜</div>
+                    <div class="engine-item" data-engine="google" data-url="https://www.google.com/search?q=">谷歌</div>
+                    <div class="engine-item" data-engine="bingglobal" data-url="https://www.bing.com/search?q=">Bing Global</div>
+                    <div class="engine-item" data-engine="yahoo" data-url="https://search.yahoo.com/search?p=">Yahoo</div>
+                    <div class="engine-item" data-engine="duckduckgo" data-url="https://duckduckgo.com/?q=">DuckDuckGo</div>
+                    <div class="engine-item" data-engine="yandex" data-url="https://yandex.com/search/?text=">Yandex</div>
+                    <div class="engine-item" data-engine="baiduglobal" data-url="https://www.baidu.com/s?wd=">Baidu Global</div>
+                    <div class="engine-item" data-engine="ecosia" data-url="https://www.ecosia.org/search?q=">Ecosia</div>
+                    <div class="engine-item" data-engine="startpage" data-url="https://www.startpage.com/sp/search?query=">StartPage</div>
+                    <div class="engine-item" data-engine="qwant" data-url="https://www.qwant.com/?q=">Qwant</div>
+                    <div class="engine-item" data-engine="ask" data-url="https://www.ask.com/web?q=">Ask.com</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Custom Confirm Dialog -->
     <div id="customConfirm" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 20000;">
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #f0f0f0; border: 2px solid #000000; border-radius: 10px; padding: 30px; min-width: 300px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-            <div id="customConfirmMessage" style="font-size: 16px; margin-bottom: 25px; text-align: center; line-height: 1.5;"></div>
+            <div id="customConfirmMessage" style="font-size: 16px; margin-bottom: 25px; text-align: center; line-height: 1.5; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;"></div>
             <div style="display: flex; gap: 15px; justify-content: center;">
-                <button id="customConfirmCancel" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; transition: all 0.2s;">取消</button>
-                <button id="customConfirmOk" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #000000; color: white; cursor: pointer; font-size: 14px; transition: all 0.2s;">确定</button>
+                <button id="customConfirmCancel" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
+                <button id="customConfirmOk" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #000000; color: white; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
             </div>
         </div>
     </div>
@@ -495,11 +552,11 @@
     <!-- Custom Prompt Dialog -->
     <div id="customPrompt" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 20000;">
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #f0f0f0; border: 2px solid #000000; border-radius: 10px; padding: 30px; min-width: 350px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-            <div id="customPromptMessage" style="font-size: 16px; margin-bottom: 15px; text-align: center; line-height: 1.5;"></div>
-            <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 2px solid #000000; border-radius: 6px; font-size: 14px; outline: none; margin-bottom: 20px; box-sizing: border-box;">
+            <div id="customPromptMessage" style="font-size: 16px; margin-bottom: 15px; text-align: center; line-height: 1.5; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;"></div>
+            <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 2px solid #000000; border-radius: 6px; font-size: 14px; outline: none; margin-bottom: 20px; box-sizing: border-box; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
             <div style="display: flex; gap: 15px; justify-content: center;">
-                <button id="customPromptCancel" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; transition: all 0.2s;">取消</button>
-                <button id="customPromptOk" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #000000; color: white; cursor: pointer; font-size: 14px; transition: all 0.2s;">确定</button>
+                <button id="customPromptCancel" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
+                <button id="customPromptOk" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #000000; color: white; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
             </div>
         </div>
     </div>
@@ -681,7 +738,7 @@
                 return;
             }
 
-            suggestionsList.innerHTML = data.s.map(item => `<li>${item}</li>`).join('');
+            suggestionsList.innerHTML = data.s.map(item => `<li style="font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">${item}</li>`).join('');
             suggestionsList.classList.add('visible');
             
             // Match search box width and position exactly
@@ -750,75 +807,12 @@
         });
         
         // Disable right-click context menu
-        let emojiEnabled = getCookie('emojiEnabled') === 'true';
-        
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            // Toggle emoji feature on right click
-            emojiEnabled = !emojiEnabled;
-            
-            // Save to cookie (365 days)
-            setCookie('emojiEnabled', emojiEnabled, 365);
-            
-            // Show toast notification
-            const toast = document.createElement('div');
-            toast.textContent = emojiEnabled ? 'Emoji 已开启 ✓' : 'Emoji 已关闭 ✗';
-            toast.style.position = 'fixed';
-            toast.style.bottom = '50px';
-            toast.style.left = '50%';
-            toast.style.transform = 'translateX(-50%)';
-            toast.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-            toast.style.color = 'white';
-            toast.style.padding = '12px 24px';
-            toast.style.borderRadius = '8px';
-            toast.style.fontSize = '14px';
-            toast.style.zIndex = '10000';
-            toast.style.transition = 'opacity 0.3s ease';
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            }, 1500);
-            
             return false;
         });
         
-        // Random emoji on left click
-        const emojis = ['😀', '😂', '🥰', '😎', '🤔', '👍', '✨', '🎉', '❤️', '🔥', '⭐', '💯', '🌟', '😊', '🙌'];
-        
-        document.addEventListener('click', function(e) {
-            // Only show emoji if feature is enabled
-            if (!emojiEnabled) {
-                return;
-            }
-            
-            // Don't show emoji when clicking on interactive elements
-            if (e.target.closest('button, input, .engine-item, .search-history li, .delete-btn, .clear-all')) {
-                return;
-            }
-            
-            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-            const emojiElement = document.createElement('div');
-            emojiElement.textContent = emoji;
-            emojiElement.style.position = 'fixed';
-            emojiElement.style.left = e.clientX + 'px';
-            emojiElement.style.top = e.clientY + 'px';
-            emojiElement.style.fontSize = '24px';
-            emojiElement.style.pointerEvents = 'none';
-            emojiElement.style.zIndex = '9999';
-            emojiElement.style.animation = 'emojiPopup 1s ease-out forwards';
-            document.body.appendChild(emojiElement);
-            
-            // Remove after animation
-            setTimeout(() => {
-                emojiElement.remove();
-            }, 1000);
-        });
-        
-        // Disable long press on mobile and toggle emoji feature
+        // Disable long press on mobile
         let longPressTimer;
         let isLongPress = false;
         
@@ -848,6 +842,7 @@
                 toast.style.fontSize = '14px';
                 toast.style.zIndex = '10000';
                 toast.style.transition = 'opacity 0.3s ease';
+                toast.style.fontFamily = "'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif";
                 document.body.appendChild(toast);
                 
                 setTimeout(() => {
@@ -917,13 +912,23 @@
             fetch('https://v1.jinrishici.com/all.json')
                 .then(res => res.json())
                 .then(data => {
-                    // Set the poem as search box placeholder
+                    // Set the poem as search box placeholder (empty, don't show anything)
                     const searchInput = document.getElementById('searchInput');
-                    searchInput.placeholder = data.content;
+                    searchInput.placeholder = ' ';
+                    
+                    // Update the favorites button text with poem content
+                    const favBtnText = document.getElementById('favBtnText');
+                    if (favBtnText) {
+                        favBtnText.textContent = data.content;
+                    }
                 })
                 .catch(err => {
                     console.error('Failed to load poem:', err);
-                    document.getElementById('searchInput').placeholder = '加载失败';
+                    document.getElementById('searchInput').placeholder = ' ';
+                    const favBtnText = document.getElementById('favBtnText');
+                    if (favBtnText) {
+                        favBtnText.textContent = '古诗';
+                    }
                 });
         }
 
@@ -935,21 +940,12 @@
         const engineSelector = document.getElementById('engineSelector');
         const engineToggleBtn = document.getElementById('engineToggleBtn');
         
-        // Toggle engine selector visibility
+        // Toggle engine selector visibility - now switches to engine tab
         engineToggleBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            // Hide search history when toggling engine selector
-            searchHistoryList.style.display = 'none';
-            
-            if (engineSelector.style.display === 'none') {
-                engineSelector.style.display = 'block';
-                // Update width to match search box
-                const searchBox = document.getElementById('searchInput');
-                const rect = searchBox.getBoundingClientRect();
-                engineSelector.style.width = rect.width + 'px';
-            } else {
-                engineSelector.style.display = 'none';
-            }
+            // Open the favorites modal first
+            document.getElementById('favoritesModal').style.display = 'block';
+            switchToEngineTab();
         });
         
         // Engine item click handler
@@ -964,6 +960,9 @@
                 const engineName = this.getAttribute('data-engine');
                 currentEngineUrl = engineUrl;
                 
+                // Update the toggle button icon with search engine favicon
+                updateEngineToggleIcon(engineName);
+                
                 // Save to cookie (365 days)
                 setCookie('searchEngine', engineUrl, 365);
                 
@@ -977,8 +976,45 @@
         engineItems.forEach(item => {
             if (item.getAttribute('data-url') === currentEngineUrl) {
                 item.classList.add('active');
+                const engineName = item.getAttribute('data-engine');
+                updateEngineToggleIcon(engineName);
             }
         });
+        
+        // Function to update engine toggle button icon
+        function updateEngineToggleIcon(engineName) {
+            const engineToggleBtn = document.getElementById('engineToggleBtn');
+            const engineTabIcon = document.getElementById('engineTabIcon');
+            const engineTabText = document.getElementById('engineTabText');
+            
+            if (engineToggleBtn) {
+                // Get domain from engine selector
+                const engineItem = document.querySelector(`.engine-item[data-engine="${engineName}"]`);
+                if (engineItem) {
+                    const engineUrl = engineItem.getAttribute('data-url');
+                    const domain = new URL(engineUrl).hostname;
+                    const firstChar = engineName.charAt(0);
+                    
+                    // Update main toggle button icon
+                    engineToggleBtn.innerHTML = `<img src="https://${domain}/favicon.ico" style="width: 24px; height: 24px; object-fit: contain;" alt="${engineName}" onerror="this.style.display='none'; this.parentNode.textContent='${firstChar}'; this.parentNode.style.fontSize='20px'; this.parentNode.style.fontWeight='bold';">`;
+                    
+                    // Update engine tab icon
+                    if (engineTabIcon && engineTabText) {
+                        engineTabIcon.src = `https://${domain}/favicon.ico`;
+                        engineTabIcon.style.display = 'block';
+                        engineTabText.style.display = 'none';
+                        
+                        engineTabIcon.onerror = function() {
+                            this.style.display = 'none';
+                            engineTabText.textContent = firstChar;
+                            engineTabText.style.display = 'block';
+                            engineTabText.style.fontSize = '20px';
+                            engineTabText.style.fontWeight = 'bold';
+                        };
+                    }
+                }
+            }
+        }
         
         // Close selector when clicking outside
         document.addEventListener('click', function(e) {
@@ -987,91 +1023,8 @@
             }
         });
         
-        // Scan QR code button handler
-        const scanBtn = document.getElementById('scanBtn');
-        let scannerStream = null;
-        
-        scanBtn.addEventListener('click', function() {
-            openScanner();
-        });
-        
-        function openScanner() {
-            const modal = document.getElementById('scannerModal');
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            
-            modal.style.display = 'block';
-            
-            // Start camera
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                    .then(function(stream) {
-                        scannerStream = stream;
-                        video.srcObject = stream;
-                        video.play();
-                        
-                        // Start scanning
-                        startScanning(video, canvas);
-                    })
-                    .catch(function(err) {
-                        console.error('Camera error:', err);
-                        alert('无法访问摄像头，请确保已授予相机权限');
-                        closeScanner();
-                    });
-            } else {
-                alert('您的浏览器不支持摄像头访问');
-                closeScanner();
-            }
-        }
-        
-        function startScanning(video, canvas) {
-            // Use jsqr library for QR code detection
-            const canvas2d = canvas.getContext('2d');
-            
-            function detectQRCode() {
-                if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    canvas2d.height = video.videoHeight;
-                    canvas2d.width = video.videoWidth;
-                    canvas2d.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-                    
-                    const imageData = canvas2d.getImageData(0, 0, video.videoWidth, video.videoHeight);
-                    const code = jsQR(imageData.data, imageData.width, imageData.height);
-                    
-                    if (code) {
-                        console.log('QR Code detected:', code.data);
-                        closeScanner();
-                        
-                        // Open result in new tab after 500ms
-                        setTimeout(() => {
-                            window.open(code.data, '_blank');
-                        }, 500);
-                        return;
-                    }
-                }
-                
-                // Continue scanning
-                requestAnimationFrame(detectQRCode);
-            }
-            
-            detectQRCode();
-        }
-        
-        function closeScanner() {
-            const modal = document.getElementById('scannerModal');
-            const video = document.getElementById('video');
-            
-            modal.style.display = 'none';
-            
-            // Stop camera
-            if (scannerStream) {
-                scannerStream.getTracks().forEach(track => track.stop());
-                scannerStream = null;
-            }
-            
-            if (video) {
-                video.srcObject = null;
-            }
-        }
+        // Scan QR code button - removed, now links to external site
+        // Scanner functionality deleted
 
         // Favorites management
         let favorites = [];
@@ -1187,7 +1140,7 @@
             );
             
             if (filtered.length === 0) {
-                list.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">暂无收藏</div>';
+                list.innerHTML = '<div style="text-align: center; color: #999; padding: 40px; font-family: \'KaiTi\', \'STKaiti\', \'楷体\', \'Microsoft YaHei\', Arial, sans-serif;">暂无收藏</div>';
                 return;
             }
             
@@ -1198,7 +1151,7 @@
                 const faviconUrl = getFavicon(fav.url);
                 const initials = getInitials(fav.name);
                 
-                html += `<div onclick="openFavoriteUrl('${fav.url.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; padding: 12px; border: 2px solid #000000; border-radius: 6px; margin-bottom: 10px; background: #f0f0f0; cursor: pointer;">
+                html += `<div onclick="openFavoriteUrl('${fav.url.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; padding: 12px; border: 2px solid #000000; border-radius: 6px; margin-bottom: 10px; background: #f0f0f0; cursor: pointer; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
                     <div style="width: 32px; height: 32px; margin-right: 12px; flex-shrink: 0; position: relative;">
                         <img src="${faviconUrl}" onload="this.style.display='block'; this.nextElementSibling.style.display='none'" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" style="width: 100%; height: 100%; object-fit: contain; display: none;" alt="">
                         <div style="width: 100%; height: 100%; background: #000000; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; position: absolute; top: 0; left: 0;">${initials}</div>
@@ -1229,6 +1182,7 @@
         
         function openFavorites() {
             document.getElementById('favoritesModal').style.display = 'block';
+            switchToFavoritesTab();  // Switch to favorites tab
             loadFavorites();
         }
         
@@ -1318,13 +1272,13 @@
             );
             
             if (filtered.length === 0) {
-                list.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">暂无内容</div>';
+                list.innerHTML = '<div style="text-align: center; color: #999; padding: 40px; font-family: \'KaiTi\', \'STKaiti\', \'楷体\', \'Microsoft YaHei\', Arial, sans-serif;">暂无内容</div>';
                 return;
             }
             
             let html = '';
             filtered.forEach((kg) => {
-                html += `<div onclick="openFavoriteUrl('${kg.url.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; padding: 12px; border: 2px solid #000000; border-radius: 6px; margin-bottom: 10px; background: #f0f0f0; cursor: pointer;">
+                html += `<div onclick="openFavoriteUrl('${kg.url.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; padding: 12px; border: 2px solid #000000; border-radius: 6px; margin-bottom: 10px; background: #f0f0f0; cursor: pointer; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
                     <div style="width: 32px; height: 32px; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: ${kg.color}; color: white; border-radius: 50%; font-weight: bold; font-size: 16px;">
                         ${kg.initial}
                     </div>
@@ -1338,24 +1292,56 @@
             list.innerHTML = html;
         }
         
-        function openKG() {
-            document.getElementById('kgModal').style.display = 'block';
+        // Tab switching functions
+        function switchToFavoritesTab() {
+            document.getElementById('favoritesContent').style.display = 'block';
+            document.getElementById('kgContent').style.display = 'none';
+            document.getElementById('engineContent').style.display = 'none';
+            document.getElementById('favTabBtn').style.background = '#000000';
+            document.getElementById('favTabBtn').style.color = 'white';
+            document.getElementById('kgTabBtn').style.background = '#f0f0f0';
+            document.getElementById('kgTabBtn').style.color = '#000000';
+            document.getElementById('engineTabBtn').style.background = '#f0f0f0';
+            document.getElementById('engineTabBtn').style.color = '#000000';
+            renderFavorites();
+        }
+        
+        function switchToKGTab() {
+            document.getElementById('favoritesContent').style.display = 'none';
+            document.getElementById('kgContent').style.display = 'block';
+            document.getElementById('engineContent').style.display = 'none';
+            document.getElementById('favTabBtn').style.background = '#f0f0f0';
+            document.getElementById('favTabBtn').style.color = '#000000';
+            document.getElementById('kgTabBtn').style.background = '#000000';
+            document.getElementById('kgTabBtn').style.color = 'white';
+            document.getElementById('engineTabBtn').style.background = '#f0f0f0';
+            document.getElementById('engineTabBtn').style.color = '#000000';
             renderKG();
         }
         
-        function closeKG() {
-            document.getElementById('kgModal').style.display = 'none';
+        function switchToEngineTab() {
+            document.getElementById('favoritesContent').style.display = 'none';
+            document.getElementById('kgContent').style.display = 'none';
+            document.getElementById('engineContent').style.display = 'block';
+            document.getElementById('favTabBtn').style.background = '#f0f0f0';
+            document.getElementById('favTabBtn').style.color = '#000000';
+            document.getElementById('kgTabBtn').style.background = '#f0f0f0';
+            document.getElementById('kgTabBtn').style.color = '#000000';
+            document.getElementById('engineTabBtn').style.background = '#000000';
+            document.getElementById('engineTabBtn').style.color = 'white';
+        }
+        
+        function openKG() {
+            openFavorites();
+            setTimeout(() => {
+                switchToKGTab();
+            }, 100);
         }
         
         // Event listeners for favorites
         const favBtn = document.getElementById('favBtn');
         if (favBtn) {
-            favBtn.addEventListener('click', openFavorites);
-        }
-        
-        const kgBtn = document.getElementById('kgBtn');
-        if (kgBtn) {
-            kgBtn.addEventListener('click', openKG);
+            // Event listener already set in HTML onclick
         }
         
         const addFavBtn = document.getElementById('addFavBtn');
