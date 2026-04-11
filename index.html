@@ -33,6 +33,7 @@
             flex-wrap: wrap;
             justify-content: center;
             position: relative;
+            z-index: 100;
             opacity: 0;
             transform: translateY(-60vh) rotate(-360deg);
             animation: searchBoxEntry 1s ease-out forwards;
@@ -46,6 +47,17 @@
             to {
                 opacity: 1;
                 transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        @keyframes searchBoxExit {
+            from {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-60vh) rotate(-360deg);
             }
         }
 
@@ -157,6 +169,29 @@
             to {
                 opacity: 1;
                 transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        @keyframes favBtnExit {
+            from {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(100px) rotate(360deg);
+            }
+        }
+
+        @keyframes scanAnimation {
+            0% {
+                transform: translate(-50%, -125px);
+            }
+            50% {
+                transform: translate(-50%, 125px);
+            }
+            100% {
+                transform: translate(-50%, -125px);
             }
         }
 
@@ -276,6 +311,35 @@
             font-size: 13px;
             line-height: 1.6;
             font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        /* Tab content transition */
+        #favoritesContent,
+        #kgContent,
+        #engineContent,
+        #settingsContent {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Search history and suggestions item animation */
+        .suggestion-item,
+        .history-item,
+        .search-history li:not(.search-history-header),
+        .suggestions li {
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: slideInItem 0.3s ease forwards;
+        }
+
+        @keyframes slideInItem {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Dark mode styles - Neumorphism Style */
@@ -452,7 +516,7 @@
             list-style: none;
             max-height: 160px;
             overflow-y: auto;
-            z-index: 1000;
+            z-index: 10000;
             display: none;
             box-sizing: border-box;
             opacity: 0;
@@ -650,8 +714,8 @@
 </head>
 <body>
     <div class="search-container" style="position: relative; background: transparent;">
-        <!-- Scan QR code button - link to external site -->
-        <button class="search-button" id="scanBtn" onclick="window.open('https://mazhuren.com/saoma/', '_blank')" style="left: 7px;">
+        <!-- Scan QR code button -->
+        <button class="search-button" id="scanBtn" onclick="openScanner()" style="left: 7px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
                 <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
@@ -683,7 +747,7 @@
     </div>
     
     <!-- Favorites button at bottom -->
-    <div class="bottom-buttons-container" style="display: flex; justify-content: center; gap: 15px; margin-top: 12px; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
+    <div class="bottom-buttons-container" style="display: flex; justify-content: center; gap: 15px; margin-top: 12px; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1;">
         <button class="bottom-btn" id="favBtn" onclick="openFavorites()" style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;">
             <span id="favBtnText">古诗</span>
         </button>
@@ -754,7 +818,7 @@
                         <line x1="12" y1="17" x2="12" y2="21"></line>
                     </svg>
                 </button>
-                <button id="officialTabBtn" onclick="window.open('https://image.cursorhub.org/user-upload/1775901622435-52fd2b67-bb6c-4dc2-9275-0b47041557fe.html', '_blank')" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="officialTabBtn" onclick="window.open('https://image.cursorhub.org/user-upload/1775906952848-a88f2ae0-a776-481b-abc1-2082ceb2491c.html', '_blank')" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                         <polyline points="15 3 21 3 21 9"></polyline>
@@ -1288,7 +1352,7 @@
                         </li>`;
             
             history.forEach((item, index) => {
-                html += `<li onclick="selectHistory('${item.replace(/'/g, "\\'")}')">
+                html += `<li onclick="selectHistory('${item.replace(/'/g, "\\'")}')"  style="animation-delay: ${index * 0.05}s">
                             ${item}
                             <span class="delete-btn" onclick="event.stopPropagation(); deleteHistoryItem(${index})">✕</span>
                         </li>`;
@@ -1412,7 +1476,9 @@
                 return;
             }
 
-            suggestionsList.innerHTML = data.s.map(item => `<li style="font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">${item}</li>`).join('');
+            suggestionsList.innerHTML = data.s.map((item, index) => 
+                `<li style="font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; animation-delay: ${index * 0.05}s">${item}</li>`
+            ).join('');
             suggestionsList.classList.add('visible');
             
             // Match search box width and position exactly
@@ -2029,7 +2095,40 @@
         }
         
         function closeFavorites() {
-            hideModalWithFade('favoritesModal');
+            // First hide the modal
+            const modal = document.getElementById('favoritesModal');
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    
+                    // After modal is hidden, trigger entry animations
+                    const searchContainer = document.querySelector('.search-container');
+                    const bottomButtons = document.querySelector('.bottom-buttons-container');
+                    
+                    if (searchContainer) {
+                        searchContainer.style.animation = 'none';
+                        void searchContainer.offsetWidth; // Force reflow
+                        searchContainer.style.animation = 'searchBoxEntry 1s ease-out forwards';
+                    }
+                    
+                    if (bottomButtons) {
+                        bottomButtons.style.animation = 'none';
+                        void bottomButtons.offsetWidth; // Force reflow
+                        bottomButtons.style.animation = 'favBtnEntry 1s ease-out 0.3s forwards';
+                    }
+                    
+                    // Reset animations after they complete
+                    setTimeout(() => {
+                        if (searchContainer) {
+                            searchContainer.style.animation = '';
+                        }
+                        if (bottomButtons) {
+                            bottomButtons.style.animation = '';
+                        }
+                    }, 1300);
+                }, 300);
+            }
         }
         
         function openFavoriteUrl(url) {
@@ -2101,7 +2200,7 @@
         
         // KG data - fixed websites
         const kgWebsites = [
-            { name: 'Kg官方网站国内', url: 'https://image.cursorhub.org/user-upload/1775216603705-cb96f9fc-3f38-4dc1-86c6-1ca48e70ebcf.html', color: '#FAFAD2', initial: 'K' },
+            { name: 'Kg官方网站国内', url: 'https://image.cursorhub.org/user-upload/1775906952848-a88f2ae0-a776-481b-abc1-2082ceb2491c.html', color: '#FAFAD2', initial: 'K' },
             { name: 'Kg 收银系统', url: 'https://wwbpg.lanzouu.com/iGuw43ibdxgf', color: '#FF6B8A', initial: 'K' },
             { name: 'Kg bing 壁纸', url: 'https://wwbpg.lanzouu.com/i1r813l8pwdi', color: '#4ECDC4', initial: 'W' },
             { name: 'KgWinNas', url: 'https://wwbpg.lanzouu.com/iQysW3ibdxpe', color: '#45B7D1', initial: 'N' }
@@ -2135,94 +2234,259 @@
             list.innerHTML = html;
         }
         
-        // Tab switching functions
+        // Tab switching functions with smooth transition
         function switchToFavoritesTab() {
-            document.getElementById('favoritesContent').style.display = 'block';
-            document.getElementById('kgContent').style.display = 'none';
-            document.getElementById('engineContent').style.display = 'none';
-            document.getElementById('settingsContent').style.display = 'none';
-            document.getElementById('favTabBtn').style.background = '#000000';
-            document.getElementById('favTabBtn').style.color = 'white';
-            document.getElementById('favTabBtn').style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
-            document.getElementById('kgTabBtn').style.background = '#F0F0F0';
-            document.getElementById('kgTabBtn').style.color = '#000000';
-            document.getElementById('kgTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('officialTabBtn').style.background = '#F0F0F0';
-            document.getElementById('officialTabBtn').style.color = '#000000';
-            document.getElementById('officialTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('engineTabBtn').style.background = '#F0F0F0';
-            document.getElementById('engineTabBtn').style.color = '#000000';
-            document.getElementById('engineTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('settingsTabBtn').style.background = '#F0F0F0';
-            document.getElementById('settingsTabBtn').style.color = '#000000';
-            document.getElementById('settingsTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            renderFavorites();
+            const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            
+            // Fade out all contents
+            contents.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(10px)';
+                }
+            });
+            
+            // Update button styles
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.style.background = '#F0F0F0';
+                    btn.style.color = '#000000';
+                    btn.style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+                }
+            });
+            
+            // Set active button
+            const activeBtn = document.getElementById('favTabBtn');
+            if (activeBtn) {
+                activeBtn.style.background = '#000000';
+                activeBtn.style.color = 'white';
+                activeBtn.style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
+            }
+            
+            // After fade out, show favorites content
+            setTimeout(() => {
+                contents.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.style.display = id === 'favoritesContent' ? 'block' : 'none';
+                    }
+                });
+                
+                // Fade in favorites content
+                const favContent = document.getElementById('favoritesContent');
+                if (favContent) {
+                    void favContent.offsetWidth; // Force reflow
+                    favContent.style.opacity = '1';
+                    favContent.style.transform = 'translateY(0)';
+                }
+                
+                renderFavorites();
+            }, 300);
         }
         
         function switchToKGTab() {
-            document.getElementById('favoritesContent').style.display = 'none';
-            document.getElementById('kgContent').style.display = 'block';
-            document.getElementById('engineContent').style.display = 'none';
-            document.getElementById('favTabBtn').style.background = '#F0F0F0';
-            document.getElementById('favTabBtn').style.color = '#000000';
-            document.getElementById('favTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('kgTabBtn').style.background = '#000000';
-            document.getElementById('kgTabBtn').style.color = 'white';
-            document.getElementById('kgTabBtn').style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
-            document.getElementById('officialTabBtn').style.background = '#F0F0F0';
-            document.getElementById('officialTabBtn').style.color = '#000000';
-            document.getElementById('officialTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('engineTabBtn').style.background = '#F0F0F0';
-            document.getElementById('engineTabBtn').style.color = '#000000';
-            document.getElementById('engineTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('settingsTabBtn').style.background = '#F0F0F0';
-            document.getElementById('settingsTabBtn').style.color = '#000000';
-            document.getElementById('settingsTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            renderKG();
+            const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            
+            // Fade out all contents
+            contents.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(10px)';
+                }
+            });
+            
+            // Update button styles
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.style.background = '#F0F0F0';
+                    btn.style.color = '#000000';
+                    btn.style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+                }
+            });
+            
+            // Set active button
+            const activeBtn = document.getElementById('kgTabBtn');
+            if (activeBtn) {
+                activeBtn.style.background = '#000000';
+                activeBtn.style.color = 'white';
+                activeBtn.style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
+            }
+            
+            // After fade out, show KG content
+            setTimeout(() => {
+                contents.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.style.display = id === 'kgContent' ? 'block' : 'none';
+                    }
+                });
+                
+                // Fade in KG content
+                const kgContent = document.getElementById('kgContent');
+                if (kgContent) {
+                    void kgContent.offsetWidth; // Force reflow
+                    kgContent.style.opacity = '1';
+                    kgContent.style.transform = 'translateY(0)';
+                }
+                
+                renderKG();
+            }, 300);
+        }
+        
+        function switchToOfficialTab() {
+            const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            
+            // Fade out all contents
+            contents.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(10px)';
+                }
+            });
+            
+            // Update button styles
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.style.background = '#F0F0F0';
+                    btn.style.color = '#000000';
+                    btn.style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+                }
+            });
+            
+            // Set active button
+            const activeBtn = document.getElementById('officialTabBtn');
+            if (activeBtn) {
+                activeBtn.style.background = '#000000';
+                activeBtn.style.color = 'white';
+                activeBtn.style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
+            }
+            
+            // After fade out, show official content (currently same as KG)
+            setTimeout(() => {
+                contents.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.style.display = id === 'kgContent' ? 'block' : 'none';
+                    }
+                });
+                
+                // Fade in content
+                const kgContent = document.getElementById('kgContent');
+                if (kgContent) {
+                    void kgContent.offsetWidth; // Force reflow
+                    kgContent.style.opacity = '1';
+                    kgContent.style.transform = 'translateY(0)';
+                }
+            }, 300);
         }
         
         function switchToEngineTab() {
-            document.getElementById('favoritesContent').style.display = 'none';
-            document.getElementById('kgContent').style.display = 'none';
-            document.getElementById('engineContent').style.display = 'block';
-            document.getElementById('settingsContent').style.display = 'none';
-            document.getElementById('favTabBtn').style.background = '#F0F0F0';
-            document.getElementById('favTabBtn').style.color = '#000000';
-            document.getElementById('favTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('kgTabBtn').style.background = '#F0F0F0';
-            document.getElementById('kgTabBtn').style.color = '#000000';
-            document.getElementById('kgTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('officialTabBtn').style.background = '#F0F0F0';
-            document.getElementById('officialTabBtn').style.color = '#000000';
-            document.getElementById('officialTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('engineTabBtn').style.background = '#000000';
-            document.getElementById('engineTabBtn').style.color = 'white';
-            document.getElementById('engineTabBtn').style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
-            document.getElementById('settingsTabBtn').style.background = '#F0F0F0';
-            document.getElementById('settingsTabBtn').style.color = '#000000';
-            document.getElementById('settingsTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            
+            // Fade out all contents
+            contents.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(10px)';
+                }
+            });
+            
+            // Update button styles
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.style.background = '#F0F0F0';
+                    btn.style.color = '#000000';
+                    btn.style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+                }
+            });
+            
+            // Set active button
+            const activeBtn = document.getElementById('engineTabBtn');
+            if (activeBtn) {
+                activeBtn.style.background = '#000000';
+                activeBtn.style.color = 'white';
+                activeBtn.style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
+            }
+            
+            // After fade out, show engine content
+            setTimeout(() => {
+                contents.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.style.display = id === 'engineContent' ? 'block' : 'none';
+                    }
+                });
+                
+                // Fade in engine content
+                const engineContent = document.getElementById('engineContent');
+                if (engineContent) {
+                    void engineContent.offsetWidth; // Force reflow
+                    engineContent.style.opacity = '1';
+                    engineContent.style.transform = 'translateY(0)';
+                }
+            }, 300);
         }
         
         function switchToSettingsTab() {
-            document.getElementById('favoritesContent').style.display = 'none';
-            document.getElementById('kgContent').style.display = 'none';
-            document.getElementById('engineContent').style.display = 'none';
-            document.getElementById('settingsContent').style.display = 'block';
-            document.getElementById('favTabBtn').style.background = '#F0F0F0';
-            document.getElementById('favTabBtn').style.color = '#000000';
-            document.getElementById('favTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('kgTabBtn').style.background = '#F0F0F0';
-            document.getElementById('kgTabBtn').style.color = '#000000';
-            document.getElementById('kgTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('officialTabBtn').style.background = '#F0F0F0';
-            document.getElementById('officialTabBtn').style.color = '#000000';
-            document.getElementById('officialTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('engineTabBtn').style.background = '#F0F0F0';
-            document.getElementById('engineTabBtn').style.color = '#000000';
-            document.getElementById('engineTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
-            document.getElementById('settingsTabBtn').style.background = '#000000';
-            document.getElementById('settingsTabBtn').style.color = 'white';
-            document.getElementById('settingsTabBtn').style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
+            const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            
+            // Fade out all contents
+            contents.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(10px)';
+                }
+            });
+            
+            // Update button styles
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.style.background = '#F0F0F0';
+                    btn.style.color = '#000000';
+                    btn.style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+                }
+            });
+            
+            // Set active button
+            const activeBtn = document.getElementById('settingsTabBtn');
+            if (activeBtn) {
+                activeBtn.style.background = '#000000';
+                activeBtn.style.color = 'white';
+                activeBtn.style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
+            }
+            
+            // After fade out, show settings content
+            setTimeout(() => {
+                contents.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.style.display = id === 'settingsContent' ? 'block' : 'none';
+                    }
+                });
+                
+                // Fade in settings content
+                const settingsContent = document.getElementById('settingsContent');
+                if (settingsContent) {
+                    void settingsContent.offsetWidth; // Force reflow
+                    settingsContent.style.opacity = '1';
+                    settingsContent.style.transform = 'translateY(0)';
+                }
+            }, 300);
         }
         
         function openKG() {
@@ -2550,10 +2814,168 @@
             drawCanvas.addEventListener('touchend', () => isDrawing = false);
         }
         
+        // QR Code Scanner Functions
+        let scannerStream = null;
+        let scannerInterval = null;
+        let currentScanResult = '';
+        
+        function openScanner() {
+            const modal = document.getElementById('scannerModal');
+            const video = document.getElementById('scannerVideo');
+            
+            // Show modal with fade in
+            modal.style.display = 'block';
+            setTimeout(() => {
+                modal.style.opacity = '1';
+            }, 10);
+            
+            // Request camera access
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(function(stream) {
+                    scannerStream = stream;
+                    video.srcObject = stream;
+                    video.play();
+                    
+                    // Start scanning
+                    startScanning();
+                })
+                .catch(function(err) {
+                    console.error('Camera access denied:', err);
+                    alert('无法访问摄像头，请确保已授予权限。');
+                    closeScanner();
+                });
+        }
+        
+        function closeScanner() {
+            const modal = document.getElementById('scannerModal');
+            
+            // Fade out
+            modal.style.opacity = '0';
+            
+            // Stop camera
+            if (scannerStream) {
+                scannerStream.getTracks().forEach(track => track.stop());
+                scannerStream = null;
+            }
+            
+            // Stop scanning
+            if (scannerInterval) {
+                clearInterval(scannerInterval);
+                scannerInterval = null;
+            }
+            
+            // Hide modal after fade out
+            setTimeout(() => {
+                modal.style.display = 'none';
+                
+                // Reset result display
+                document.getElementById('scanResult').style.display = 'none';
+                currentScanResult = '';
+            }, 300);
+        }
+        
+        function startScanning() {
+            const video = document.getElementById('scannerVideo');
+            const canvas = document.getElementById('scannerCanvas');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            
+            // Scan every 200ms
+            scannerInterval = setInterval(function() {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.height = video.videoHeight;
+                    canvas.width = video.videoWidth;
+                    
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    
+                    // Use jsQR to detect QR code
+                    if (typeof jsQR !== 'undefined') {
+                        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                            inversionAttempts: 'dontInvert',
+                        });
+                        
+                        if (code && code.data) {
+                            // QR code detected
+                            showScanResult(code.data);
+                        }
+                    }
+                }
+            }, 200);
+        }
+        
+        function showScanResult(result) {
+            currentScanResult = result;
+            const resultDiv = document.getElementById('scanResult');
+            const resultText = document.getElementById('scanResultText');
+            
+            resultText.textContent = result;
+            resultDiv.style.display = 'block';
+            
+            // Stop scanning after successful scan
+            if (scannerInterval) {
+                clearInterval(scannerInterval);
+                scannerInterval = null;
+            }
+        }
+        
+        function openScanResult() {
+            if (currentScanResult) {
+                // Check if it's a URL
+                if (currentScanResult.startsWith('http://') || currentScanResult.startsWith('https://')) {
+                    window.open(currentScanResult, '_blank');
+                } else {
+                    // Try to open as URL
+                    window.open('https://' + currentScanResult, '_blank');
+                }
+            }
+        }
+        
         function closeDrawingCanvas() {
             document.getElementById('drawingCanvas').style.display = 'none';
         }
     </script>
+    
+    <!-- QR Code Scanner Modal -->
+    <div id="scannerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000000; z-index: 100000; opacity: 0; transition: opacity 0.3s ease;">
+        <!-- Close Button -->
+        <button onclick="closeScanner()" style="position: absolute; top: 20px; right: 20px; width: 50px; height: 50px; border: none; border-radius: 50%; background: rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100001; backdrop-filter: blur(10px);">×</button>
+        
+        <!-- Title -->
+        <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: #ffffff; font-size: 20px; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; z-index: 100001;">
+            扫一扫
+        </div>
+        
+        <!-- Video Element -->
+        <video id="scannerVideo" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; object-fit: cover;"></video>
+        
+        <!-- Canvas for processing (hidden) -->
+        <canvas id="scannerCanvas" style="display: none;"></canvas>
+        
+        <!-- Scanning Frame Overlay -->
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border: 3px solid #00ff00; border-radius: 20px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5); pointer-events: none;">
+            <!-- Corner markers -->
+            <div style="position: absolute; top: -3px; left: -3px; width: 30px; height: 30px; border-top: 5px solid #00ff00; border-left: 5px solid #00ff00;"></div>
+            <div style="position: absolute; top: -3px; right: -3px; width: 30px; height: 30px; border-top: 5px solid #00ff00; border-right: 5px solid #00ff00;"></div>
+            <div style="position: absolute; bottom: -3px; left: -3px; width: 30px; height: 30px; border-bottom: 5px solid #00ff00; border-left: 5px solid #00ff00;"></div>
+            <div style="position: absolute; bottom: -3px; right: -3px; width: 30px; height: 30px; border-bottom: 5px solid #00ff00; border-right: 5px solid #00ff00;"></div>
+        </div>
+        
+        <!-- Scan Line Animation -->
+        <div id="scanLine" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 2px; background: linear-gradient(to right, transparent, #00ff00, transparent); animation: scanAnimation 2s linear infinite; pointer-events: none;"></div>
+        
+        <!-- Result Display -->
+        <div id="scanResult" style="position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(255, 255, 255, 0.9); padding: 15px 25px; border-radius: 10px; max-width: 80%; text-align: center; display: none; z-index: 100001;">
+            <div style="font-size: 14px; color: #666; margin-bottom: 10px;">扫描结果：</div>
+            <div id="scanResultText" style="font-size: 16px; color: #000; word-break: break-all;"></div>
+            <button onclick="openScanResult()" style="margin-top: 10px; padding: 8px 20px; background: #000; color: #fff; border: none; border-radius: 20px; cursor: pointer; font-size: 14px;">打开链接</button>
+        </div>
+        
+        <!-- Instructions -->
+        <div style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: #ffffff; font-size: 14px; text-align: center; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; z-index: 100001;">
+            将二维码/条形码放入框内，即可自动扫描
+        </div>
+    </div>
     
     <!-- Easter Egg: Drawing Canvas -->
     <div id="drawingCanvas" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 99999;">
