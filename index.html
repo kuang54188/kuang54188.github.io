@@ -33,17 +33,47 @@
             flex-wrap: wrap;
             justify-content: center;
             position: relative;
+            opacity: 0;
+            transform: translateY(-60vh) rotate(-360deg);
+            animation: searchBoxEntry 1s ease-out forwards;
+        }
+
+        @keyframes searchBoxEntry {
+            from {
+                opacity: 0;
+                transform: translateY(-60vh) rotate(-360deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
         }
 
         .search-box {
             padding: 12px 95px 12px 55px;
             font-size: 14px;
             font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
-            border: 2px solid #000000;
-            border-radius: 10px;
+            border: none;
+            border-radius: 34px;
             outline: none;
             width: 500px;
             max-width: 100%;
+            background: #F0F0F0;
+            box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;
+            transition: transform 0.3s ease;
+        }
+
+        .search-box.rotate {
+            animation: searchBoxRotate360 0.6s ease;
+        }
+
+        @keyframes searchBoxRotate360 {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Input fade-in animation */
@@ -74,8 +104,22 @@
             top: 50%;
             transform: translateY(-50%);
             padding: 0;
-            transition: none;
+            transition: transform 0.3s ease;
             opacity: 1;
+        }
+
+        .search-button.rotate,
+        button.rotate {
+            animation: rotate360 0.6s ease;
+        }
+
+        @keyframes rotate360 {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .search-button:hover {
@@ -100,6 +144,20 @@
             font-weight: normal;
             color: #000000;
             font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
+            opacity: 0;
+            transform: translateY(100px) rotate(360deg);
+            animation: favBtnEntry 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes favBtnEntry {
+            from {
+                opacity: 0;
+                transform: translateY(100px) rotate(360deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
         }
 
         .bottom-btn:hover {
@@ -125,28 +183,17 @@
             #timeDisplay {
                 padding: 10px 0 !important;
             }
-            
-            #currentTime {
-                font-size: 20px !important;
-            }
-            
-            #currentDate {
-                display: none !important;
-            }
-            
-            #timeInSearchBox span:last-child {
-                display: none !important;
-            }
 
             .search-box {
                 flex: 1;
                 min-width: 0;
                 font-size: 16px;
                 padding: 12px 73px 12px 43px;
-                background: #f0f0f0;
-                border: 2px solid #000000;
+                background: #F0F0F0;
+                border: none;
                 outline: none;
-                border-radius: 6px;
+                border-radius: 34px;
+                box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;
             }
 
             .search-button {
@@ -222,12 +269,167 @@
         .search-hint {
             margin-top: 15px;
             padding: 10px 15px;
-            border: 2px solid #000000;
-            border-radius: 8px;
-            background-color: #f0f0f0;
+            border: none;
+            border-radius: 34px;
+            background-color: #F0F0F0;
+            box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;
             font-size: 13px;
             line-height: 1.6;
             font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        /* Dark mode styles - Neumorphism Style */
+        body.dark-mode {
+            background-color: #222;
+        }
+
+        body.dark-mode .search-box {
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .search-button svg {
+            stroke: #e0e0e0;
+        }
+
+        body.dark-mode .engine-item {
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .engine-item:hover,
+        body.dark-mode .engine-item.active {
+            background: #222;
+            color: #ffffff;
+            box-shadow: inset 5px 5px 10px #1a1a1a, inset -5px -5px 10px #3e3e3e;
+        }
+
+        body.dark-mode .suggestions,
+        body.dark-mode .search-history {
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .suggestion-item,
+        body.dark-mode .history-item {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .suggestion-item:hover,
+        body.dark-mode .history-item:hover {
+            background: #222;
+            color: #ffffff;
+        }
+
+        body.dark-mode .bottom-btn {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .modal-content {
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+        }
+
+        body.dark-mode .modal-header h2,
+        body.dark-mode .settings-section h3 {
+            color: #e0e0e0;
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+        }
+
+        body.dark-mode label {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="password"] {
+            background: #2c2c2c;
+            box-shadow: inset 5px 5px 10px #1a1a1a, inset -5px -5px 10px #3e3e3e;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode input::placeholder {
+            color: rgba(224, 224, 224, 0.5);
+        }
+
+        body.dark-mode button {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .tab-btn {
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .tab-btn:hover {
+            background: #282828;
+        }
+
+        body.dark-mode .tab-btn.active {
+            background: #222;
+            color: #ffffff;
+            box-shadow: inset 5px 5px 10px #1a1a1a, inset -5px -5px 10px #3e3e3e;
+            font-weight: bold;
+        }
+
+        body.dark-mode .favorite-item {
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .favorite-item:hover {
+            background: #282828;
+        }
+
+        body.dark-mode .kg-content {
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .kg-content p,
+        body.dark-mode .kg-content h4 {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .hot-news-container {
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+        }
+
+        body.dark-mode .news-title {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .news-item {
+            border-bottom: 1px solid #3e3e3e;
+        }
+
+        body.dark-mode .news-item a {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .news-item:hover {
+            background: #222;
+        }
+
+        body.dark-mode #engineHintInSearchBox span {
+            color: rgba(224, 224, 224, 0.5);
+        }
+
+        body.dark-mode .delete-btn {
+            color: #ff6b6b;
+        }
+
+        body.dark-mode .search-hint {
+            background: #2c2c2c;
+            box-shadow: 20px 20px 62px #1a1a1a, -20px -20px 62px #3e3e3e;
+            color: #e0e0e0;
         }
 
         .search-hint-title {
@@ -244,19 +446,24 @@
             position: absolute;
             top: 100%;
             margin-top: 5px;
-            background: #f0f0f0;
-            border: 2px solid #000000;
-            border-radius: 10px;
+            background: #F0F0F0;
+            border: none;
+            border-radius: 34px;
             list-style: none;
             max-height: 160px;
             overflow-y: auto;
             z-index: 1000;
             display: none;
             box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .suggestions.visible {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .suggestions li {
@@ -276,18 +483,23 @@
             position: absolute;
             top: 100%;
             margin-top: 5px;
-            background: #f0f0f0;
-            border: 2px solid #000000;
-            border-radius: 10px;
+            background: #F0F0F0;
+            border: none;
+            border-radius: 34px;
             list-style: none;
             overflow-y: auto;
             z-index: 10000;
             display: none;
             box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .search-history.visible {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .search-history li {
@@ -328,7 +540,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 8px 15px;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: none;
             font-size: 12px;
             color: #666;
             font-weight: bold;
@@ -347,13 +559,14 @@
         .search-engine-selector {
             margin-top: 10px;
             padding: 10px 15px;
-            border: 2px solid #000000;
-            border-radius: 10px;
-            background-color: #f0f0f0;
+            border: none;
+            border-radius: 34px;
+            background-color: #F0F0F0;
+            box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;
             max-width: 100%;
             opacity: 0;
             transform: translateY(-10px);
-            transition: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .search-engine-selector[style*="display: block"] {
@@ -369,12 +582,13 @@
         }
 
         .engine-item {
-            padding: 6px 12px;
-            border: 2px solid #000000;
-            border-radius: 6px;
+            padding: 14px 12px;
+            border: none;
+            border-radius: 34px;
+            box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;
             cursor: pointer;
             transition: none;
-            background-color: #f0f0f0;
+            background-color: #F0F0F0;
             font-size: 20px;
             font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
         }
@@ -421,12 +635,21 @@
             color: #333;
             margin-bottom: 10px;
         }
+
+        /* Neumorphic UI class */
+        .ui {
+            border-radius: 34px;
+            background: #F0F0F0;
+            box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;
+            width: 166px;
+            height: 166px;
+        }
     </style>
     <!-- jsQR Library for QR Code scanning -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
-    <div class="search-container" style="position: relative; background: #f0f0f0;">
+    <div class="search-container" style="position: relative; background: transparent;">
         <!-- Scan QR code button - link to external site -->
         <button class="search-button" id="scanBtn" onclick="window.open('https://mazhuren.com/saoma/', '_blank')" style="left: 7px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -437,10 +660,9 @@
                 <rect x="7" y="7" width="10" height="10" rx="1"></rect>
             </svg>
         </button>
-        <input type="text" class="search-box" id="searchInput" placeholder=" " autocomplete="off" style="background: #f0f0f0;">
-            <div id="timeInSearchBox" style="position: absolute; left: 50px; right: 100px; top: 50%; transform: translateY(-50%); pointer-events: none; display: flex; justify-content: space-between; align-items: center; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
-                <span id="currentTime" style="font-size: 16px; font-weight: bold; color: rgba(0, 0, 0, 0.5);">00:00:00</span>
-                <span id="currentDate" style="font-size: 13px; color: rgba(0, 0, 0, 0.4);">星期一 正月初一</span>
+        <input type="text" class="search-box" id="searchInput" placeholder=" " autocomplete="off" style="background: #F0F0F0;">
+            <div id="engineHintInSearchBox" style="position: absolute; left: 50px; right: 100px; top: 50%; transform: translateY(-50%); pointer-events: none; display: flex; justify-content: center; align-items: center; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+                <span id="engineHintText" style="font-size: 14px; color: rgba(0, 0, 0, 0.4);">使用百度搜索</span>
             </div>
         </input>
         <!-- Engine toggle button (left of search button) -->
@@ -462,7 +684,7 @@
     
     <!-- Favorites button at bottom -->
     <div class="bottom-buttons-container" style="display: flex; justify-content: center; gap: 15px; margin-top: 12px; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
-        <button class="bottom-btn" id="favBtn" onclick="openFavorites()" style="padding: 8px 16px; border: none; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;">
+        <button class="bottom-btn" id="favBtn" onclick="openFavorites()" style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-size: 14px; font-weight: normal; color: #000000;">
             <span id="favBtnText">古诗</span>
         </button>
     </div>
@@ -515,35 +737,35 @@
 
     <!-- QR Scanner Modal -->
     <!-- Favorites Modal (with KG integration) -->
-    <div id="favoritesModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #f0f0f0; z-index: 10000; overflow-y: auto; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
+    <div id="favoritesModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #F0F0F0; z-index: 10000; overflow-y: auto; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; opacity: 0; transition: opacity 0.3s ease;">
         <!-- Header with close button and tabs -->
         <div style="display: flex; justify-content: center; align-items: center; position: relative; padding: 20px 20px 0 20px;">
             <!-- Tab Navigation (centered) -->
             <div style="display: flex; gap: 10px;">
-                <button id="favTabBtn" onclick="switchToFavoritesTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: 2px solid #000000; border-radius: 6px; background: #000000; color: white; cursor: pointer; font-weight: bold;">
+                <button id="favTabBtn" onclick="switchToFavoritesTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
                         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
                     </svg>
                 </button>
-                <button id="kgTabBtn" onclick="switchToKGTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="kgTabBtn" onclick="switchToKGTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
                         <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                         <line x1="8" y1="21" x2="16" y2="21"></line>
                         <line x1="12" y1="17" x2="12" y2="21"></line>
                     </svg>
                 </button>
-                <button id="officialTabBtn" onclick="window.open('https://kuang54188.github.io', '_blank')" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="officialTabBtn" onclick="window.open('https://image.cursorhub.org/user-upload/1775901622435-52fd2b67-bb6c-4dc2-9275-0b47041557fe.html', '_blank')" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                         <polyline points="15 3 21 3 21 9"></polyline>
                         <line x1="10" y1="14" x2="21" y2="3"></line>
                     </svg>
                 </button>
-                <button id="engineTabBtn" onclick="switchToEngineTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="engineTabBtn" onclick="switchToEngineTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <img id="engineTabIcon" src="" style="width: 24px; height: 24px; object-fit: contain; display: none;" alt="引擎">
                     <span id="engineTabText" style="font-size: 20px; font-weight: bold;">引</span>
                 </button>
-                <button id="settingsTabBtn" onclick="switchToSettingsTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="settingsTabBtn" onclick="handleSettingsClick()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -558,8 +780,8 @@
         <!-- Favorites Content -->
         <div id="favoritesContent" style="display: block;">
             <div class="favorites-header" style="padding: 20px 20px 0 20px; display: flex; gap: 10px; align-items: center;">
-                <input type="text" id="favSearchInput" placeholder="搜索收藏网页..." class="fav-search-input" style="flex: 1; padding: 10px 15px; border: 2px solid #000000; border-radius: 6px; font-size: 14px; outline: none; background: #f0f0f0; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
-                <button id="addFavBtn" class="fav-add-btn" style="padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-weight: bold; white-space: nowrap; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+                <input type="text" id="favSearchInput" placeholder="搜索收藏网页..." class="fav-search-input" style="flex: 1; padding: 10px 15px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; font-size: 14px; outline: none; background: #F0F0F0; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+                <button id="addFavBtn" class="fav-add-btn" style="padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-weight: bold; white-space: nowrap; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 5px;">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -573,7 +795,7 @@
         <!-- KG Content -->
         <div id="kgContent" style="display: none;">
             <div style="padding: 20px 20px 0 20px;">
-                <input type="text" id="kgSearchInput" placeholder="搜索 KG 网页..." style="width: 100%; padding: 10px 15px; border: 2px solid #000000; border-radius: 6px; font-size: 14px; outline: none; background: #f0f0f0; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+                <input type="text" id="kgSearchInput" placeholder="搜索 KG 网页..." style="width: 100%; padding: 10px 15px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; font-size: 14px; outline: none; background: #F0F0F0; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
             </div>
             <div id="kgList" style="padding: 20px;"></div>
         </div>
@@ -676,7 +898,7 @@
             
             <!-- 搜索设置 -->
             <div style="margin-bottom: 30px;">
-                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #000000; padding-bottom: 10px;">一、搜索设置</h3>
+                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: none; padding-bottom: 10px; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; padding: 10px 15px;">一、搜索设置</h3>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
@@ -700,7 +922,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         缓存搜索建议
                     </label>
-                    <select id="cacheDuration" style="margin-left: 30px; padding: 8px; border: 2px solid #000000; border-radius: 6px; font-family: 'YouYuan'; font-size: 13px; background: #f0f0f0;">
+                    <select id="cacheDuration" style="margin-left: 30px; padding: 8px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; font-family: 'YouYuan'; font-size: 13px; background: #F0F0F0;">
                         <option value="300">5 分钟</option>
                         <option value="3600" selected>1 小时</option>
                         <option value="86400">1 天</option>
@@ -718,7 +940,7 @@
             
             <!-- 收藏设置 -->
             <div style="margin-bottom: 30px;">
-                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #000000; padding-bottom: 10px;">二、收藏设置</h3>
+                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: none; padding-bottom: 10px; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; padding: 10px 15px;">二、收藏设置</h3>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
@@ -737,11 +959,11 @@
                 </div>
                 
                 <div style="display: flex; gap: 15px; margin-top: 15px;">
-                    <button id="importFavBtn" onclick="importFavorites()" style="flex: 1; padding: 10px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <button id="importFavBtn" onclick="importFavorites()" style="flex: 1; padding: 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         收藏数据导入
                     </button>
-                    <button id="exportFavBtn" onclick="exportFavorites()" style="flex: 1; padding: 10px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <button id="exportFavBtn" onclick="exportFavorites()" style="flex: 1; padding: 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 5 17 10"></polyline><line x1="12" y1="5" x2="12" y2="15"></line></svg>
                         收藏数据导出
                     </button>
@@ -751,7 +973,15 @@
             
             <!-- 外观设置 -->
             <div style="margin-bottom: 30px;">
-                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #000000; padding-bottom: 10px;">三、外观设置</h3>
+                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: none; padding-bottom: 10px; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; padding: 10px 15px;">三、外观设置</h3>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
+                        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()" style="margin-right: 10px; width: 18px; height: 18px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                        深色模式
+                    </label>
+                </div>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
@@ -772,7 +1002,7 @@
             
             <!-- 隐私与数据管理 -->
             <div style="margin-bottom: 30px;">
-                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #000000; padding-bottom: 10px;">四、隐私与数据管理</h3>
+                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: none; padding-bottom: 10px; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; padding: 10px 15px;">四、隐私与数据管理</h3>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 10px; font-weight: bold;">
@@ -796,18 +1026,18 @@
                             页面缓存
                         </label>
                     </div>
-                    <button id="clearDataBtn" onclick="clearSelectedData()" style="padding: 10px 20px; border: 2px solid #ff4444; border-radius: 6px; background: #ff4444; color: white; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                    <button id="clearDataBtn" onclick="clearSelectedData()" style="padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #000000; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                         清理选中数据
                     </button>
                 </div>
                 
                 <div style="display: flex; gap: 15px; margin-top: 15px;">
-                    <button id="backupAllBtn" onclick="backupAllData()" style="flex: 1; padding: 10px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <button id="backupAllBtn" onclick="backupAllData()" style="flex: 1; padding: 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         全量数据备份
                     </button>
-                    <button id="restoreAllBtn" onclick="document.getElementById('restoreFile').click()" style="flex: 1; padding: 10px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <button id="restoreAllBtn" onclick="document.getElementById('restoreFile').click()" style="flex: 1; padding: 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         全量数据恢复
                     </button>
@@ -815,7 +1045,7 @@
                 <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="restoreAllData(this)">
                 
                 <div style="margin-top: 15px;">
-                    <button id="resetSettingsBtn" onclick="resetSettings()" style="width: 100%; padding: 10px; border: 2px solid #ff4444; border-radius: 6px; background: #fff; color: #ff4444; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <button id="resetSettingsBtn" onclick="resetSettings()" style="width: 100%; padding: 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #000000; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
                         重置所有设置（保留收藏）
                     </button>
@@ -824,7 +1054,7 @@
             
             <!-- 关于与帮助 -->
             <div style="margin-bottom: 30px;">
-                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #000000; padding-bottom: 10px;">五、关于与帮助</h3>
+                <h3 style="font-family: 'YouYuan'; font-size: 18px; margin-bottom: 15px; border-bottom: none; padding-bottom: 10px; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; padding: 10px 15px;">五、关于与帮助</h3>
                 
                 <div style="font-family: 'YouYuan'; font-size: 14px; line-height: 1.8;">
                     <p><strong>产品名称：</strong>HelloKgSearch</p>
@@ -840,24 +1070,24 @@
     </div>
 
     <!-- Custom Confirm Dialog -->
-    <div id="customConfirm" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 20000;">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #f0f0f0; border: 2px solid #000000; border-radius: 10px; padding: 30px; min-width: 300px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+    <div id="customConfirm" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 20000; opacity: 0; transition: opacity 0.3s ease;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #F0F0F0; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; padding: 30px; min-width: 300px; max-width: 90%;">
             <div id="customConfirmMessage" style="font-size: 16px; margin-bottom: 25px; text-align: center; line-height: 1.5; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;"></div>
             <div style="display: flex; gap: 15px; justify-content: center;">
-                <button id="customConfirmCancel" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
-                <button id="customConfirmOk" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #000000; color: white; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
+                <button id="customConfirmCancel" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
+                <button id="customConfirmOk" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #000000; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
             </div>
         </div>
     </div>
 
     <!-- Custom Prompt Dialog -->
-    <div id="customPrompt" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 20000;">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #f0f0f0; border: 2px solid #000000; border-radius: 10px; padding: 30px; min-width: 350px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+    <div id="customPrompt" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 20000; opacity: 0; transition: opacity 0.3s ease;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #F0F0F0; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; padding: 30px; min-width: 350px; max-width: 90%;">
             <div id="customPromptMessage" style="font-size: 16px; margin-bottom: 15px; text-align: center; line-height: 1.5; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;"></div>
-            <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 2px solid #000000; border-radius: 6px; font-size: 14px; outline: none; margin-bottom: 20px; box-sizing: border-box; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+            <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; font-size: 14px; outline: none; margin-bottom: 20px; box-sizing: border-box; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; background: #F0F0F0;">
             <div style="display: flex; gap: 15px; justify-content: center;">
-                <button id="customPromptCancel" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #f0f0f0; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
-                <button id="customPromptOk" style="flex: 1; padding: 10px 20px; border: 2px solid #000000; border-radius: 6px; background: #000000; color: white; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
+                <button id="customPromptCancel" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
+                <button id="customPromptOk" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #000000; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
             </div>
         </div>
     </div>
@@ -866,6 +1096,117 @@
         const input = document.getElementById('searchInput');
         const suggestionsList = document.getElementById('suggestions');
         const searchHistoryList = document.getElementById('searchHistory');
+        
+        // Button rotation animation
+        function addButtonRotationEffect() {
+            // Add click event to all buttons
+            document.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Remove existing rotate class
+                    this.classList.remove('rotate');
+                    
+                    // Force reflow
+                    void this.offsetWidth;
+                    
+                    // Add rotate class
+                    this.classList.add('rotate');
+                    
+                    // Remove class after animation completes
+                    setTimeout(() => {
+                        this.classList.remove('rotate');
+                    }, 600);
+                });
+            });
+        }
+        
+        // Initialize button rotation effect
+        addButtonRotationEffect();
+        
+        // Get engine hint box reference
+        const engineHintBox = document.getElementById('engineHintInSearchBox');
+        
+        // Add rotation effect to search box on click
+        const searchBox = document.getElementById('searchInput');
+        if (searchBox) {
+            let isRotating = false;
+            
+            searchBox.addEventListener('click', function() {
+                // Get all buttons in search container
+                const searchButtons = document.querySelectorAll('.search-container .search-button');
+                
+                // Hide all buttons and engine hint
+                searchButtons.forEach(btn => {
+                    btn.style.opacity = '0';
+                    btn.style.pointerEvents = 'none';
+                });
+                if (engineHintBox) {
+                    engineHintBox.style.opacity = '0';
+                }
+                
+                // Hide search history immediately
+                searchHistoryList.classList.remove('visible');
+                setTimeout(() => {
+                    if (!searchHistoryList.classList.contains('visible')) {
+                        searchHistoryList.style.display = 'none';
+                    }
+                }, 300);
+                
+                // Remove existing rotate class
+                this.classList.remove('rotate');
+                
+                // Force reflow
+                void this.offsetWidth;
+                
+                // Add rotate class
+                this.classList.add('rotate');
+                isRotating = true;
+                
+                // After animation completes, restore buttons and show search history
+                setTimeout(() => {
+                    this.classList.remove('rotate');
+                    isRotating = false;
+                    
+                    // Restore buttons
+                    searchButtons.forEach(btn => {
+                        btn.style.opacity = '1';
+                        btn.style.pointerEvents = 'auto';
+                    });
+                    if (engineHintBox) {
+                        engineHintBox.style.opacity = '1';
+                    }
+                    
+                    // Show search history if input is empty
+                    const keyword = this.value.trim();
+                    if (!keyword) {
+                        showSearchHistory();
+                    }
+                }, 600);
+            });
+        }
+        
+        // Modal fade-in/fade-out functions
+        function showModalWithFade(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
+                // Force reflow
+                void modal.offsetWidth;
+                // Fade in
+                modal.style.opacity = '1';
+            }
+        }
+        
+        function hideModalWithFade(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                // Fade out
+                modal.style.opacity = '0';
+                // Hide after transition
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
+            }
+        }
         
         // Search history management
         const MAX_HISTORY = 50;
@@ -907,8 +1248,11 @@
         
         function clearSearchHistory() {
             localStorage.removeItem('searchHistory');
-            searchHistoryList.style.display = 'none';
-            searchHistoryList.innerHTML = '';
+            searchHistoryList.classList.remove('visible');
+            setTimeout(() => {
+                searchHistoryList.style.display = 'none';
+                searchHistoryList.innerHTML = '';
+            }, 300);
         }
         
         function showSearchHistory() {
@@ -952,6 +1296,10 @@
             
             searchHistoryList.innerHTML = html;
             searchHistoryList.style.display = 'block';
+            // Force reflow
+            void searchHistoryList.offsetWidth;
+            // Add visible class for fade-in animation
+            searchHistoryList.classList.add('visible');
             console.log('Showing search history:', history.length, 'items');
         }
         
@@ -981,6 +1329,25 @@
         
         // Load saved engine from cookie or use default
         let currentEngineUrl = getCookie('searchEngine') || 'https://cn.bing.com/search?q='; // Default: Bing China
+        
+        // Update engine hint text in search box
+        function updateEngineHint() {
+            const engineHintText = document.getElementById('engineHintText');
+            if (engineHintText) {
+                // Get current engine name
+                const engineItems = document.querySelectorAll('.engine-item');
+                let engineName = 'Bing';
+                engineItems.forEach(item => {
+                    if (item.getAttribute('data-url') === currentEngineUrl) {
+                        engineName = item.textContent.trim();
+                    }
+                });
+                engineHintText.textContent = `使用${engineName}搜索`;
+            }
+        }
+        
+        // Initialize engine hint
+        updateEngineHint();
 
         // Search functionality using current engine
         function performSearch() {
@@ -1066,7 +1433,11 @@
         // Hide suggestions
         function hideSuggestions() {
             suggestionsList.classList.remove('visible');
-            suggestionsList.innerHTML = '';
+            setTimeout(() => {
+                if (!suggestionsList.classList.contains('visible')) {
+                    suggestionsList.innerHTML = '';
+                }
+            }, 300);
         }
 
         // Select suggestion
@@ -1085,6 +1456,7 @@
 
         // Input event listener
         const engineSelectorDom = document.querySelector('.search-engine-selector');
+        const engineHintInSearchBox = document.getElementById('engineHintInSearchBox');
         input.addEventListener('input', function(e) {
             const keyword = e.target.value.trim();
             if (keyword) {
@@ -1094,14 +1466,23 @@
                     engineSelectorDom.style.display = 'none';
                 }
                 searchHistoryList.style.display = 'none';
+                // Hide engine hint when typing
+                if (engineHintInSearchBox) {
+                    engineHintInSearchBox.style.display = 'none';
+                }
             } else {
                 // Hide suggestions when input is empty, but keep engine selector hidden
                 hideSuggestions();
+                // Show engine hint when input is empty
+                if (engineHintInSearchBox) {
+                    engineHintInSearchBox.style.display = 'flex';
+                }
                 // Don't show engine selector automatically - user must click toggle button
             }
         });
         
-        // Show search history when clicking on input
+        // Show search history when clicking on input - disabled, now handled by rotation animation
+        /*
         input.addEventListener('click', function(e) {
             const keyword = input.value.trim();
             console.log('Input clicked, keyword:', keyword);
@@ -1112,6 +1493,7 @@
                 showSearchHistory();
             }
         });
+        */
         
         // Disable right-click context menu
         document.addEventListener('contextmenu', function(e) {
@@ -1210,7 +1592,12 @@
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.search-container')) {
                 hideSuggestions();
-                searchHistoryList.style.display = 'none';
+                searchHistoryList.classList.remove('visible');
+                setTimeout(() => {
+                    if (!searchHistoryList.classList.contains('visible')) {
+                        searchHistoryList.style.display = 'none';
+                    }
+                }, 300);
             }
         });
 
@@ -1250,8 +1637,8 @@
         // Toggle engine selector visibility - now switches to engine tab
         engineToggleBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            // Open the favorites modal first
-            document.getElementById('favoritesModal').style.display = 'block';
+            // Open the favorites modal first with fade effect
+            showModalWithFade('favoritesModal');
             switchToEngineTab();
         });
         
@@ -1269,6 +1656,9 @@
                 
                 // Update the toggle button icon with search engine favicon
                 updateEngineToggleIcon(engineName);
+                
+                // Update engine hint text
+                updateEngineHint();
                 
                 // Save to cookie (365 days)
                 setCookie('searchEngine', engineUrl, 365);
@@ -1493,7 +1883,7 @@
             const cancelBtn = document.getElementById('customConfirmCancel');
             
             messageEl.textContent = message;
-            dialog.style.display = 'block';
+            showModalWithFade('customConfirm');
             
             // Clear old listeners by cloning
             const newOkBtn = okBtn.cloneNode(true);
@@ -1503,12 +1893,12 @@
             
             // Add new listeners
             newOkBtn.addEventListener('click', function() {
-                dialog.style.display = 'none';
+                hideModalWithFade('customConfirm');
                 if (callback) callback(true);
             });
             
             newCancelBtn.addEventListener('click', function() {
-                dialog.style.display = 'none';
+                hideModalWithFade('customConfirm');
                 if (callback) callback(false);
             });
         }
@@ -1523,7 +1913,7 @@
             
             messageEl.textContent = message;
             input.value = defaultValue || '';
-            dialog.style.display = 'block';
+            showModalWithFade('customPrompt');
             
             // Clear old listeners by cloning
             const newOkBtn = okBtn.cloneNode(true);
@@ -1541,18 +1931,18 @@
             
             // Add new listeners
             newOkBtn.addEventListener('click', function() {
-                dialog.style.display = 'none';
+                hideModalWithFade('customPrompt');
                 if (callback) callback(newInput.value);
             });
             
             newCancelBtn.addEventListener('click', function() {
-                dialog.style.display = 'none';
+                hideModalWithFade('customPrompt');
                 if (callback) callback(null);
             });
             
             newInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    dialog.style.display = 'none';
+                    hideModalWithFade('customPrompt');
                     if (callback) callback(newInput.value);
                 }
             });
@@ -1603,7 +1993,7 @@
                 const faviconUrl = getFavicon(fav.url);
                 const initials = getInitials(fav.name);
                 
-                html += `<div onclick="openFavoriteUrl('${fav.url.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; padding: 12px; border: 2px solid #000000; border-radius: 6px; margin-bottom: 10px; background: #f0f0f0; cursor: pointer; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+                html += `<div onclick="openFavoriteUrl('${fav.url.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; padding: 12px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; margin-bottom: 10px; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
                     <div style="width: 32px; height: 32px; margin-right: 12px; flex-shrink: 0; position: relative;">
                         <img src="${faviconUrl}" onload="this.style.display='block'; this.nextElementSibling.style.display='none'" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" style="width: 100%; height: 100%; object-fit: contain; display: none;" alt="">
                         <div style="width: 100%; height: 100%; background: #000000; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; position: absolute; top: 0; left: 0;">${initials}</div>
@@ -1612,13 +2002,13 @@
                         <div style="font-weight: bold; margin-bottom: 4px;">${fav.name}</div>
                         <div style="color: #666; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${fav.url}</div>
                     </div>
-                    <button onclick="event.stopPropagation(); editFavorite(${originalIndex})" style="margin-left: 10px; padding: 6px 10px; border: 2px solid #000000; border-radius: 4px; background: #f0f0f0; cursor: pointer;">
+                    <button onclick="event.stopPropagation(); editFavorite(${originalIndex})" style="margin-left: 10px; padding: 6px 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
                     </button>
-                    <button onclick="event.stopPropagation(); deleteFavorite(${originalIndex})" style="margin-left: 5px; padding: 6px 10px; border: 2px solid #000000; border-radius: 4px; background: #f0f0f0; cursor: pointer;">
+                    <button onclick="event.stopPropagation(); deleteFavorite(${originalIndex})" style="margin-left: 5px; padding: 6px 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -1633,13 +2023,13 @@
         }
         
         function openFavorites() {
-            document.getElementById('favoritesModal').style.display = 'block';
+            showModalWithFade('favoritesModal');
             switchToFavoritesTab();  // Switch to favorites tab
             loadFavorites();
         }
         
         function closeFavorites() {
-            document.getElementById('favoritesModal').style.display = 'none';
+            hideModalWithFade('favoritesModal');
         }
         
         function openFavoriteUrl(url) {
@@ -1711,7 +2101,7 @@
         
         // KG data - fixed websites
         const kgWebsites = [
-            { name: 'Kg官方网站国内', url: 'https://image.cursorhub.org/user-upload/1775278183700-955c59a0-eafe-4105-98d1-a343d3d565e4.html', color: '#FAFAD2', initial: 'K' },
+            { name: 'Kg官方网站国内', url: 'https://image.cursorhub.org/user-upload/1775216603705-cb96f9fc-3f38-4dc1-86c6-1ca48e70ebcf.html', color: '#FAFAD2', initial: 'K' },
             { name: 'Kg 收银系统', url: 'https://wwbpg.lanzouu.com/iGuw43ibdxgf', color: '#FF6B8A', initial: 'K' },
             { name: 'Kg bing 壁纸', url: 'https://wwbpg.lanzouu.com/i1r813l8pwdi', color: '#4ECDC4', initial: 'W' },
             { name: 'KgWinNas', url: 'https://wwbpg.lanzouu.com/iQysW3ibdxpe', color: '#45B7D1', initial: 'N' }
@@ -1731,7 +2121,7 @@
             
             let html = '';
             filtered.forEach((kg) => {
-                html += `<div onclick="openFavoriteUrl('${kg.url.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; padding: 12px; border: 2px solid #000000; border-radius: 6px; margin-bottom: 10px; background: #f0f0f0; cursor: pointer; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+                html += `<div onclick="openFavoriteUrl('${kg.url.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; padding: 12px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; margin-bottom: 10px; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
                     <div style="width: 32px; height: 32px; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: ${kg.color}; color: white; border-radius: 50%; font-weight: bold; font-size: 16px;">
                         ${kg.initial}
                     </div>
@@ -1753,12 +2143,19 @@
             document.getElementById('settingsContent').style.display = 'none';
             document.getElementById('favTabBtn').style.background = '#000000';
             document.getElementById('favTabBtn').style.color = 'white';
-            document.getElementById('kgTabBtn').style.background = '#f0f0f0';
+            document.getElementById('favTabBtn').style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
+            document.getElementById('kgTabBtn').style.background = '#F0F0F0';
             document.getElementById('kgTabBtn').style.color = '#000000';
-            document.getElementById('engineTabBtn').style.background = '#f0f0f0';
+            document.getElementById('kgTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('officialTabBtn').style.background = '#F0F0F0';
+            document.getElementById('officialTabBtn').style.color = '#000000';
+            document.getElementById('officialTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('engineTabBtn').style.background = '#F0F0F0';
             document.getElementById('engineTabBtn').style.color = '#000000';
-            document.getElementById('settingsTabBtn').style.background = '#f0f0f0';
+            document.getElementById('engineTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('settingsTabBtn').style.background = '#F0F0F0';
             document.getElementById('settingsTabBtn').style.color = '#000000';
+            document.getElementById('settingsTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
             renderFavorites();
         }
         
@@ -1766,12 +2163,21 @@
             document.getElementById('favoritesContent').style.display = 'none';
             document.getElementById('kgContent').style.display = 'block';
             document.getElementById('engineContent').style.display = 'none';
-            document.getElementById('favTabBtn').style.background = '#f0f0f0';
+            document.getElementById('favTabBtn').style.background = '#F0F0F0';
             document.getElementById('favTabBtn').style.color = '#000000';
+            document.getElementById('favTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
             document.getElementById('kgTabBtn').style.background = '#000000';
             document.getElementById('kgTabBtn').style.color = 'white';
-            document.getElementById('engineTabBtn').style.background = '#f0f0f0';
+            document.getElementById('kgTabBtn').style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
+            document.getElementById('officialTabBtn').style.background = '#F0F0F0';
+            document.getElementById('officialTabBtn').style.color = '#000000';
+            document.getElementById('officialTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('engineTabBtn').style.background = '#F0F0F0';
             document.getElementById('engineTabBtn').style.color = '#000000';
+            document.getElementById('engineTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('settingsTabBtn').style.background = '#F0F0F0';
+            document.getElementById('settingsTabBtn').style.color = '#000000';
+            document.getElementById('settingsTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
             renderKG();
         }
         
@@ -1780,14 +2186,21 @@
             document.getElementById('kgContent').style.display = 'none';
             document.getElementById('engineContent').style.display = 'block';
             document.getElementById('settingsContent').style.display = 'none';
-            document.getElementById('favTabBtn').style.background = '#f0f0f0';
+            document.getElementById('favTabBtn').style.background = '#F0F0F0';
             document.getElementById('favTabBtn').style.color = '#000000';
-            document.getElementById('kgTabBtn').style.background = '#f0f0f0';
+            document.getElementById('favTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('kgTabBtn').style.background = '#F0F0F0';
             document.getElementById('kgTabBtn').style.color = '#000000';
+            document.getElementById('kgTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('officialTabBtn').style.background = '#F0F0F0';
+            document.getElementById('officialTabBtn').style.color = '#000000';
+            document.getElementById('officialTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
             document.getElementById('engineTabBtn').style.background = '#000000';
             document.getElementById('engineTabBtn').style.color = 'white';
-            document.getElementById('settingsTabBtn').style.background = '#f0f0f0';
+            document.getElementById('engineTabBtn').style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
+            document.getElementById('settingsTabBtn').style.background = '#F0F0F0';
             document.getElementById('settingsTabBtn').style.color = '#000000';
+            document.getElementById('settingsTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
         }
         
         function switchToSettingsTab() {
@@ -1795,14 +2208,21 @@
             document.getElementById('kgContent').style.display = 'none';
             document.getElementById('engineContent').style.display = 'none';
             document.getElementById('settingsContent').style.display = 'block';
-            document.getElementById('favTabBtn').style.background = '#f0f0f0';
+            document.getElementById('favTabBtn').style.background = '#F0F0F0';
             document.getElementById('favTabBtn').style.color = '#000000';
-            document.getElementById('kgTabBtn').style.background = '#f0f0f0';
+            document.getElementById('favTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('kgTabBtn').style.background = '#F0F0F0';
             document.getElementById('kgTabBtn').style.color = '#000000';
-            document.getElementById('engineTabBtn').style.background = '#f0f0f0';
+            document.getElementById('kgTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('officialTabBtn').style.background = '#F0F0F0';
+            document.getElementById('officialTabBtn').style.color = '#000000';
+            document.getElementById('officialTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
+            document.getElementById('engineTabBtn').style.background = '#F0F0F0';
             document.getElementById('engineTabBtn').style.color = '#000000';
+            document.getElementById('engineTabBtn').style.boxShadow = '20px 20px 62px #cccccc, -20px -20px 62px #ffffff';
             document.getElementById('settingsTabBtn').style.background = '#000000';
             document.getElementById('settingsTabBtn').style.color = 'white';
+            document.getElementById('settingsTabBtn').style.boxShadow = 'inset 5px 5px 10px #000000, inset -5px -5px 10px #333333';
         }
         
         function openKG() {
@@ -1890,21 +2310,7 @@
         
         // Initialize input fade-in animation
         setupInputFadeIn();
-        
-        // Show/hide time based on search input
-        const searchInput = document.getElementById('searchInput');
-        const timeInSearchBox = document.getElementById('timeInSearchBox');
-        
-        if (searchInput && timeInSearchBox) {
-            searchInput.addEventListener('input', function() {
-                if (this.value.trim()) {
-                    timeInSearchBox.style.display = 'none';
-                } else {
-                    timeInSearchBox.style.display = 'flex';
-                }
-            });
-        }
-        
+
         // Lunar calendar conversion (simplified version)
         const lunarInfo = [
             0x04bd8, 0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0, 0x09ad0, 0x055d2,
@@ -2021,49 +2427,146 @@
             return `${yearName}年 (${animal}) ${monthStr}${dayStr}`;
         }
         
-        // Update time display
-        function updateTime() {
-            const now = new Date();
-            
-            // Format time HH:MM:SS
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const timeStr = `${hours}:${minutes}:${seconds}`;
-            
-            const currentTimeEl = document.getElementById('currentTime');
-            if (currentTimeEl) {
-                currentTimeEl.textContent = timeStr;
-                console.log('Time updated:', timeStr);
-            }
-            
-            // Format date with weekday and lunar calendar
-            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-            const weekday = weekdays[now.getDay()];
-            
-            const lunar = getLunarDate(now);
-            const lunarStr = formatLunarDate(lunar);
-            
-            const currentDateEl = document.getElementById('currentDate');
-            if (currentDateEl) {
-                currentDateEl.textContent = `${weekday} ${lunarStr}`;
-            }
-        }
-        
-        // Initialize time display
-        updateTime();
-        setInterval(updateTime, 1000); // Update time every second
-        
         // Load time display preference
         const showTimePreference = localStorage.getItem('showTimeDisplay');
         if (showTimePreference !== null) {
             const showTime = showTimePreference === 'true';
             document.getElementById('showTimeToggle').checked = showTime;
-            const timeDisplay = document.getElementById('timeDisplay');
-            if (timeDisplay) {
-                timeDisplay.style.display = showTime ? 'flex' : 'none';
+        }
+        
+        // Toggle dark mode function
+        function toggleDarkMode() {
+            const isDarkMode = document.getElementById('darkModeToggle').checked;
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'false');
             }
         }
+
+        // Load dark mode preference
+        const darkModePreference = localStorage.getItem('darkMode');
+        if (darkModePreference === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').checked = true;
+        }
+        
+        // Easter Egg: Settings button click counter
+        let settingsClickCount = 0;
+        let settingsClickTimer = null;
+        
+        function handleSettingsClick() {
+            settingsClickCount++;
+            
+            // Clear previous timer
+            if (settingsClickTimer) {
+                clearTimeout(settingsClickTimer);
+            }
+            
+            // If clicked 10 times, open drawing canvas
+            if (settingsClickCount >= 10) {
+                settingsClickCount = 0;
+                openDrawingCanvas();
+                return;
+            }
+            
+            // Reset counter after 2 seconds
+            settingsClickTimer = setTimeout(() => {
+                settingsClickCount = 0;
+            }, 2000);
+            
+            // Normal behavior: switch to settings tab
+            switchToSettingsTab();
+        }
+        
+        // Drawing Canvas Functions
+        function openDrawingCanvas() {
+            const canvas = document.getElementById('drawingCanvas');
+            const drawCanvas = document.getElementById('drawCanvas');
+            
+            // Show canvas
+            canvas.style.display = 'block';
+            
+            // Set canvas size
+            drawCanvas.width = window.innerWidth;
+            drawCanvas.height = window.innerHeight;
+            
+            // Get context
+            const ctx = drawCanvas.getContext('2d');
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            
+            // Mouse events
+            drawCanvas.addEventListener('mousedown', (e) => {
+                isDrawing = true;
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            });
+            
+            drawCanvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            });
+            
+            drawCanvas.addEventListener('mouseup', () => isDrawing = false);
+            drawCanvas.addEventListener('mouseout', () => isDrawing = false);
+            
+            // Touch events for mobile
+            drawCanvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                isDrawing = true;
+                const touch = e.touches[0];
+                const rect = drawCanvas.getBoundingClientRect();
+                lastX = touch.clientX - rect.left;
+                lastY = touch.clientY - rect.top;
+            });
+            
+            drawCanvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (!isDrawing) return;
+                const touch = e.touches[0];
+                const rect = drawCanvas.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                lastX = x;
+                lastY = y;
+            });
+            
+            drawCanvas.addEventListener('touchend', () => isDrawing = false);
+        }
+        
+        function closeDrawingCanvas() {
+            document.getElementById('drawingCanvas').style.display = 'none';
+        }
     </script>
+    
+    <!-- Easter Egg: Drawing Canvas -->
+    <div id="drawingCanvas" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 99999;">
+        <!-- KG Text in Center -->
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 120px; font-weight: bold; color: #000000; font-family: Arial, sans-serif; pointer-events: none; user-select: none; opacity: 0.1;">
+            kg
+        </div>
+        
+        <!-- Close Button (Top Right) -->
+        <button onclick="closeDrawingCanvas()" style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; border: none; border-radius: 50%; background: #000000; color: #ffffff; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100000;">×</button>
+        
+        <!-- Canvas for Drawing -->
+        <canvas id="drawCanvas" style="position: absolute; top: 0; left: 0; cursor: crosshair;"></canvas>
+    </div>
 </body>
 </html>
