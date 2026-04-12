@@ -50,6 +50,15 @@
             }
         }
 
+        @keyframes rotateContainer360 {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(-360deg);
+            }
+        }
+
         @keyframes searchBoxExit {
             from {
                 opacity: 1;
@@ -88,6 +97,20 @@
             }
         }
 
+        /* Override for search buttons to preserve their positioning */
+        .search-button.rotate {
+            animation: searchButtonRotate360 0.6s ease;
+        }
+
+        @keyframes searchButtonRotate360 {
+            from {
+                transform: translateY(-50%) rotate(0deg);
+            }
+            to {
+                transform: translateY(-50%) rotate(-360deg);
+            }
+        }
+
         /* Input fade-in animation */
         input[type="text"],
         input[type="password"],
@@ -122,6 +145,10 @@
 
         .search-button.rotate,
         button.rotate {
+            animation: rotate360 0.6s ease;
+        }
+
+        #engineHintInSearchBox.rotate {
             animation: rotate360 0.6s ease;
         }
 
@@ -170,6 +197,10 @@
                 opacity: 1;
                 transform: translateY(0) rotate(0deg);
             }
+        }
+
+        .animate-entry.bottom-buttons-container {
+            animation: favBtnEntry 1s ease-out forwards;
         }
 
         @keyframes favBtnExit {
@@ -776,26 +807,6 @@
                 <img src="https://cn.bing.com/favicon.ico" alt="必应中国" style="width: 20px; height: 20px; object-fit: contain;">
                 必应中国
             </div>
-            <div class="engine-item" data-engine="google" data-url="https://www.google.com/search?q=">
-                <img src="https://www.google.com/favicon.ico" alt="Google" style="width: 20px; height: 20px; object-fit: contain;">
-                Google
-            </div>
-            <div class="engine-item" data-engine="bing" data-url="https://www.bing.com/search?q=">
-                <img src="https://www.bing.com/favicon.ico" alt="Bing" style="width: 20px; height: 20px; object-fit: contain;">
-                Bing
-            </div>
-            <div class="engine-item" data-engine="yandex" data-url="https://yandex.com/search/?text=">
-                <img src="https://yandex.com/favicon.ico" alt="Yandex" style="width: 20px; height: 20px; object-fit: contain;">
-                Yandex
-            </div>
-            <div class="engine-item" data-engine="naver" data-url="https://search.naver.com/search.naver?query=">
-                <img src="https://search.naver.com/favicon.ico" alt="Naver" style="width: 20px; height: 20px; object-fit: contain;">
-                Naver
-            </div>
-            <div class="engine-item" data-engine="duckduckgo" data-url="https://duckduckgo.com/?q=">
-                <img src="https://duckduckgo.com/favicon.ico" alt="DuckDuckGo" style="width: 20px; height: 20px; object-fit: contain;">
-                DuckDuckGo
-            </div>
         </div>
     </div>
 
@@ -818,7 +829,7 @@
                         <line x1="12" y1="17" x2="12" y2="21"></line>
                     </svg>
                 </button>
-                <button id="officialTabBtn" onclick="window.open('https://image.cursorhub.org/user-upload/1775906952848-a88f2ae0-a776-481b-abc1-2082ceb2491c.html', '_blank')" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="officialTabBtn" onclick="window.open('https://image.cursorhub.org/user-upload/1775992631230-a7a6a7f7-0586-4ed6-9108-94e1ad259d14.html', '_blank')" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                         <polyline points="15 3 21 3 21 9"></polyline>
@@ -911,46 +922,6 @@
                     <div class="engine-item" data-engine="wechat" data-url="https://weixin.sogou.com/weixin?type=2&q=">
                         <img src="https://weixin.sogou.com/favicon.ico" alt="微信搜一搜" style="width: 20px; height: 20px; object-fit: contain;">
                         微信搜一搜
-                    </div>
-                    <div class="engine-item" data-engine="google" data-url="https://www.google.com/search?q=">
-                        <img src="https://www.google.com/favicon.ico" alt="谷歌" style="width: 20px; height: 20px; object-fit: contain;">
-                        谷歌
-                    </div>
-                    <div class="engine-item" data-engine="bingglobal" data-url="https://www.bing.com/search?q=">
-                        <img src="https://www.bing.com/favicon.ico" alt="Bing Global" style="width: 20px; height: 20px; object-fit: contain;">
-                        Bing Global
-                    </div>
-                    <div class="engine-item" data-engine="yahoo" data-url="https://search.yahoo.com/search?p=">
-                        <img src="https://search.yahoo.com/favicon.ico" alt="Yahoo" style="width: 20px; height: 20px; object-fit: contain;">
-                        Yahoo
-                    </div>
-                    <div class="engine-item" data-engine="duckduckgo" data-url="https://duckduckgo.com/?q=">
-                        <img src="https://duckduckgo.com/favicon.ico" alt="DuckDuckGo" style="width: 20px; height: 20px; object-fit: contain;">
-                        DuckDuckGo
-                    </div>
-                    <div class="engine-item" data-engine="yandex" data-url="https://yandex.com/search/?text=">
-                        <img src="https://yandex.com/favicon.ico" alt="Yandex" style="width: 20px; height: 20px; object-fit: contain;">
-                        Yandex
-                    </div>
-                    <div class="engine-item" data-engine="baiduglobal" data-url="https://www.baidu.com/s?wd=">
-                        <img src="https://www.baidu.com/favicon.ico" alt="Baidu Global" style="width: 20px; height: 20px; object-fit: contain;">
-                        Baidu Global
-                    </div>
-                    <div class="engine-item" data-engine="ecosia" data-url="https://www.ecosia.org/search?q=">
-                        <img src="https://www.ecosia.org/favicon.ico" alt="Ecosia" style="width: 20px; height: 20px; object-fit: contain;">
-                        Ecosia
-                    </div>
-                    <div class="engine-item" data-engine="startpage" data-url="https://www.startpage.com/sp/search?query=">
-                        <img src="https://www.startpage.com/favicon.ico" alt="StartPage" style="width: 20px; height: 20px; object-fit: contain;">
-                        StartPage
-                    </div>
-                    <div class="engine-item" data-engine="qwant" data-url="https://www.qwant.com/?q=">
-                        <img src="https://www.qwant.com/favicon.ico" alt="Qwant" style="width: 20px; height: 20px; object-fit: contain;">
-                        Qwant
-                    </div>
-                    <div class="engine-item" data-engine="ask" data-url="https://www.ask.com/web?q=">
-                        <img src="https://www.ask.com/favicon.ico" alt="Ask.com" style="width: 20px; height: 20px; object-fit: contain;">
-                        Ask.com
                     </div>
                 </div>
             </div>
@@ -1135,23 +1106,23 @@
 
     <!-- Custom Confirm Dialog -->
     <div id="customConfirm" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 20000; opacity: 0; transition: opacity 0.3s ease;">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #F0F0F0; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; padding: 30px; min-width: 300px; max-width: 90%;">
-            <div id="customConfirmMessage" style="font-size: 16px; margin-bottom: 25px; text-align: center; line-height: 1.5; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;"></div>
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #F0F0F0; border: none; border-radius: 34px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); padding: 30px; min-width: 300px; max-width: 90%;">
+            <div id="customConfirmMessage" style="font-size: 16px; margin-bottom: 25px; text-align: center; line-height: 1.5; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;"></div>
             <div style="display: flex; gap: 15px; justify-content: center;">
-                <button id="customConfirmCancel" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
-                <button id="customConfirmOk" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #000000; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
+                <button id="customConfirmCancel" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); background: #F0F0F0; cursor: pointer; font-size: 14px; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
+                <button id="customConfirmOk" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); background: #F0F0F0; color: #000000; cursor: pointer; font-size: 14px; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
             </div>
         </div>
     </div>
 
     <!-- Custom Prompt Dialog -->
     <div id="customPrompt" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 20000; opacity: 0; transition: opacity 0.3s ease;">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #F0F0F0; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; padding: 30px; min-width: 350px; max-width: 90%;">
-            <div id="customPromptMessage" style="font-size: 16px; margin-bottom: 15px; text-align: center; line-height: 1.5; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;"></div>
-            <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; font-size: 14px; outline: none; margin-bottom: 20px; box-sizing: border-box; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; background: #F0F0F0;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #F0F0F0; border: none; border-radius: 34px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); padding: 30px; min-width: 350px; max-width: 90%;">
+            <div id="customPromptMessage" style="font-size: 16px; margin-bottom: 15px; text-align: center; line-height: 1.5; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;"></div>
+            <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: none; border-radius: 34px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); font-size: 14px; outline: none; margin-bottom: 20px; box-sizing: border-box; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; background: #F0F0F0;">
             <div style="display: flex; gap: 15px; justify-content: center;">
-                <button id="customPromptCancel" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
-                <button id="customPromptOk" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #000000; cursor: pointer; font-size: 14px; font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
+                <button id="customPromptCancel" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); background: #F0F0F0; cursor: pointer; font-size: 14px; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">取消</button>
+                <button id="customPromptOk" style="flex: 1; padding: 10px 20px; border: none; border-radius: 34px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); background: #F0F0F0; color: #000000; cursor: pointer; font-size: 14px; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">确定</button>
             </div>
         </div>
     </div>
@@ -1195,18 +1166,6 @@
             let isRotating = false;
             
             searchBox.addEventListener('click', function() {
-                // Get all buttons in search container
-                const searchButtons = document.querySelectorAll('.search-container .search-button');
-                
-                // Hide all buttons and engine hint
-                searchButtons.forEach(btn => {
-                    btn.style.opacity = '0';
-                    btn.style.pointerEvents = 'none';
-                });
-                if (engineHintBox) {
-                    engineHintBox.style.opacity = '0';
-                }
-                
                 // Hide search history immediately
                 searchHistoryList.classList.remove('visible');
                 setTimeout(() => {
@@ -1215,28 +1174,41 @@
                     }
                 }, 300);
                 
+                // Get all buttons and engine hint
+                const searchButtons = document.querySelectorAll('.search-container .search-button');
+                const engineHint = document.getElementById('engineHintInSearchBox');
+                
+                // Hide buttons and engine hint
+                searchButtons.forEach(btn => {
+                    btn.style.opacity = '0';
+                    btn.style.pointerEvents = 'none';
+                });
+                if (engineHint) {
+                    engineHint.style.opacity = '0';
+                }
+                
                 // Remove existing rotate class
                 this.classList.remove('rotate');
                 
                 // Force reflow
                 void this.offsetWidth;
                 
-                // Add rotate class
+                // Add rotate class for 360 degree rotation
                 this.classList.add('rotate');
                 isRotating = true;
                 
-                // After animation completes, restore buttons and show search history
+                // After animation completes, show search history and restore buttons
                 setTimeout(() => {
                     this.classList.remove('rotate');
                     isRotating = false;
                     
-                    // Restore buttons
+                    // Restore buttons and engine hint
                     searchButtons.forEach(btn => {
                         btn.style.opacity = '1';
                         btn.style.pointerEvents = 'auto';
                     });
-                    if (engineHintBox) {
-                        engineHintBox.style.opacity = '1';
+                    if (engineHint) {
+                        engineHint.style.opacity = '1';
                     }
                     
                     // Show search history if input is empty
@@ -1477,7 +1449,7 @@
             }
 
             suggestionsList.innerHTML = data.s.map((item, index) => 
-                `<li style="font-family: 'KaiTi', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; animation-delay: ${index * 0.05}s">${item}</li>`
+                `<li style="font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; animation-delay: ${index * 0.05}s">${item}</li>`
             ).join('');
             suggestionsList.classList.add('visible');
             
@@ -2104,29 +2076,39 @@
                     
                     // After modal is hidden, trigger entry animations
                     const searchContainer = document.querySelector('.search-container');
-                    const bottomButtons = document.querySelector('.bottom-buttons-container');
+                    const bottomButtons = document.querySelectorAll('.bottom-btn');
                     
                     if (searchContainer) {
+                        // Reset and trigger animation
                         searchContainer.style.animation = 'none';
-                        void searchContainer.offsetWidth; // Force reflow
+                        searchContainer.offsetHeight; // Trigger reflow
                         searchContainer.style.animation = 'searchBoxEntry 1s ease-out forwards';
+                        
+                        // After animation completes, keep the final state by setting inline styles
+                        setTimeout(() => {
+                            searchContainer.style.opacity = '1';
+                            searchContainer.style.transform = 'translateY(0) rotate(0deg)';
+                            searchContainer.style.animation = 'none';
+                        }, 1000);
                     }
                     
-                    if (bottomButtons) {
-                        bottomButtons.style.animation = 'none';
-                        void bottomButtons.offsetWidth; // Force reflow
-                        bottomButtons.style.animation = 'favBtnEntry 1s ease-out 0.3s forwards';
+                    if (bottomButtons && bottomButtons.length > 0) {
+                        // Delay for bottom buttons
+                        setTimeout(() => {
+                            bottomButtons.forEach(btn => {
+                                btn.style.animation = 'none';
+                                btn.offsetHeight; // Trigger reflow
+                                btn.style.animation = 'favBtnEntry 1s ease-out forwards';
+                                
+                                // After animation completes, keep the final state
+                                setTimeout(() => {
+                                    btn.style.opacity = '1';
+                                    btn.style.transform = 'translateY(0) rotate(0deg)';
+                                    btn.style.animation = 'none';
+                                }, 1000);
+                            });
+                        }, 300);
                     }
-                    
-                    // Reset animations after they complete
-                    setTimeout(() => {
-                        if (searchContainer) {
-                            searchContainer.style.animation = '';
-                        }
-                        if (bottomButtons) {
-                            bottomButtons.style.animation = '';
-                        }
-                    }, 1300);
                 }, 300);
             }
         }
@@ -2200,10 +2182,11 @@
         
         // KG data - fixed websites
         const kgWebsites = [
-            { name: 'Kg官方网站国内', url: 'https://image.cursorhub.org/user-upload/1775906952848-a88f2ae0-a776-481b-abc1-2082ceb2491c.html', color: '#FAFAD2', initial: 'K' },
-            { name: 'Kg 收银系统', url: 'https://wwbpg.lanzouu.com/iGuw43ibdxgf', color: '#FF6B8A', initial: 'K' },
-            { name: 'Kg bing 壁纸', url: 'https://wwbpg.lanzouu.com/i1r813l8pwdi', color: '#4ECDC4', initial: 'W' },
-            { name: 'KgWinNas', url: 'https://wwbpg.lanzouu.com/iQysW3ibdxpe', color: '#45B7D1', initial: 'N' }
+            { name: 'Kg官方网站国内', url: 'https://image.cursorhub.org/user-upload/1775992631230-a7a6a7f7-0586-4ed6-9108-94e1ad259d14.html', color: '#FAFAD2', initial: 'K' },
+            { name: 'Kg 收银系统', url: 'https://wwbpg.lanzouu.com/iGuw43ibdxgf', color: '#FF6B8A', initial: '银' },
+            { name: 'Kg bing 壁纸', url: 'https://wwbpg.lanzouu.com/i1r813l8pwdi', color: '#4ECDC4', initial: '壁' },
+            { name: 'KgWinNas', url: 'https://wwbpg.lanzouu.com/iQysW3ibdxpe', color: '#45B7D1', initial: '盘' },
+            { name: 'Kg跃点网络优先切换', url: 'https://wwbpg.lanzouu.com/iZbiG3n2mk2d', color: '#323154', initial: '网' }
         ];
         
         function renderKG(filter = '') {
@@ -2934,6 +2917,20 @@
         function closeDrawingCanvas() {
             document.getElementById('drawingCanvas').style.display = 'none';
         }
+        
+        // Force trigger load event after page is ready
+        // This fixes the issue where page keeps spinning due to blocked resources
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                // Check if load event has already been fired
+                if (document.readyState === 'complete') {
+                    return;
+                }
+                // Force trigger load event
+                window.dispatchEvent(new Event('load'));
+                console.log('Load event forced');
+            }, 2000); // Wait 2 seconds after DOM is ready
+        });
     </script>
     
     <!-- QR Code Scanner Modal -->
