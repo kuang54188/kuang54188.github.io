@@ -35,18 +35,18 @@
             position: relative;
             z-index: 100;
             opacity: 0;
-            transform: translateY(-60vh) rotate(-360deg);
-            animation: searchBoxEntry 1s ease-out forwards;
+            transform: scale(0.5);
+            animation: searchBoxEntry 0.8s ease-out forwards;
         }
 
         @keyframes searchBoxEntry {
             from {
                 opacity: 0;
-                transform: translateY(-60vh) rotate(-360deg);
+                transform: scale(0.5);
             }
             to {
                 opacity: 1;
-                transform: translateY(0) rotate(0deg);
+                transform: scale(1);
             }
         }
 
@@ -62,11 +62,11 @@
         @keyframes searchBoxExit {
             from {
                 opacity: 1;
-                transform: translateY(0) rotate(0deg);
+                transform: scale(1);
             }
             to {
                 opacity: 0;
-                transform: translateY(-60vh) rotate(-360deg);
+                transform: scale(0.5);
             }
         }
 
@@ -84,17 +84,27 @@
             transition: transform 0.3s ease;
         }
 
-        .search-box.rotate {
-            animation: searchBoxRotate360 0.6s ease;
+        .search-box.dynamic-island {
+            animation: dynamicIsland 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        @keyframes searchBoxRotate360 {
-            from {
-                transform: rotate(0deg);
+        @keyframes dynamicIsland {
+            0% {
+                transform: scale(1);
             }
-            to {
-                transform: rotate(360deg);
+            40% {
+                transform: scale(0.92);
             }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        #favTabBtn.dynamic-island,
+        #kgTabBtn.dynamic-island,
+        #engineTabBtn.dynamic-island,
+        #settingsTabBtn.dynamic-island {
+            animation: dynamicIsland 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         /* Override for search buttons to preserve their positioning */
@@ -184,33 +194,33 @@
             color: #000000;
             font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;
             opacity: 0;
-            transform: translateY(100px) rotate(360deg);
-            animation: favBtnEntry 1s ease-out 0.3s forwards;
+            transform: scale(0.5);
+            animation: favBtnEntry 0.8s ease-out 0.3s forwards;
         }
 
         @keyframes favBtnEntry {
             from {
                 opacity: 0;
-                transform: translateY(100px) rotate(360deg);
+                transform: scale(0.5);
             }
             to {
                 opacity: 1;
-                transform: translateY(0) rotate(0deg);
+                transform: scale(1);
             }
         }
 
         .animate-entry.bottom-buttons-container {
-            animation: favBtnEntry 1s ease-out forwards;
+            animation: favBtnEntry 0.8s ease-out forwards;
         }
 
         @keyframes favBtnExit {
             from {
                 opacity: 1;
-                transform: translateY(0) rotate(0deg);
+                transform: scale(1);
             }
             to {
                 opacity: 0;
-                transform: translateY(100px) rotate(360deg);
+                transform: scale(0.5);
             }
         }
 
@@ -289,18 +299,16 @@
             
             #favTabBtn,
             #kgTabBtn,
-            #officialTabBtn,
             #engineTabBtn,
             #settingsTabBtn {
                 max-width: none !important;
                 padding: 6px 8px !important; /* 50% smaller */
                 font-size: 12px !important; /* 50% smaller */
-                width: calc(20% - 8px) !important;
+                width: calc(25% - 8px) !important;
             }
             
             #favTabBtn svg,
             #kgTabBtn svg,
-            #officialTabBtn svg,
             #engineTabBtn svg,
             #settingsTabBtn svg {
                 width: 18px !important; /* 50% smaller from 24px */
@@ -824,16 +832,10 @@
                 </button>
                 <button id="kgTabBtn" onclick="switchToKGTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
-                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                        <line x1="8" y1="21" x2="16" y2="21"></line>
-                        <line x1="12" y1="17" x2="12" y2="21"></line>
-                    </svg>
-                </button>
-                <button id="officialTabBtn" onclick="window.open('https://image.cursorhub.org/user-upload/1775992631230-a7a6a7f7-0586-4ed6-9108-94e1ad259d14.html', '_blank')" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
                     </svg>
                 </button>
                 <button id="engineTabBtn" onclick="switchToEngineTab()" style="display: flex; align-items: center; justify-content: center; width: 80px; padding: 12px 20px; border: none; border-radius: 34px; background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
@@ -870,7 +872,7 @@
         <!-- KG Content -->
         <div id="kgContent" style="display: none;">
             <div style="padding: 20px 20px 0 20px;">
-                <input type="text" id="kgSearchInput" placeholder="搜索 KG 网页..." style="width: 100%; padding: 10px 15px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; font-size: 14px; outline: none; background: #F0F0F0; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
+                <input type="text" id="kgSearchInput" placeholder="搜索 KG 软件..." style="width: 100%; padding: 10px 15px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; font-size: 14px; outline: none; background: #F0F0F0; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif;">
             </div>
             <div id="kgList" style="padding: 20px;"></div>
         </div>
@@ -1003,7 +1005,19 @@
                         收藏数据导出
                     </button>
                 </div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 15px;">
+                    <button onclick="exportAllData()" style="flex: 1; padding: 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 5 17 10"></polyline><line x1="12" y1="5" x2="12" y2="15"></line></svg>
+                        全量数据导出
+                    </button>
+                    <button onclick="importAllData()" style="flex: 1; padding: 10px; border: none; border-radius: 34px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        全量数据导入
+                    </button>
+                </div>
                 <input type="file" id="favImportFile" accept=".json" style="display: none;">
+                <input type="file" id="allDataImportFile" accept=".json" style="display: none;">
             </div>
             
             <!-- 外观设置 -->
@@ -1028,9 +1042,33 @@
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
+                        <input type="checkbox" id="showPoemToggle" onchange="togglePoemDisplay()" style="margin-right: 10px; width: 18px; height: 18px;" checked>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                        显示古诗
+                    </label>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
+                        <input type="checkbox" id="showScannerToggle" onchange="toggleScannerDisplay()" style="margin-right: 10px; width: 18px; height: 18px;" checked>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px;"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path></svg>
+                        显示扫一扫
+                    </label>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
                         <input type="checkbox" id="highContrastMode" onchange="toggleHighContrast()" style="margin-right: 10px; width: 18px; height: 18px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                         高对比度模式
+                    </label>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle></svg>
+                        主题背景色
+                        <input type="color" id="themeColorPicker" value="#F0F0F0" onchange="changeThemeColor(this.value)" style="margin-left: 10px; width: 40px; height: 30px; border: none; border-radius: 5px; cursor: pointer;">
                     </label>
                 </div>
             </div>
@@ -1160,11 +1198,9 @@
         // Get engine hint box reference
         const engineHintBox = document.getElementById('engineHintInSearchBox');
         
-        // Add rotation effect to search box on click
+        // Add dynamic island effect to search box on click
         const searchBox = document.getElementById('searchInput');
         if (searchBox) {
-            let isRotating = false;
-            
             searchBox.addEventListener('click', function() {
                 // Hide search history immediately
                 searchHistoryList.classList.remove('visible');
@@ -1187,20 +1223,24 @@
                     engineHint.style.opacity = '0';
                 }
                 
-                // Remove existing rotate class
-                this.classList.remove('rotate');
+                // Remove existing dynamic-island class
+                this.classList.remove('dynamic-island');
                 
                 // Force reflow
                 void this.offsetWidth;
                 
-                // Add rotate class for 360 degree rotation
-                this.classList.add('rotate');
-                isRotating = true;
+                // Add dynamic-island class for iPhone-like animation
+                this.classList.add('dynamic-island');
                 
                 // After animation completes, show search history and restore buttons
                 setTimeout(() => {
-                    this.classList.remove('rotate');
-                    isRotating = false;
+                    this.classList.remove('dynamic-island');
+                    
+                    // Show search history if input is empty
+                    const keyword = this.value.trim();
+                    if (!keyword) {
+                        showSearchHistory();
+                    }
                     
                     // Restore buttons and engine hint
                     searchButtons.forEach(btn => {
@@ -1210,37 +1250,47 @@
                     if (engineHint) {
                         engineHint.style.opacity = '1';
                     }
-                    
-                    // Show search history if input is empty
-                    const keyword = this.value.trim();
-                    if (!keyword) {
-                        showSearchHistory();
-                    }
-                }, 600);
+                }, 500);
             });
         }
         
         // Modal fade-in/fade-out functions
+        let modalHideTimeouts = {};
+        
         function showModalWithFade(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
+                console.log('showModalWithFade called for:', modalId);
+                // Clear any pending hide timeout
+                if (modalHideTimeouts[modalId]) {
+                    console.log('Clearing hide timeout');
+                    clearTimeout(modalHideTimeouts[modalId]);
+                    delete modalHideTimeouts[modalId];
+                }
+                
                 modal.style.display = 'block';
                 // Force reflow
                 void modal.offsetWidth;
                 // Fade in
                 modal.style.opacity = '1';
+                console.log('Modal shown, display:', modal.style.display, 'opacity:', modal.style.opacity);
             }
         }
         
         function hideModalWithFade(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
-                // Fade out
+                console.log('hideModalWithFade called for:', modalId);
+                // Clear any existing timeout
+                if (modalHideTimeouts[modalId]) {
+                    console.log('Clearing existing timeout');
+                    clearTimeout(modalHideTimeouts[modalId]);
+                }
+                
+                // Instantly hide (no fade out animation to avoid conflicts with nested dialogs)
                 modal.style.opacity = '0';
-                // Hide after transition
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                }, 300);
+                modal.style.display = 'none';
+                console.log('Modal hidden, display:', modal.style.display);
             }
         }
         
@@ -1324,8 +1374,28 @@
                         </li>`;
             
             history.forEach((item, index) => {
+                // Check if first item is a URL and add favicon
+                let iconHtml = '';
+                if (index === 0 && checkIfUrl(item)) {
+                    console.log('First item is URL:', item);
+                    // Extract domain for favicon
+                    let domain = item;
+                    if (!domain.startsWith('http://') && !domain.startsWith('https://')) {
+                        domain = 'https://' + domain;
+                    }
+                    try {
+                        const urlObj = new URL(domain);
+                        const faviconUrl = `${urlObj.protocol}//${urlObj.hostname}/favicon.ico`;
+                        console.log('Favicon URL:', faviconUrl);
+                        iconHtml = `<img src="${faviconUrl}" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle; object-fit: contain;" onerror="console.log('Failed to load favicon:', '${faviconUrl}'); this.style.display='none'">`;
+                    } catch(e) {
+                        console.log('Invalid URL:', e);
+                        // Invalid URL, no icon
+                    }
+                }
+                
                 html += `<li onclick="selectHistory('${item.replace(/'/g, "\\'")}')"  style="animation-delay: ${index * 0.05}s">
-                            ${item}
+                            ${iconHtml}${item}
                             <span class="delete-btn" onclick="event.stopPropagation(); deleteHistoryItem(${index})">✕</span>
                         </li>`;
             });
@@ -1363,6 +1433,119 @@
             return null;
         }
         
+        // Toggle poem display
+        function togglePoemDisplay() {
+            const checkbox = document.getElementById('showPoemToggle');
+            const favBtn = document.getElementById('favBtn');
+            const showPoem = checkbox.checked;
+            
+            if (favBtn) {
+                favBtn.style.display = showPoem ? 'flex' : 'none';
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('showPoem', showPoem);
+        }
+        
+        // Toggle scanner display
+        function toggleScannerDisplay() {
+            const checkbox = document.getElementById('showScannerToggle');
+            const scanBtn = document.getElementById('scanBtn');
+            const showScanner = checkbox.checked;
+            
+            if (scanBtn) {
+                scanBtn.style.display = showScanner ? 'flex' : 'none';
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('showScanner', showScanner);
+        }
+        
+        // Load saved settings from localStorage
+        function loadDisplaySettings() {
+            // Load poem display setting
+            const showPoem = localStorage.getItem('showPoem');
+            if (showPoem !== null) {
+                const poemCheckbox = document.getElementById('showPoemToggle');
+                if (poemCheckbox) {
+                    poemCheckbox.checked = showPoem === 'true';
+                    togglePoemDisplay();
+                }
+            }
+            
+            // Load scanner display setting
+            const showScanner = localStorage.getItem('showScanner');
+            if (showScanner !== null) {
+                const scannerCheckbox = document.getElementById('showScannerToggle');
+                if (scannerCheckbox) {
+                    scannerCheckbox.checked = showScanner === 'true';
+                    toggleScannerDisplay();
+                }
+            }
+            
+            // Load theme color
+            const themeColor = localStorage.getItem('themeColor');
+            if (themeColor) {
+                applyThemeColor(themeColor);
+                const colorPicker = document.getElementById('themeColorPicker');
+                if (colorPicker) {
+                    colorPicker.value = themeColor;
+                }
+            }
+        }
+        
+        // Change theme color
+        function changeThemeColor(color) {
+            applyThemeColor(color);
+            localStorage.setItem('themeColor', color);
+        }
+        
+        // Apply theme color to all elements
+        function applyThemeColor(color) {
+            // Calculate shadow colors based on theme color
+            const darkerShadow = adjustColor(color, -20);
+            const lighterShadow = adjustColor(color, 20);
+            
+            // Update CSS variables or inline styles
+            document.body.style.setProperty('--theme-bg', color);
+            document.body.style.setProperty('--theme-shadow-dark', darkerShadow);
+            document.body.style.setProperty('--theme-shadow-light', lighterShadow);
+            
+            // Update all elements with the theme color
+            updateElementColors(color, darkerShadow, lighterShadow);
+        }
+        
+        // Adjust color brightness
+        function adjustColor(color, amount) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const r = Math.min(255, Math.max(0, (num >> 16) + amount));
+            const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
+            const b = Math.min(255, Math.max(0, (num & 0x0000FF) + amount));
+            return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+        }
+        
+        // Update all element colors
+        function updateElementColors(bgColor, darkShadow, lightShadow) {
+            // Get all elements with the default background
+            const elements = document.querySelectorAll('*');
+            elements.forEach(el => {
+                const computedStyle = window.getComputedStyle(el);
+                const currentBg = computedStyle.backgroundColor;
+                
+                // Convert rgb to hex for comparison
+                const rgbMatch = currentBg.match(/\d+/g);
+                if (rgbMatch && rgbMatch.length >= 3) {
+                    const hex = '#' + ((1 << 24) + (parseInt(rgbMatch[0]) << 16) + (parseInt(rgbMatch[1]) << 8) + parseInt(rgbMatch[2])).toString(16).slice(1).toUpperCase();
+                    
+                    // If it matches #F0F0F0, replace with new theme color
+                    if (hex === '#F0F0F0') {
+                        el.style.backgroundColor = bgColor;
+                        el.style.boxShadow = `20px 20px 62px ${darkShadow}, -20px -20px 62px ${lightShadow}`;
+                    }
+                }
+            });
+        }
+        
         // Load saved engine from cookie or use default
         let currentEngineUrl = getCookie('searchEngine') || 'https://cn.bing.com/search?q='; // Default: Bing China
         
@@ -1384,6 +1567,9 @@
         
         // Initialize engine hint
         updateEngineHint();
+        
+        // Load display settings from cookies
+        loadDisplaySettings();
 
         // Search functionality using current engine
         function performSearch() {
@@ -1409,8 +1595,10 @@
                 query = query.substring(1);
             }
             
-            // Check if it's a URL (contains www. or starts with http)
-            if (query.includes('www.') || query.startsWith('http://') || query.startsWith('https://')) {
+            // Check if it's a URL using browser-standard rules
+            const isUrl = checkIfUrl(query);
+            
+            if (isUrl) {
                 // Ensure https protocol
                 if (!query.startsWith('http://') && !query.startsWith('https://')) {
                     query = 'https://' + query;
@@ -1420,6 +1608,35 @@
                 // Use current search engine for normal queries
                 window.open(`${currentEngineUrl}${encodeURIComponent(query)}`, '_blank');
             }
+        }
+        
+        // Check if input is a URL using browser-standard rules
+        function checkIfUrl(input) {
+            // Rule 1: Contains protocol header -> 100% URL
+            if (input.startsWith('http://') || input.startsWith('https://') || 
+                input.startsWith('ftp://') || input.startsWith('file://')) {
+                return true;
+            }
+            
+            // Rule 2: Is valid IP address (IPv4)
+            const ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+            if (ipPattern.test(input)) {
+                return true;
+            }
+            
+            // Rule 3: Contains dot and not pure numbers -> likely URL/domain
+            if (input.includes('.') && !/^\d+$/.test(input)) {
+                return true;
+            }
+            
+            // Rule 4: Is localhost or common internal domain
+            const internalDomains = ['localhost', 'router', 'home'];
+            if (internalDomains.includes(input.toLowerCase())) {
+                return true;
+            }
+            
+            // Otherwise -> search keyword
+            return false;
         }
 
         // Fetch search suggestions from Baidu
@@ -1448,9 +1665,28 @@
                 return;
             }
 
-            suggestionsList.innerHTML = data.s.map((item, index) => 
-                `<li style="font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; animation-delay: ${index * 0.05}s">${item}</li>`
-            ).join('');
+            suggestionsList.innerHTML = data.s.map((item, index) => {
+                // Check if first item is a URL and add favicon
+                let iconHtml = '';
+                if (index === 0 && checkIfUrl(item)) {
+                    console.log('First suggestion is URL:', item);
+                    // Extract domain for favicon
+                    let domain = item;
+                    if (!domain.startsWith('http://') && !domain.startsWith('https://')) {
+                        domain = 'https://' + domain;
+                    }
+                    try {
+                        const urlObj = new URL(domain);
+                        const faviconUrl = `${urlObj.protocol}//${urlObj.hostname}/favicon.ico`;
+                        console.log('Suggestion Favicon URL:', faviconUrl);
+                        iconHtml = `<img src="${faviconUrl}" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle; object-fit: contain;" onerror="console.log('Failed to load suggestion favicon:', '${faviconUrl}'); this.style.display='none'">`;
+                    } catch(e) {
+                        console.log('Invalid suggestion URL:', e);
+                    }
+                }
+                
+                return `<li style="font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; animation-delay: ${index * 0.05}s">${iconHtml}${item}</li>`;
+            }).join('');
             suggestionsList.classList.add('visible');
             
             // Match search box width and position exactly
@@ -1518,6 +1754,54 @@
                 // Don't show engine selector automatically - user must click toggle button
             }
         });
+        
+        // Keyboard navigation for suggestions and history
+        let selectedIndex = -1;
+        
+        input.addEventListener('keydown', function(e) {
+            const suggestions = suggestionsList.querySelectorAll('li');
+            const historyItems = searchHistoryList.querySelectorAll('li');
+            const activeList = suggestions.length > 0 ? suggestions : (historyItems.length > 0 ? historyItems : []);
+            
+            if (activeList.length === 0) return;
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, activeList.length - 1);
+                updateSelection(activeList);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, -1);
+                updateSelection(activeList);
+            } else if (e.key === 'Enter') {
+                if (selectedIndex >= 0 && selectedIndex < activeList.length) {
+                    e.preventDefault();
+                    const selectedItem = activeList[selectedIndex];
+                    // Remove favicon icon text if exists
+                    const text = selectedItem.textContent.replace(/^\s+/, '').trim();
+                    if (suggestions.length > 0) {
+                        selectSuggestion(text);
+                    } else {
+                        selectHistory(text);
+                    }
+                }
+            } else if (e.key === 'Escape') {
+                hideSuggestions();
+                searchHistoryList.style.display = 'none';
+                selectedIndex = -1;
+            }
+        });
+        
+        function updateSelection(items) {
+            items.forEach((item, index) => {
+                if (index === selectedIndex) {
+                    item.style.background = '#E0E0E0';
+                    item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                } else {
+                    item.style.background = '';
+                }
+            });
+        }
         
         // Show search history when clicking on input - disabled, now handled by rotation animation
         /*
@@ -1722,30 +2006,40 @@
             const engineTabIcon = document.getElementById('engineTabIcon');
             const engineTabText = document.getElementById('engineTabText');
             
-            if (engineToggleBtn) {
-                // Get domain from engine selector
-                const engineItem = document.querySelector(`.engine-item[data-engine="${engineName}"]`);
-                if (engineItem) {
-                    const engineUrl = engineItem.getAttribute('data-url');
-                    const domain = new URL(engineUrl).hostname;
-                    const firstChar = engineName.charAt(0);
-                    
-                    // Update main toggle button icon
-                    engineToggleBtn.innerHTML = `<img src="https://${domain}/favicon.ico" style="width: 24px; height: 24px; object-fit: contain;" alt="${engineName}" onerror="this.style.display='none'; this.parentNode.textContent='${firstChar}'; this.parentNode.style.fontSize='20px'; this.parentNode.style.fontWeight='bold';">`;
-                    
-                    // Update engine tab icon
-                    if (engineTabIcon && engineTabText) {
-                        engineTabIcon.src = `https://${domain}/favicon.ico`;
-                        engineTabIcon.style.display = 'block';
+            // Engine favicon URL mapping
+            const engineFavicons = {
+                'baidu': 'https://www.baidu.com/favicon.ico',
+                'sogou': 'https://www.sogou.com/favicon.ico',
+                'so360': 'https://www.so.com/favicon.ico',
+                'bing': 'https://cn.bing.com/favicon.ico',
+                'bingcn': 'https://cn.bing.com/favicon.ico',
+                'shenma': 'https://m.sm.cn/favicon.ico',
+                'toutiao': 'https://www.toutiao.com/favicon.ico',
+                'douyin': 'https://www.douyin.com/favicon.ico',
+                'quark': 'https://quark.sm.cn/favicon.ico',
+                'zhongguo': 'https://www.chinaso.com/favicon.ico',
+                'jike': 'https://www.jike.com/favicon.ico',
+                'wechat': 'https://weixin.sogou.com/favicon.ico'
+            };
+            
+            const faviconUrl = engineFavicons[engineName];
+            
+            if (engineToggleBtn && faviconUrl) {
+                // Update main toggle button with favicon
+                engineToggleBtn.innerHTML = `<img src="${faviconUrl}" alt="${engineName}" style="width: 24px; height: 24px; object-fit: contain;">`;
+                
+                // Update engine tab icon/text
+                if (engineTabIcon) {
+                    // Show the image icon, hide text
+                    engineTabIcon.src = faviconUrl;
+                    engineTabIcon.style.display = 'block';
+                    if (engineTabText) {
                         engineTabText.style.display = 'none';
-                        
-                        engineTabIcon.onerror = function() {
-                            this.style.display = 'none';
-                            engineTabText.textContent = firstChar;
-                            engineTabText.style.display = 'block';
-                            engineTabText.style.fontSize = '20px';
-                            engineTabText.style.fontWeight = 'bold';
-                        };
+                    }
+                    // Remove any SVG that was added
+                    let tabSvg = engineTabIcon.nextElementSibling;
+                    if (tabSvg && tabSvg.classList.contains('engine-tab-svg')) {
+                        tabSvg.remove();
                     }
                 }
             }
@@ -1798,6 +2092,107 @@
             a.click();
             URL.revokeObjectURL(url);
         }
+        
+        function exportAllData() {
+            const allData = {
+                favorites: favorites,
+                searchHistory: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
+                settings: {
+                    saveSearchHistory: true,
+                    showSearchSuggestions: true,
+                    cacheSuggestions: true,
+                    cacheDuration: 3600,
+                    privacyMode: false,
+                    showFavCreateTime: false,
+                    autoSortFavorites: true,
+                    darkMode: localStorage.getItem('darkMode') === 'true',
+                    showTimeDisplay: localStorage.getItem('showTimeDisplay') !== 'false',
+                    showPoem: localStorage.getItem('showPoem') !== 'false',
+                    showScanner: localStorage.getItem('showScanner') !== 'false',
+                    highContrast: document.getElementById('highContrastMode').checked,
+                    themeColor: localStorage.getItem('themeColor') || '#F0F0F0'
+                },
+                searchEngine: localStorage.getItem('searchEngine') || 'https://cn.bing.com/search?q='
+            };
+            
+            const dataStr = JSON.stringify(allData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'all_data_backup_' + new Date().toISOString().slice(0,10) + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function importAllData() {
+            document.getElementById('allDataImportFile').click();
+        }
+        
+        // Handle all data import
+        document.getElementById('allDataImportFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const allData = JSON.parse(event.target.result);
+                    
+                    if (allData.favorites) {
+                        favorites = allData.favorites;
+                        localStorage.setItem('favorites', JSON.stringify(favorites));
+                        renderFavorites();
+                    }
+                    
+                    if (allData.searchHistory) {
+                        localStorage.setItem('searchHistory', JSON.stringify(allData.searchHistory));
+                    }
+                    
+                    if (allData.settings) {
+                        localStorage.setItem('darkMode', allData.settings.darkMode);
+                        localStorage.setItem('showTimeDisplay', allData.settings.showTimeDisplay);
+                        localStorage.setItem('showPoem', allData.settings.showPoem);
+                        localStorage.setItem('showScanner', allData.settings.showScanner);
+                        
+                        // Apply settings
+                        if (allData.settings.darkMode) {
+                            document.body.classList.add('dark-mode');
+                            document.getElementById('darkModeToggle').checked = true;
+                        }
+                        
+                        const showTime = allData.settings.showTimeDisplay !== false;
+                        document.getElementById('showTimeToggle').checked = showTime;
+                        document.getElementById('timeDisplay').style.display = showTime ? 'flex' : 'none';
+                        
+                        loadDisplaySettings();
+                        
+                        // Apply theme color
+                        if (allData.settings.themeColor) {
+                            localStorage.setItem('themeColor', allData.settings.themeColor);
+                            applyThemeColor(allData.settings.themeColor);
+                            const colorPicker = document.getElementById('themeColorPicker');
+                            if (colorPicker) {
+                                colorPicker.value = allData.settings.themeColor;
+                            }
+                        }
+                    }
+                    
+                    if (allData.searchEngine) {
+                        localStorage.setItem('searchEngine', allData.searchEngine);
+                    }
+                    
+                    alert('全量数据恢复成功！');
+                    location.reload();
+                } catch (err) {
+                    alert('数据格式错误：' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset input
+            this.value = '';
+        });
         
         function clearSelectedData() {
             const checkboxes = document.querySelectorAll('.clearOption:checked');
@@ -1942,6 +2337,11 @@
         }
         
         // Custom prompt dialog
+        let currentPromptCallback = null;
+        let okHandler = null;
+        let cancelHandler = null;
+        let keypressHandler = null;
+        
         function showCustomPrompt(message, defaultValue, callback) {
             const dialog = document.getElementById('customPrompt');
             const messageEl = document.getElementById('customPromptMessage');
@@ -1949,41 +2349,45 @@
             const okBtn = document.getElementById('customPromptOk');
             const cancelBtn = document.getElementById('customPromptCancel');
             
+            // Remove old handlers
+            if (okHandler) okBtn.removeEventListener('click', okHandler);
+            if (cancelHandler) cancelBtn.removeEventListener('click', cancelHandler);
+            if (keypressHandler) input.removeEventListener('keypress', keypressHandler);
+            
+            currentPromptCallback = callback;
             messageEl.textContent = message;
             input.value = defaultValue || '';
-            showModalWithFade('customPrompt');
             
-            // Clear old listeners by cloning
-            const newOkBtn = okBtn.cloneNode(true);
-            const newCancelBtn = cancelBtn.cloneNode(true);
-            const newInput = input.cloneNode(true);
-            okBtn.parentNode.replaceChild(newOkBtn, okBtn);
-            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-            input.parentNode.replaceChild(newInput, input);
-            
-            // Set value and focus on new input
-            setTimeout(() => {
-                newInput.value = defaultValue || '';
-                newInput.focus();
-            }, 0);
-            
-            // Add new listeners
-            newOkBtn.addEventListener('click', function() {
+            // Create new handlers
+            okHandler = function() {
+                const cb = currentPromptCallback;
+                currentPromptCallback = null;
                 hideModalWithFade('customPrompt');
-                if (callback) callback(newInput.value);
-            });
+                if (cb) setTimeout(() => cb(input.value), 0);
+            };
             
-            newCancelBtn.addEventListener('click', function() {
+            cancelHandler = function() {
+                const cb = currentPromptCallback;
+                currentPromptCallback = null;
                 hideModalWithFade('customPrompt');
-                if (callback) callback(null);
-            });
+                if (cb) setTimeout(() => cb(null), 0);
+            };
             
-            newInput.addEventListener('keypress', function(e) {
+            keypressHandler = function(e) {
                 if (e.key === 'Enter') {
+                    const cb = currentPromptCallback;
+                    currentPromptCallback = null;
                     hideModalWithFade('customPrompt');
-                    if (callback) callback(newInput.value);
+                    if (cb) setTimeout(() => cb(input.value), 0);
                 }
-            });
+            };
+            
+            okBtn.addEventListener('click', okHandler);
+            cancelBtn.addEventListener('click', cancelHandler);
+            input.addEventListener('keypress', keypressHandler);
+            
+            showModalWithFade('customPrompt');
+            setTimeout(() => input.focus(), 0);
         }
         
         function loadFavorites() {
@@ -2074,40 +2478,24 @@
                 setTimeout(() => {
                     modal.style.display = 'none';
                     
-                    // After modal is hidden, trigger entry animations
+                    // After modal is hidden, show elements directly without animation
                     const searchContainer = document.querySelector('.search-container');
                     const bottomButtons = document.querySelectorAll('.bottom-btn');
                     
                     if (searchContainer) {
-                        // Reset and trigger animation
+                        searchContainer.style.transition = 'none';
                         searchContainer.style.animation = 'none';
-                        searchContainer.offsetHeight; // Trigger reflow
-                        searchContainer.style.animation = 'searchBoxEntry 1s ease-out forwards';
-                        
-                        // After animation completes, keep the final state by setting inline styles
-                        setTimeout(() => {
-                            searchContainer.style.opacity = '1';
-                            searchContainer.style.transform = 'translateY(0) rotate(0deg)';
-                            searchContainer.style.animation = 'none';
-                        }, 1000);
+                        searchContainer.style.opacity = '1';
+                        searchContainer.style.transform = 'scale(1)';
                     }
                     
                     if (bottomButtons && bottomButtons.length > 0) {
-                        // Delay for bottom buttons
-                        setTimeout(() => {
-                            bottomButtons.forEach(btn => {
-                                btn.style.animation = 'none';
-                                btn.offsetHeight; // Trigger reflow
-                                btn.style.animation = 'favBtnEntry 1s ease-out forwards';
-                                
-                                // After animation completes, keep the final state
-                                setTimeout(() => {
-                                    btn.style.opacity = '1';
-                                    btn.style.transform = 'translateY(0) rotate(0deg)';
-                                    btn.style.animation = 'none';
-                                }, 1000);
-                            });
-                        }, 300);
+                        bottomButtons.forEach(btn => {
+                            btn.style.transition = 'none';
+                            btn.style.animation = 'none';
+                            btn.style.opacity = '1';
+                            btn.style.transform = 'scale(1)';
+                        });
                     }
                 }, 300);
             }
@@ -2119,26 +2507,75 @@
         }
         
         function addFavorite() {
-            // First dialog: Get website name
-            showCustomPrompt('请输入网站名称:', '', function(name) {
-                if (name !== null && name.trim()) {
-                    // Second dialog: Get website URL
-                    showCustomPrompt('请输入网址（自动添加 https://）:', 'https://', function(url) {
-                        if (url !== null && url.trim()) {
-                            let finalUrl = url.trim();
-                            
-                            // Add https:// if not present
-                            if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
-                                finalUrl = 'https://' + finalUrl;
-                            }
-                            
-                            // Add to the beginning of array (show at top)
-                            favorites.unshift({ name: name.trim(), url: finalUrl });
-                            saveFavorites();
-                        }
-                    });
+            // Single dialog with both name and URL
+            const dialog = document.getElementById('customPrompt');
+            const messageEl = document.getElementById('customPromptMessage');
+            const input = document.getElementById('customPromptInput');
+            const okBtn = document.getElementById('customPromptOk');
+            const cancelBtn = document.getElementById('customPromptCancel');
+            
+            // Remove old handlers
+            if (okHandler) okBtn.removeEventListener('click', okHandler);
+            if (cancelHandler) cancelBtn.removeEventListener('click', cancelHandler);
+            if (keypressHandler) input.removeEventListener('keypress', keypressHandler);
+            
+            // Create a custom UI with two inputs
+            messageEl.innerHTML = '<div style="margin-bottom: 10px;">请输入网站名称:</div><input id="favNameInput" type="text" style="width: 100%; padding: 10px; border: none; border-radius: 34px; box-shadow: inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff; font-size: 14px; outline: none; margin-bottom: 15px; box-sizing: border-box; background: #ffffff; color: #000;"><div style="margin-bottom: 10px;">请输入网址（自动添加 https://）:</div><input id="favUrlInput" type="text" value="https://" style="width: 100%; padding: 10px; border: none; border-radius: 34px; box-shadow: inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff; font-size: 14px; outline: none; box-sizing: border-box; background: #ffffff; color: #000;">';
+            
+            // Hide the original input
+            input.style.display = 'none';
+            
+            showModalWithFade('customPrompt');
+            
+            setTimeout(() => {
+                const nameInput = document.getElementById('favNameInput');
+                if (nameInput) {
+                    nameInput.focus();
                 }
-            });
+            }, 100);
+            
+            // Create handlers for the new UI
+            okHandler = function() {
+                const nameInput = document.getElementById('favNameInput');
+                const urlInput = document.getElementById('favUrlInput');
+                
+                if (nameInput && urlInput) {
+                    const name = nameInput.value.trim();
+                    let url = urlInput.value.trim();
+                    
+                    if (name && url) {
+                        // Add https:// if not present
+                        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                            url = 'https://' + url;
+                        }
+                        
+                        favorites.unshift({ name: name, url: url });
+                        saveFavorites();
+                    }
+                }
+                
+                // Restore original input
+                input.style.display = '';
+                messageEl.textContent = '';
+                hideModalWithFade('customPrompt');
+            };
+            
+            cancelHandler = function() {
+                // Restore original input
+                input.style.display = '';
+                messageEl.textContent = '';
+                hideModalWithFade('customPrompt');
+            };
+            
+            keypressHandler = function(e) {
+                if (e.key === 'Enter') {
+                    okHandler();
+                }
+            };
+            
+            okBtn.addEventListener('click', okHandler);
+            cancelBtn.addEventListener('click', cancelHandler);
+            document.addEventListener('keypress', keypressHandler);
         }
         
         function deleteFavorite(index) {
@@ -2182,11 +2619,12 @@
         
         // KG data - fixed websites
         const kgWebsites = [
-            { name: 'Kg官方网站国内', url: 'https://image.cursorhub.org/user-upload/1775992631230-a7a6a7f7-0586-4ed6-9108-94e1ad259d14.html', color: '#FAFAD2', initial: 'K' },
-            { name: 'Kg 收银系统', url: 'https://wwbpg.lanzouu.com/iGuw43ibdxgf', color: '#FF6B8A', initial: '银' },
-            { name: 'Kg bing 壁纸', url: 'https://wwbpg.lanzouu.com/i1r813l8pwdi', color: '#4ECDC4', initial: '壁' },
-            { name: 'KgWinNas', url: 'https://wwbpg.lanzouu.com/iQysW3ibdxpe', color: '#45B7D1', initial: '盘' },
-            { name: 'Kg跃点网络优先切换', url: 'https://wwbpg.lanzouu.com/iZbiG3n2mk2d', color: '#323154', initial: '网' }
+            { name: 'Kg官方网站国内', url: 'https://image.cursorhub.org/user-upload/1776481358104-464350dc-e6fb-4732-b851-4e53bf93cea9.html', color: '#FAFAD2', initial: 'K' },
+            { name: '（Windows）Kg 收银系统', url: 'https://wwbpg.lanzouu.com/iGuw43ibdxgf', color: '#FF6B8A', initial: '银' },
+            { name: '（Android）Kg快计', url: 'https://wwbpg.lanzouu.com/iaBHq3nhwimb', color: '#FG1234', initial: '快' },
+            { name: '（Windows）Kg bing 壁纸', url: 'https://wwbpg.lanzouu.com/i1r813l8pwdi', color: '#4ECDC4', initial: '壁' },
+            { name: '（Windows）KgWinNas', url: 'https://wwbpg.lanzouu.com/iQysW3ibdxpe', color: '#45B7D1', initial: '盘' },
+            { name: '（Windows）Kg跃点网络优先切换', url: 'https://wwbpg.lanzouu.com/iZbiG3n2mk2d', color: '#323154', initial: '网' }
         ];
         
         function renderKG(filter = '') {
@@ -2208,8 +2646,7 @@
                         ${kg.initial}
                     </div>
                     <div style="flex: 1; overflow: hidden;">
-                        <div style="font-weight: bold; margin-bottom: 4px;">${kg.name}</div>
-                        <div style="color: #666; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${kg.url}</div>
+                        <div style="font-weight: bold;">${kg.name}</div>
                     </div>
                 </div>`;
             });
@@ -2219,8 +2656,17 @@
         
         // Tab switching functions with smooth transition
         function switchToFavoritesTab() {
+            // Add dynamic island animation to button
+            const btn = document.getElementById('favTabBtn');
+            if (btn) {
+                btn.classList.remove('dynamic-island');
+                void btn.offsetWidth;
+                btn.classList.add('dynamic-island');
+                setTimeout(() => btn.classList.remove('dynamic-island'), 500);
+            }
+            
             const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
-            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'engineTabBtn', 'settingsTabBtn'];
             
             // Fade out all contents
             contents.forEach(id => {
@@ -2271,8 +2717,17 @@
         }
         
         function switchToKGTab() {
+            // Add dynamic island animation to button
+            const btn = document.getElementById('kgTabBtn');
+            if (btn) {
+                btn.classList.remove('dynamic-island');
+                void btn.offsetWidth;
+                btn.classList.add('dynamic-island');
+                setTimeout(() => btn.classList.remove('dynamic-island'), 500);
+            }
+            
             const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
-            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'engineTabBtn', 'settingsTabBtn'];
             
             // Fade out all contents
             contents.forEach(id => {
@@ -2324,7 +2779,7 @@
         
         function switchToOfficialTab() {
             const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
-            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'engineTabBtn', 'settingsTabBtn'];
             
             // Fade out all contents
             contents.forEach(id => {
@@ -2373,8 +2828,17 @@
         }
         
         function switchToEngineTab() {
+            // Add dynamic island animation to button
+            const btn = document.getElementById('engineTabBtn');
+            if (btn) {
+                btn.classList.remove('dynamic-island');
+                void btn.offsetWidth;
+                btn.classList.add('dynamic-island');
+                setTimeout(() => btn.classList.remove('dynamic-island'), 500);
+            }
+            
             const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
-            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'engineTabBtn', 'settingsTabBtn'];
             
             // Fade out all contents
             contents.forEach(id => {
@@ -2423,8 +2887,17 @@
         }
         
         function switchToSettingsTab() {
+            // Add dynamic island animation to button
+            const btn = document.getElementById('settingsTabBtn');
+            if (btn) {
+                btn.classList.remove('dynamic-island');
+                void btn.offsetWidth;
+                btn.classList.add('dynamic-island');
+                setTimeout(() => btn.classList.remove('dynamic-island'), 500);
+            }
+            
             const contents = ['favoritesContent', 'kgContent', 'engineContent', 'settingsContent'];
-            const buttons = ['favTabBtn', 'kgTabBtn', 'officialTabBtn', 'engineTabBtn', 'settingsTabBtn'];
+            const buttons = ['favTabBtn', 'kgTabBtn', 'engineTabBtn', 'settingsTabBtn'];
             
             // Fade out all contents
             contents.forEach(id => {
@@ -2674,13 +3147,6 @@
             return `${yearName}年 (${animal}) ${monthStr}${dayStr}`;
         }
         
-        // Load time display preference
-        const showTimePreference = localStorage.getItem('showTimeDisplay');
-        if (showTimePreference !== null) {
-            const showTime = showTimePreference === 'true';
-            document.getElementById('showTimeToggle').checked = showTime;
-        }
-        
         // Toggle dark mode function
         function toggleDarkMode() {
             const isDarkMode = document.getElementById('darkModeToggle').checked;
@@ -2698,6 +3164,17 @@
         if (darkModePreference === 'true') {
             document.body.classList.add('dark-mode');
             document.getElementById('darkModeToggle').checked = true;
+        }
+        
+        // Load time display preference
+        const showTimePreference = localStorage.getItem('showTimeDisplay');
+        if (showTimePreference !== null) {
+            const showTime = showTimePreference === 'true';
+            document.getElementById('showTimeToggle').checked = showTime;
+            const timeDisplay = document.getElementById('timeDisplay');
+            if (timeDisplay) {
+                timeDisplay.style.display = showTime ? 'flex' : 'none';
+            }
         }
         
         // Easter Egg: Settings button click counter
@@ -2934,12 +3411,12 @@
     </script>
     
     <!-- QR Code Scanner Modal -->
-    <div id="scannerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000000; z-index: 100000; opacity: 0; transition: opacity 0.3s ease;">
+    <div id="scannerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #F0F0F0; z-index: 100000; opacity: 0; transition: opacity 0.3s ease;">
         <!-- Close Button -->
-        <button onclick="closeScanner()" style="position: absolute; top: 20px; right: 20px; width: 50px; height: 50px; border: none; border-radius: 50%; background: rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100001; backdrop-filter: blur(10px);">×</button>
+        <button onclick="closeScanner()" style="position: absolute; top: 20px; right: 20px; width: 50px; height: 50px; border: none; border-radius: 50%; background: #F0F0F0; color: #000000; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100001; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;">×</button>
         
         <!-- Title -->
-        <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: #ffffff; font-size: 20px; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; z-index: 100001;">
+        <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: #000000; font-size: 20px; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; z-index: 100001; font-weight: bold;">
             扫一扫
         </div>
         
@@ -2950,26 +3427,26 @@
         <canvas id="scannerCanvas" style="display: none;"></canvas>
         
         <!-- Scanning Frame Overlay -->
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border: 3px solid #00ff00; border-radius: 20px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5); pointer-events: none;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border: 3px solid #000000; border-radius: 20px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff, 0 0 0 9999px rgba(240, 240, 240, 0.7); pointer-events: none;">
             <!-- Corner markers -->
-            <div style="position: absolute; top: -3px; left: -3px; width: 30px; height: 30px; border-top: 5px solid #00ff00; border-left: 5px solid #00ff00;"></div>
-            <div style="position: absolute; top: -3px; right: -3px; width: 30px; height: 30px; border-top: 5px solid #00ff00; border-right: 5px solid #00ff00;"></div>
-            <div style="position: absolute; bottom: -3px; left: -3px; width: 30px; height: 30px; border-bottom: 5px solid #00ff00; border-left: 5px solid #00ff00;"></div>
-            <div style="position: absolute; bottom: -3px; right: -3px; width: 30px; height: 30px; border-bottom: 5px solid #00ff00; border-right: 5px solid #00ff00;"></div>
+            <div style="position: absolute; top: -3px; left: -3px; width: 30px; height: 30px; border-top: 5px solid #000000; border-left: 5px solid #000000;"></div>
+            <div style="position: absolute; top: -3px; right: -3px; width: 30px; height: 30px; border-top: 5px solid #000000; border-right: 5px solid #000000;"></div>
+            <div style="position: absolute; bottom: -3px; left: -3px; width: 30px; height: 30px; border-bottom: 5px solid #000000; border-left: 5px solid #000000;"></div>
+            <div style="position: absolute; bottom: -3px; right: -3px; width: 30px; height: 30px; border-bottom: 5px solid #000000; border-right: 5px solid #000000;"></div>
         </div>
         
         <!-- Scan Line Animation -->
-        <div id="scanLine" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 2px; background: linear-gradient(to right, transparent, #00ff00, transparent); animation: scanAnimation 2s linear infinite; pointer-events: none;"></div>
+        <div id="scanLine" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 2px; background: linear-gradient(to right, transparent, #000000, transparent); animation: scanAnimation 2s linear infinite; pointer-events: none;"></div>
         
         <!-- Result Display -->
-        <div id="scanResult" style="position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(255, 255, 255, 0.9); padding: 15px 25px; border-radius: 10px; max-width: 80%; text-align: center; display: none; z-index: 100001;">
+        <div id="scanResult" style="position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: #F0F0F0; padding: 15px 25px; border-radius: 34px; max-width: 80%; text-align: center; display: none; z-index: 100001; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;">
             <div style="font-size: 14px; color: #666; margin-bottom: 10px;">扫描结果：</div>
             <div id="scanResultText" style="font-size: 16px; color: #000; word-break: break-all;"></div>
-            <button onclick="openScanResult()" style="margin-top: 10px; padding: 8px 20px; background: #000; color: #fff; border: none; border-radius: 20px; cursor: pointer; font-size: 14px;">打开链接</button>
+            <button onclick="openScanResult()" style="margin-top: 10px; padding: 8px 20px; background: #F0F0F0; color: #000; border: none; border-radius: 34px; cursor: pointer; font-size: 14px; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;">打开链接</button>
         </div>
         
         <!-- Instructions -->
-        <div style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: #ffffff; font-size: 14px; text-align: center; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; z-index: 100001;">
+        <div style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: #000000; font-size: 14px; text-align: center; font-family: 'YouYuan', 'STKaiti', '楷体', 'Microsoft YaHei', Arial, sans-serif; z-index: 100001;">
             将二维码/条形码放入框内，即可自动扫描
         </div>
     </div>
