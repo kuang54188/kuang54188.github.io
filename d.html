@@ -136,11 +136,11 @@
             font-size: 12px;
         }
 
-        /* 抖音面板 - 全屏居中 */
+        /* 抖音面板 - 全屏图片 */
         .panel-content.douyin-content {
             align-items: center;
             justify-content: center;
-            background: #f5f7fa;
+            background: #000000;
         }
         .panel-content.douyin-content .douyin-link {
             display: flex;
@@ -148,42 +148,17 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            gap: 10px;
-            padding: 30px 40px;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s ease, background 0.2s ease;
-            width: 80%;
-            max-width: 320px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-        }
-        .panel-content.douyin-content .douyin-link:active {
-            transform: scale(0.96);
-            background: rgba(255, 255, 255, 0.9);
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         .panel-content.douyin-content .douyin-link img {
-            width: 64px;
-            height: 64px;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
-            border-radius: 8px;
-        }
-        .panel-content.douyin-content .douyin-link span {
-            font-size: 16px;
-            font-weight: 500;
-            color: #1c1c1e;
-            letter-spacing: 0.5px;
-        }
-        .panel-content.douyin-content .douyin-link .sub-hint {
-            font-size: 12px;
-            font-weight: 400;
-            color: #8e8e93;
-            letter-spacing: 0.3px;
         }
 
-        /* 液态玻璃底部导航 - 苹果风格 */
+        /* 液态玻璃底部导航 - 极致效果 */
         .bottom-nav {
             position: fixed;
             bottom: 24px;
@@ -193,14 +168,13 @@
             justify-content: center;
             align-items: center;
             gap: 4px;
-            padding: 8px 18px;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 100px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.08),
-                0 4px 10px rgba(0, 0, 0, 0.04),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            background: transparent;
+            backdrop-filter: url(#liquidGlassFilter);
+            -webkit-backdrop-filter: none;
+            border-radius: 2rem;
+            border: none;
+            box-shadow: none;
             z-index: 100;
         }
 
@@ -426,9 +400,7 @@
             <!-- 面板：抖音 -->
             <div class="panel-content douyin-content" id="panelDouyin">
                 <a href="https://m.douyin.com/share/user/MS4wLjABAAAAKuLiTRBe5BKSuGOrXTm5aciE0xnqzf3h_dfdV1s_3tmDa9oXB9ZAvJSwfrCpZ-ta" target="_blank" rel="noopener noreferrer" class="douyin-link">
-                    <img src="https://www.douyin.com/favicon.ico" alt="抖音" loading="lazy" />
-                    <span>前往抖音</span>
-                    <span class="sub-hint">点击跳转</span>
+                    <img src="https://picui.ogmua.cn/s1/2026/07/25/6a6464c30fc75.webp" alt="抖音" loading="lazy" />
                 </a>
             </div>
 
@@ -468,6 +440,7 @@
     <!-- Liquid Glass SVG Filter -->
     <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998;">
         <defs>
+            <!-- 基础滤镜 -->
             <filter id="liquid-glass-filter" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
                 <feColorMatrix in="blur" type="matrix" 
@@ -477,6 +450,39 @@
                             0 0 0 1 0" 
                     result="saturated" />
                 <feComposite in="SourceGraphic" in2="saturated" operator="over" />
+            </filter>
+            
+            <!-- 高级折射效果滤镜 -->
+            <filter id="distort" x="0%" y="0%" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="2" result="noise"/>
+                <feGaussianBlur in="noise" stdDeviation="2" result="blurred"/>
+                <feDisplacementMap in="SourceGraphic" in2="blurred" scale="70" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            
+            <!-- Liquid Glass 高级滤镜 - 基于物理折射 -->
+            <filter id="liquidGlassFilter" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
+                <!-- 折射层 -->
+                <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise"/>
+                <feGaussianBlur in="noise" stdDeviation="3" result="blurredNoise"/>
+                <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="20" xChannelSelector="R" yChannelSelector="G" result="refracted"/>
+                
+                <!-- 镜面高光 -->
+                <feSpecularLighting in="blurredNoise" surfaceScale="2" specularConstant="0.5" specularExponent="20" result="specular">
+                    <feDistantLight azimuth="45" elevation="60"/>
+                </feSpecularLighting>
+                <feComposite in="specular" in2="refracted" operator="in" result="highlight"/>
+                
+                <!-- 组合折射和高光 -->
+                <feBlend in="refracted" in2="highlight" mode="screen" result="final"/>
+                
+                <!-- 添加柔和模糊 -->
+                <feGaussianBlur in="final" stdDeviation="1" result="softened"/>
+                
+                <!-- 增强饱和度 -->
+                <feColorMatrix in="softened" type="saturate" values="1.5" result="saturatedFinal"/>
+                
+                <!-- 最终混合 -->
+                <feComposite in="saturatedFinal" in2="SourceGraphic" operator="over"/>
             </filter>
         </defs>
     </svg>
