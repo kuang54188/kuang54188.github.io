@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>千克 • 官方网站</title>
+  <title>千克官方网站</title>
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <style>
@@ -20,6 +20,20 @@
       -webkit-user-select: none;
       -moz-user-select: none;
       user-select: none;
+    }
+    /* ===== 安卓专属兼容（不影响桌面/iOS）：动态视口 dvh 修复定位与大幅跳动，并修正介绍文本描边 ===== */
+    .android .snap-page,
+    .android .black-screen,
+    .android .screen-c,
+    .android .screen-down,
+    .android .screen-about,
+    .android .screen-privacy {
+      height: 100dvh;
+    }
+    .android body.at-home .pill-nav { top: calc(100dvh - 120px); }
+    .android .wheel-desc {
+      -webkit-text-stroke: 0;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     }
     #bg {
       position: fixed;
@@ -600,7 +614,7 @@
       transform: translate(0, -50%);
     }
     .option-wheel__item--selected { color: var(--ow-active-color); }
-    /* ===== 药丸导航：顶部全局置顶 ===== */
+    /* ===== 药丸导航：顶部全局置顶（液态玻璃 Liquid Glass，整体亮玻璃、无黑底） ===== */
     .pill-nav {
       position: fixed;
       top: 18px;
@@ -613,24 +627,31 @@
       justify-content: center;
       align-items: center;
       gap: 4px;
-      padding: 6px 8px;
-      background: rgba(18, 15, 23, 0.82);
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 12px;
+      /* 液态玻璃（Liquid Glass）：提高不透明度让玻璃整体发亮，斜向高光渐变 + 强模糊 + 内外高光 */
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42));
+      -webkit-backdrop-filter: blur(0) saturate(180%);
+      backdrop-filter: blur(0) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
       border-radius: 999px;
-      box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25),
+                  inset 0 1px 1px rgba(255, 255, 255, 0.9),
+                  inset 0 -1px 1px rgba(255, 255, 255, 0.25);
+      /* 以下变量完完全全照搬 液态玻璃示例.txt 的定义 */
+      --pill-bg: #ffffff;
+      --pill-color: #111111;
+      --hover-bg: #3b82f6;
+      --hover-color: #ffffff;
+      --item-rot: 0deg;
       --base: #ffffff;
-      --pill-bg: #120F17;
+      --pill-text: #111111;
       --hover-text: #120F17;
-      --pill-text: #ffffff;
     }
     .pill-track {
       position: relative;
       display: flex;
       padding: 4px;
-      background: rgba(18, 15, 23, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: transparent;
       border-radius: 999px;
     }
     .pill {
@@ -643,21 +664,25 @@
       height: 36px;
       padding: 0 18px;
       border-radius: 999px;
-      color: var(--pill-text);
+      color: var(--pill-color);
       font: 500 14px/1 '幼圆', 'YouYuan', -apple-system, "Segoe UI", system-ui, sans-serif;
       letter-spacing: 0.04em;
       text-decoration: none;
       white-space: nowrap;
-      transition: color 0.25s ease;
+      transition: color 0.25s ease, background 0.25s ease;
     }
-    /* 滑块：随整页滚动条进度在导航轨道上从左向右连续滑动 */
+    .pill:hover {
+      background: var(--hover-bg);
+      color: var(--hover-color);
+    }
+    /* 滑块：随整页滚动条进度在导航轨道上从左向右连续滑动（亮玻璃上用柔和深色，清晰可见） */
     .pill-thumb {
       position: absolute;
       top: 4px;
       bottom: 4px;
       left: 0;
       width: 16%;
-      background: rgba(255, 255, 255, 0.22);
+      background: rgba(17, 17, 17, 0.12);
       -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
       border-radius: 999px;
@@ -802,7 +827,7 @@
         font-size: 12px;
         padding: 8px;
       }
-      .pill-nav { top: 12px; padding: 5px 6px; }
+      .pill-nav { top: 12px; padding: 8px 10px; }
       .pill { height: 36px; padding: 0 14px; font-size: 13px; }
       .decrypt-text { top: calc(50% - 252px); font-size: 19px; letter-spacing: 0.04em; white-space: normal; max-width: 88vw; text-align: center; }
       .home-title { top: calc(50% - 312px); font-size: 28px; gap: 0.4em; }
@@ -1343,8 +1368,19 @@
     // 全局禁止右键菜单
     document.addEventListener('contextmenu', e => e.preventDefault());
 
+    // 安卓专属：检测并标记，后续仅安卓分支生效（桌面/iOS 完全不受影响）
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (isAndroid) document.documentElement.classList.add('android');
+
     // 滚动到指定界面（主页 / 软件介绍 / 起始页体验 / 下载 / 许可协议）
     function scrollToTarget(target) {
+      // 安卓：动态视口下直接用真实 snap-page 元素定位，避免 100vh 计算错位与大幅跳跃
+      if (isAndroid) {
+        const idx = target === 'privacy' ? 6 : target === 'about' ? 5
+          : target === 'down' ? 4 : target === 'c' ? 3 : target === 'black' ? 1 : 0;
+        const pages = document.querySelectorAll('.snap-page');
+        if (pages[idx]) { pages[idx].scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      }
       const vh = window.innerHeight;
       const top = target === 'privacy' ? vh * 6 : target === 'about' ? vh * 5
                 : target === 'down' ? vh * 4 : target === 'c' ? vh * 3 : target === 'black' ? vh : 0;
