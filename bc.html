@@ -1,1435 +1,1529 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>便签与待办</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>便签管理</title>
     <style>
-        /* ===== 全局重置 ===== */
-        * {
+        /* ===== 全局重置 & 基础 ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+        }
+        html {
+            font-size: 16px;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
-            background-color: #FAF7F3;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f0ece6;
             color: #2D2A26;
-            height: 100vh;
-            overflow: hidden;
             user-select: none;
+            -webkit-user-select: none;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0; /* 去掉了外部边距 */
+            margin: 0;
+        }
+        .app {
+            -webkit-touch-callout: none;
         }
 
-        /* ===== 主容器 ===== */
-        #app {
+        /* ===== 容器 ===== */
+        .app {
+            width: 100%;
+            max-width: 100%; /* 全宽 */
+            height: 100vh; /* 全高 */
+            background: #FAF7F3;
+            border-radius: 0; /* 无圆角 */
+            box-shadow: none; /* 无阴影 */
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            max-width: 480px;
-            margin: 0 auto;
-            background-color: #FAF7F3;
-            position: relative;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* ===== 主内容区 ===== */
+        .main-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            padding: 12px 12px 4px 12px; /* 减小内边距 */
+            display: flex;
+            flex-direction: column;
         }
 
         /* ===== 视图容器 ===== */
         .view {
             display: none;
-            flex: 1;
             flex-direction: column;
-            overflow: hidden;
-            padding-bottom: 64px;
-            /* 为底部tab留空间 */;
+            height: 100%;
+            animation: viewFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
-
         .view.active {
             display: flex;
+        }
+
+        @keyframes viewFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ===== 视图头部 ===== */
         .view-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 16px 20px 12px 20px;
-            background-color: #FAF7F3;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(45, 42, 38, 0.06);
             flex-shrink: 0;
-            border-bottom: 1px solid #EDE8E1;
         }
-
-        .view-header .title {
-            font-size: 20px;
+        .view-header h2 {
+            font-size: clamp(1.1rem, 4vw, 1.5rem);
             font-weight: 600;
             color: #2D2A26;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.02em;
         }
-
-        .view-header .back-btn {
-            font-size: 16px;
+        .view-header .action-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 14px;
+            font-size: clamp(0.8rem, 2.5vw, 0.95rem);
             color: #2D2A26;
             cursor: pointer;
-            padding: 6px 12px;
-            background: none;
-            border: none;
-            font-weight: 400;
-            border-radius: 6px;
-            transition: background 0.2s;
+            border-radius: 8px;
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
+            font-weight: 500;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(45, 42, 38, 0.04);
         }
-        .view-header .back-btn:active {
-            background-color: rgba(0, 0, 0, 0.06);
+        .view-header .action-btn:active {
+            transform: scale(0.92);
         }
-
-        .view-header .header-action {
-            font-size: 22px;
-            font-weight: 300;
-            color: #2D2A26;
-            cursor: pointer;
-            padding: 4px 10px;
-            background: none;
-            border: none;
-            border-radius: 6px;
-            transition: background 0.2s;
+        .view-header .action-btn .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(45, 42, 38, 0.15);
+            border-top-color: #FF6700;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
         }
-        .view-header .header-action:active {
-            background-color: rgba(0, 0, 0, 0.06);
+        .view-header .action-btn.loading .spinner {
+            display: inline-block;
         }
-        .view-header .header-action.confirm {
-            font-size: 24px;
-            font-weight: 400;
-            color: #FF6700;
+        .view-header .action-btn.loading .btn-text {
+            opacity: 0.7;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ===== 列表容器 ===== */
         .list-container {
             flex: 1;
             overflow-y: auto;
-            padding: 12px 16px 20px 16px;
-            -webkit-overflow-scrolling: touch;
+            padding: 8px 0 4px 0;
+            margin: 0 -4px;
+            padding-right: 4px;
+            scroll-behavior: smooth;
         }
-
         .list-container::-webkit-scrollbar {
-            width: 0;
+            width: 4px;
+        }
+        .list-container::-webkit-scrollbar-track {
             background: transparent;
         }
-
-        /* ===== 空状态 ===== */
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #B5ADA3;
-            font-size: 15px;
-            letter-spacing: 0.3px;
-            padding: 40px 20px;
-            text-align: center;
-        }
-        .empty-state .empty-icon {
-            width: 56px;
-            height: 56px;
-            margin-bottom: 16px;
-            opacity: 0.3;
-            border-radius: 50%;
-            background-color: #EDE8E1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: #B5ADA3;
+        .list-container::-webkit-scrollbar-thumb {
+            background: rgba(45, 42, 38, 0.15);
+            border-radius: 4px;
         }
 
         /* ===== 笔记卡片 ===== */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
         .note-card {
-            background-color: #FFFFFF;
-            border-radius: 12px;
-            padding: 16px 18px;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
-            transition: box-shadow 0.25s ease;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 14px 16px;
+            box-shadow: 0 2px 8px rgba(45, 42, 38, 0.04);
             cursor: pointer;
-            border: 1px solid #F0EBE5;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+            border: 1px solid rgba(45, 42, 38, 0.04);
+            will-change: transform, opacity;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .note-card.entered {
+            opacity: 1;
+            transform: translateY(0);
         }
         .note-card:active {
-            background-color: #F8F5F0;
+            transform: scale(0.98);
         }
-
-        .note-card .note-title {
-            font-size: 17px;
+        .note-card.expanded {
+            box-shadow: 0 4px 16px rgba(45, 42, 38, 0.08);
+        }
+        .note-card .card-title {
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
             font-weight: 600;
             color: #2D2A26;
             line-height: 1.4;
             word-break: break-word;
         }
-
-        .note-card .note-preview {
-            font-size: 14px;
-            color: #9A9288;
+        .note-card .card-preview {
+            font-size: clamp(0.82rem, 2.5vw, 0.92rem);
+            color: rgba(45, 42, 38, 0.55);
             margin-top: 4px;
-            line-height: 1.5;
-            white-space: nowrap;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
-            word-break: break-word;
+            line-height: 1.5;
         }
-
-        .note-card .note-body {
-            margin-top: 12px;
+        .note-card .card-detail-wrap {
+            overflow: hidden;
+            height: 0;
+            opacity: 0;
+            transition: height 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+        }
+        .note-card.expanded .card-detail-wrap {
+            height: auto;
+            opacity: 1;
+        }
+        .note-card .card-detail {
             padding-top: 12px;
-            border-top: 1px solid #F0EBE5;
-            font-size: 15px;
-            line-height: 1.8;
-            color: #2D2A26;
-            word-break: break-word;
+            font-size: clamp(0.82rem, 2.5vw, 0.92rem);
+            color: rgba(45, 42, 38, 0.78);
+            line-height: 1.7;
             white-space: pre-wrap;
+            word-break: break-word;
+            border-top: 1px solid rgba(45, 42, 38, 0.06);
+            margin-top: 10px;
         }
-
-        .note-card .note-body .line {
+        .note-card .card-detail .line {
             display: block;
         }
-
-        .note-card .note-meta {
-            font-size: 12px;
-            color: #C5BDB3;
+        .note-card .card-detail .line.indent-0 {
+            padding-left: 0;
+        }
+        .note-card .card-detail .line.indent-2 {
+            padding-left: 2em;
+        }
+        .note-card .card-detail .line.indent-4 {
+            padding-left: 4em;
+        }
+        .note-card .card-time {
+            font-size: 0.7rem;
+            color: rgba(45, 42, 38, 0.3);
             margin-top: 8px;
             text-align: right;
         }
 
-        /* ===== 待办项 ===== */
+        /* ===== 待办列表 ===== */
+        .todo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
         .todo-item {
             display: flex;
             align-items: center;
-            background-color: #FFFFFF;
+            gap: 12px;
+            padding: 12px 14px;
+            background: #ffffff;
             border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            border: 1px solid #F0EBE5;
-            transition: background 0.2s;
+            box-shadow: 0 1px 4px rgba(45, 42, 38, 0.04);
+            border: 1px solid rgba(45, 42, 38, 0.04);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, box-shadow 0.2s ease;
+            will-change: transform, opacity;
+            opacity: 0;
+            transform: translateX(20px);
         }
-        .todo-item:active {
-            background-color: #F8F5F0;
+        .todo-item.entered {
+            opacity: 1;
+            transform: translateX(0);
         }
-
-        .todo-item .todo-check {
+        .todo-item.removing {
+            transform: scale(0.8) translateX(-20px);
+            opacity: 0;
+        }
+        .todo-item .checkbox {
             flex-shrink: 0;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            border: 2px solid #D5CFC7;
-            background-color: #FFFFFF;
+            border: 2px solid rgba(45, 42, 38, 0.2);
             cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 14px;
-            position: relative;
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, border-color 0.2s ease;
+            background: #fff;
         }
-        .todo-item .todo-check:active {
+        .todo-item .checkbox:active {
             transform: scale(0.92);
         }
-        .todo-item .todo-check.checked {
+        .todo-item .checkbox.checked {
+            background: #FF6700;
             border-color: #FF6700;
-            background-color: #FF6700;
         }
-        .todo-item .todo-check.checked::after {
-            content: "";
-            position: absolute;
-            width: 10px;
-            height: 6px;
-            border-left: 2.5px solid #FFFFFF;
-            border-bottom: 2.5px solid #FFFFFF;
-            transform: rotate(-45deg) translate(1px, -1px);
+        .todo-item .checkbox.checked::after {
+            content: "✓";
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1;
         }
-
         .todo-item .todo-text {
             flex: 1;
-            font-size: 16px;
+            font-size: clamp(0.88rem, 2.8vw, 1rem);
             color: #2D2A26;
-            line-height: 1.4;
             word-break: break-word;
+            line-height: 1.4;
+        }
+        .todo-item .todo-text.done {
+            text-decoration: line-through;
+            color: rgba(45, 42, 38, 0.35);
         }
 
-        /* ===== 回收站项 ===== */
-        .trash-item {
+        /* ===== FAB 按钮组 ===== */
+        .fab-group {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
             display: flex;
+            gap: 12px;
             align-items: center;
-            flex-wrap: wrap;
-            background-color: #FFFFFF;
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            border: 1px solid #F0EBE5;
+            z-index: 10;
         }
-
-        .trash-item .trash-text {
-            flex: 1;
-            min-width: 120px;
-            font-size: 15px;
-            color: #2D2A26;
-            line-height: 1.4;
-            word-break: break-word;
-            margin-right: 10px;
-        }
-
-        .trash-item .trash-time {
-            font-size: 12px;
-            color: #B5ADA3;
-            width: 100%;
-            margin-top: 4px;
-            margin-bottom: 8px;
-        }
-
-        .trash-item .trash-actions {
-            display: flex;
-            gap: 8px;
-            margin-left: auto;
-            flex-shrink: 0;
-        }
-
-        .trash-item .trash-actions button {
-            padding: 6px 14px;
+        .fab {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #FF6700;
+            color: #fff;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 28px;
+            font-weight: 300;
             cursor: pointer;
-            transition: background 0.2s;
-            background-color: #F0EBE5;
-            color: #2D2A26;
-            min-height: 36px;
-        }
-        .trash-item .trash-actions button:active {
-            background-color: #E0D8D0;
-        }
-        .trash-item .trash-actions .btn-restore {
-            background-color: #FF6700;
-            color: #FFFFFF;
-        }
-        .trash-item .trash-actions .btn-restore:active {
-            background-color: #E05C00;
-        }
-        .trash-item .trash-actions .btn-delete {
-            background-color: #E8E0D8;
-            color: #6B5F54;
-        }
-        .trash-item .trash-actions .btn-delete:active {
-            background-color: #D5CDC3;
-        }
-
-        /* ===== 底部Tab栏 ===== */
-        .bottom-tab {
+            box-shadow: 0 4px 16px rgba(255, 103, 0, 0.32);
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #FFFFFF;
-            border-top: 1px solid #EDE8E1;
-            height: 56px;
+            line-height: 1;
             flex-shrink: 0;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 10;
+        }
+        .fab:active {
+            transform: scale(0.92);
+        }
+        .fab-secondary {
+            background: rgba(45, 42, 38, 0.08);
+            color: #2D2A26;
+            box-shadow: 0 2px 8px rgba(45, 42, 38, 0.06);
+            font-size: 0;
+            width: 44px;
+            height: 44px;
+        }
+        .fab-secondary:active {
+            transform: scale(0.92);
+        }
+        .fab-secondary svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: #2D2A26;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
+        /* ===== 底部 Tab ===== */
+        .bottom-tab {
+            display: flex;
+            border-top: 1px solid rgba(45, 42, 38, 0.06);
+            background: #FAF7F3;
+            flex-shrink: 0;
+            padding: 4px 12px 8px 12px;
+            gap: 0;
+            position: relative;
+            z-index: 5;
+        }
         .bottom-tab .tab-item {
             flex: 1;
             text-align: center;
-            font-size: 16px;
-            font-weight: 400;
-            color: #B5ADA3;
-            padding: 8px 0;
+            padding: 10px 0 6px 0;
+            font-size: clamp(0.85rem, 2.6vw, 1rem);
+            font-weight: 500;
+            color: rgba(45, 42, 38, 0.4);
             cursor: pointer;
-            transition: color 0.2s, font-weight 0.2s;
-            letter-spacing: 0.5px;
             border: none;
-            background: none;
+            background: transparent;
+            transition: color 0.2s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
+            letter-spacing: 0.03em;
+            border-radius: 0;
+            user-select: none;
         }
         .bottom-tab .tab-item:active {
-            opacity: 0.6;
+            transform: scale(0.92);
         }
-        .bottom-tab .tab-item.active {
-            color: #FF6700;
-            font-weight: 600;
-        }
-        .bottom-tab .tab-item.active::after {
+        .bottom-tab .tab-item::after {
             content: "";
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
+            width: 0;
             height: 3px;
-            background-color: #FF6700;
-            border-radius: 2px;
+            border-radius: 3px;
+            background: #FF6700;
+            transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
-        /* ===== 浮动按钮 ===== */
-        .fab-wrapper {
-            position: absolute;
-            bottom: 72px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 20;
+        .bottom-tab .tab-item.active {
+            color: #2D2A26;
         }
-
-        .fab-wrapper .fab-btn {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            border: none;
-            background-color: #FF6700;
-            color: #FFFFFF;
-            font-size: 30px;
-            font-weight: 300;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(255, 103, 0, 0.30);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }
-        .fab-wrapper .fab-btn:active {
-            transform: scale(0.92);
-            box-shadow: 0 2px 6px rgba(255, 103, 0, 0.25);
-        }
-
-        .fab-wrapper .fab-btn.trash-btn {
-            background-color: #EDE8E1;
-            color: #6B5F54;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            width: 46px;
-            height: 46px;
-            font-size: 0;
-            padding: 0;
-        }
-        .fab-wrapper .fab-btn.trash-btn:active {
-            background-color: #E0D8D0;
-            transform: scale(0.92);
-        }
-
-        .fab-wrapper .fab-btn.trash-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: none;
-            stroke: #6B5F54;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+        .bottom-tab .tab-item.active::after {
+            width: 32px;
         }
 
         /* ===== 模态框 ===== */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.35);
+            position: absolute;
+            inset: 0;
+            background: rgba(45, 42, 38, 0.35);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             z-index: 100;
-            align-items: center;
+            display: none;
+            align-items: flex-end;
             justify-content: center;
-            padding: 24px;
-            backdrop-filter: blur(2px);
+            padding: 16px;
+            border-radius: 0;
+            overflow: hidden;
         }
         .modal-overlay.active {
             display: flex;
         }
 
         .modal-box {
-            background-color: #FFFFFF;
-            border-radius: 16px;
-            padding: 28px 24px 24px 24px;
+            background: #FAF7F3;
+            border-radius: 20px;
+            padding: 20px 16px 24px 16px;
             width: 100%;
-            max-width: 360px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            animation: modalIn 0.25s ease;
+            max-width: 520px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(45, 42, 38, 0.2);
+            transform: scale(0.92) translateY(20px);
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+        }
+        .modal-overlay.active .modal-box {
+            transform: scale(1) translateY(0);
+            opacity: 1;
         }
 
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(0.94) translateY(12px);
+        /* 桌面端：中心缩放淡入 */
+        @media (min-width: 768px) {
+            .modal-overlay {
+                align-items: center;
             }
-            to {
-                opacity: 1;
+            .modal-box {
+                transform: scale(0.88) translateY(0);
+            }
+            .modal-overlay.active .modal-box {
                 transform: scale(1) translateY(0);
             }
         }
 
-        .modal-box .modal-title {
-            font-size: 18px;
+        .modal-box .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(45, 42, 38, 0.06);
+        }
+        .modal-box .modal-header h3 {
+            font-size: clamp(1rem, 3.2vw, 1.25rem);
             font-weight: 600;
             color: #2D2A26;
-            margin-bottom: 16px;
-            text-align: center;
         }
-
-        .modal-box .modal-input {
+        .modal-box .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            color: rgba(45, 42, 38, 0.4);
+            cursor: pointer;
+            padding: 4px 8px;
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-box .modal-close:active {
+            transform: scale(0.92);
+        }
+        .modal-box input[type="text"],
+        .modal-box textarea {
             width: 100%;
             padding: 12px 14px;
-            border: 1.5px solid #EDE8E1;
-            border-radius: 10px;
-            font-size: 16px;
-            background-color: #FAF7F3;
+            font-size: clamp(0.9rem, 2.8vw, 1rem);
+            border: 1px solid rgba(45, 42, 38, 0.1);
+            border-radius: 12px;
+            background: #ffffff;
             color: #2D2A26;
-            outline: none;
-            transition: border-color 0.25s;
             font-family: inherit;
-            min-height: 48px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none;
         }
-        .modal-box .modal-input:focus {
+        .modal-box input[type="text"]:focus,
+        .modal-box textarea:focus {
             border-color: #FF6700;
+            box-shadow: 0 0 0 3px rgba(255, 103, 0, 0.12);
         }
-        .modal-box .modal-input::placeholder {
-            color: #C5BDB3;
+        .modal-box textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
         }
-
         .modal-box .modal-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 18px;
             justify-content: flex-end;
+            gap: 12px;
+            margin-top: 18px;
         }
-
-        .modal-box .modal-actions button {
+        .modal-box .modal-actions .btn {
             padding: 10px 24px;
+            border-radius: 12px;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
+            font-size: clamp(0.85rem, 2.6vw, 0.95rem);
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s;
-            min-height: 44px;
-            min-width: 72px;
-        }
-        .modal-box .modal-actions .btn-cancel {
-            background-color: #F0EBE5;
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
+            background: rgba(45, 42, 38, 0.06);
             color: #2D2A26;
         }
-        .modal-box .modal-actions .btn-cancel:active {
-            background-color: #E0D8D0;
+        .modal-box .modal-actions .btn:active {
+            transform: scale(0.92);
         }
-        .modal-box .modal-actions .btn-confirm {
-            background-color: #FF6700;
-            color: #FFFFFF;
+        .modal-box .modal-actions .btn-primary {
+            background: #FF6700;
+            color: #fff;
         }
-        .modal-box .modal-actions .btn-confirm:active {
-            background-color: #E05C00;
+        .modal-box .modal-actions .btn-primary:active {
+            background: #e65c00;
         }
-
-        /* ===== 笔记编辑页 ===== */
-        #noteEditView .edit-content {
-            flex: 1;
-            padding: 16px 20px 20px 20px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        #noteEditView .edit-content .edit-title {
-            width: 100%;
-            padding: 12px 0 10px 0;
+        .modal-box .edit-save {
+            background: transparent;
             border: none;
-            border-bottom: 2px solid #EDE8E1;
-            font-size: 20px;
+            font-size: clamp(1rem, 3.2vw, 1.2rem);
             font-weight: 600;
-            background-color: transparent;
-            color: #2D2A26;
-            outline: none;
-            transition: border-color 0.25s;
-            font-family: inherit;
-            margin-bottom: 16px;
+            color: #FF6700;
+            cursor: pointer;
+            padding: 4px 12px;
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        #noteEditView .edit-content .edit-title:focus {
-            border-bottom-color: #FF6700;
-        }
-        #noteEditView .edit-content .edit-title::placeholder {
-            color: #C5BDB3;
-            font-weight: 400;
+        .modal-box .edit-save:active {
+            transform: scale(0.92);
         }
 
-        #noteEditView .edit-content .edit-body {
-            width: 100%;
-            padding: 10px 0;
+        /* ===== 回收站 ===== */
+        .recycle-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 14px 16px;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid rgba(45, 42, 38, 0.04);
+            margin-bottom: 10px;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+            will-change: transform, opacity;
+        }
+        .recycle-item.removing {
+            transform: translateX(-30px);
+            opacity: 0;
+        }
+        .recycle-item .recycle-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .recycle-item .recycle-text {
+            font-size: clamp(0.88rem, 2.8vw, 1rem);
+            color: #2D2A26;
+            word-break: break-word;
+            flex: 1;
+        }
+        .recycle-item .recycle-meta {
+            font-size: 0.75rem;
+            color: rgba(45, 42, 38, 0.4);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            margin-top: 4px;
+        }
+        .recycle-item .recycle-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .recycle-item .recycle-actions button {
+            padding: 4px 14px;
+            border-radius: 8px;
             border: none;
-            font-size: 16px;
-            line-height: 1.8;
-            background-color: transparent;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
+            background: rgba(45, 42, 38, 0.06);
             color: #2D2A26;
-            outline: none;
-            resize: none;
-            font-family: inherit;
-            min-height: 200px;
         }
-        #noteEditView .edit-content .edit-body::placeholder {
-            color: #C5BDB3;
+        .recycle-item .recycle-actions button:active {
+            transform: scale(0.92);
+        }
+        .recycle-item .recycle-actions .btn-restore {
+            background: rgba(255, 103, 0, 0.12);
+            color: #FF6700;
+        }
+        .recycle-item .recycle-actions .btn-restore:active {
+            background: rgba(255, 103, 0, 0.2);
+        }
+        .recycle-item .recycle-actions .btn-delete {
+            background: rgba(200, 60, 60, 0.08);
+            color: #b33a3a;
+        }
+        .recycle-item .recycle-actions .btn-delete:active {
+            background: rgba(200, 60, 60, 0.16);
         }
 
-        /* ===== 隐藏辅助 ===== */
+        .recycle-empty {
+            text-align: center;
+            color: rgba(45, 42, 38, 0.35);
+            font-size: 0.95rem;
+            padding: 40px 0;
+        }
+
+        /* ===== Toast ===== */
+        .toast {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(45, 42, 38, 0.85);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            z-index: 200;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== 响应式：平板 / 宽屏 ===== */
+        @media (min-width: 768px) {
+            .main-content {
+                padding: 16px 20px 4px 20px;
+            }
+            .notes-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .fab-group {
+                bottom: 20px;
+                right: 20px;
+            }
+            .bottom-tab {
+                padding: 4px 20px 10px 20px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .main-content {
+                padding: 20px 24px 4px 24px;
+            }
+            .notes-grid {
+                gap: 14px;
+            }
+            .fab-group {
+                bottom: 24px;
+                right: 24px;
+            }
+            .bottom-tab {
+                padding: 4px 24px 12px 24px;
+            }
+            .modal-box {
+                padding: 24px 24px 28px 24px;
+            }
+        }
+
+        /* ===== 工具类 ===== */
         .hidden {
             display: none !important;
         }
-
-        /* ===== 响应式 ===== */
-        @media (max-width: 480px) {
-            #app {
-                max-width: 100%;
-            }
-            .fab-wrapper {
-                right: 16px;
-                bottom: 68px;
-            }
-            .fab-wrapper .fab-btn {
-                width: 48px;
-                height: 48px;
-                font-size: 26px;
-            }
-            .fab-wrapper .fab-btn.trash-btn {
-                width: 42px;
-                height: 42px;
-            }
-            .fab-wrapper .fab-btn.trash-btn svg {
-                width: 20px;
-                height: 20px;
-            }
-            .modal-box {
-                padding: 24px 18px 20px 18px;
-            }
-            .view-header {
-                padding: 12px 16px 10px 16px;
-            }
-            .view-header .title {
-                font-size: 18px;
-            }
-            .list-container {
-                padding: 8px 12px 16px 12px;
-            }
-            .note-card {
-                padding: 14px 16px;
-            }
-            .todo-item {
-                padding: 12px 14px;
-            }
-            .trash-item {
-                padding: 12px 14px;
-            }
-            .trash-item .trash-actions button {
-                padding: 4px 12px;
-                font-size: 13px;
-                min-height: 32px;
-            }
-            .bottom-tab {
-                height: 50px;
-            }
-            .bottom-tab .tab-item {
-                font-size: 15px;
-            }
-            .modal-box .modal-actions button {
-                padding: 8px 18px;
-                font-size: 15px;
-                min-height: 40px;
-                min-width: 64px;
-            }
+        .flex-1 {
+            flex: 1;
+        }
+        .relative {
+            position: relative;
+        }
+        .overflow-hidden {
+            overflow: hidden;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .gap-8 {
+            gap: 8px;
         }
 
-        @media (max-width: 380px) {
-            .fab-wrapper {
-                right: 12px;
-                bottom: 62px;
-            }
-            .fab-wrapper .fab-btn {
-                width: 42px;
-                height: 42px;
-                font-size: 22px;
-            }
-            .fab-wrapper .fab-btn.trash-btn {
-                width: 38px;
-                height: 38px;
-            }
-            .fab-wrapper .fab-btn.trash-btn svg {
-                width: 18px;
-                height: 18px;
-            }
-            .trash-item .trash-actions {
-                flex-wrap: wrap;
-                width: 100%;
-                justify-content: flex-end;
-                margin-top: 6px;
-            }
-            .trash-item .trash-actions button {
-                padding: 4px 10px;
-                font-size: 12px;
-                min-height: 30px;
-            }
+        /* ===== 导入提示 ===== */
+        .import-toast {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(45, 42, 38, 0.88);
+            color: #fff;
+            padding: 16px 28px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 150;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(4px);
+            text-align: center;
         }
-
-        /* ===== 安全区域 ===== */
-        @supports (padding-bottom: env(safe-area-inset-bottom)) {
-            .bottom-tab {
-                padding-bottom: env(safe-area-inset-bottom);
-                height: calc(56px + env(safe-area-inset-bottom));
-            }
-            .fab-wrapper {
-                bottom: calc(72px + env(safe-area-inset-bottom));
-            }
-            .view {
-                padding-bottom: calc(64px + env(safe-area-inset-bottom));
-            }
-            @media (max-width: 480px) {
-                .fab-wrapper {
-                    bottom: calc(68px + env(safe-area-inset-bottom));
-                }
-            }
-            @media (max-width: 380px) {
-                .fab-wrapper {
-                    bottom: calc(62px + env(safe-area-inset-bottom));
-                }
-            }
+        .import-toast.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
     </style>
 </head>
 <body>
 
-    <div id="app">
+    <div class="app" id="app">
 
-        <!-- ==================== 笔记列表视图 ==================== -->
-        <div id="notesView" class="view active">
-            <div class="view-header">
-                <span class="title">笔记</span>
-                <span style="width:48px;"></span>
+        <!-- ===== Toast ===== -->
+        <div class="toast" id="toast"></div>
+
+        <!-- ===== 导入反馈 ===== -->
+        <div class="import-toast" id="importToast">导入成功</div>
+
+        <!-- ===== 主内容 ===== -->
+        <div class="main-content">
+
+            <!-- ====== 笔记视图 ====== -->
+            <div class="view active" id="notesView">
+                <div class="view-header">
+                    <h2>笔记</h2>
+                    <button class="action-btn" id="exportBtn">
+                        <span class="btn-text">导出</span>
+                        <span class="spinner"></span>
+                    </button>
+                </div>
+                <div class="list-container" id="notesList">
+                    <div class="notes-grid" id="notesGrid"></div>
+                </div>
+                <div class="fab-group">
+                    <button class="fab" id="addNoteFab" aria-label="添加笔记">+</button>
+                </div>
             </div>
-            <div class="list-container" id="notesList">
-                <!-- 动态渲染 -->
+
+            <!-- ====== 待办视图 ====== -->
+            <div class="view" id="todosView">
+                <div class="view-header">
+                    <h2>待办</h2>
+                    <button class="action-btn" id="importBtn">
+                        <span class="btn-text">导入</span>
+                        <span class="spinner"></span>
+                    </button>
+                    <input type="file" id="importFileInput" accept=".json" style="display:none" />
+                </div>
+                <div class="list-container" id="todosList">
+                    <div class="todo-list" id="todoList"></div>
+                </div>
+                <div class="fab-group">
+                    <button class="fab fab-secondary" id="recycleBtn" aria-label="回收站">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                            <path d="M10 11v6M14 11v6" />
+                        </svg>
+                    </button>
+                    <button class="fab" id="addTodoFab" aria-label="添加待办">+</button>
+                </div>
             </div>
-            <!-- FAB -->
-            <div class="fab-wrapper" id="notesFab">
-                <button class="fab-btn trash-btn" id="trashEntryBtn" aria-label="回收站">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M3 6h18" />
-                        <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
-                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                    </svg>
-                </button>
-                <button class="fab-btn" id="noteAddBtn">+</button>
+
+        </div>
+
+        <!-- ===== 底部 Tab ===== -->
+        <div class="bottom-tab">
+            <button class="tab-item active" data-view="notes">笔记</button>
+            <button class="tab-item" data-view="todos">待办</button>
+        </div>
+
+        <!-- ===== 编辑笔记模态框 ===== -->
+        <div class="modal-overlay" id="editModal">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>编辑笔记</h3>
+                    <button class="edit-save" id="saveNoteBtn">✓</button>
+                </div>
+                <input type="text" id="editTitle" placeholder="请填写标题" />
+                <textarea id="editContent" placeholder="请填写内容" class="mt-8"></textarea>
             </div>
         </div>
 
-        <!-- ==================== 笔记编辑视图 ==================== -->
-        <div id="noteEditView" class="view">
-            <div class="view-header">
-                <button class="back-btn" id="noteEditCancel">取消</button>
-                <span class="title" style="font-size:17px;font-weight:500;">编辑笔记</span>
-                <button class="header-action confirm" id="noteEditSave">✓</button>
-            </div>
-            <div class="edit-content">
-                <input class="edit-title" id="noteEditTitle" placeholder="请填写标题" maxlength="200" />
-                <textarea class="edit-body" id="noteEditBody" placeholder="请填写内容"></textarea>
-            </div>
-        </div>
-
-        <!-- ==================== 待办列表视图 ==================== -->
-        <div id="todosView" class="view">
-            <div class="view-header">
-                <span class="title">待办</span>
-                <span style="width:48px;"></span>
-            </div>
-            <div class="list-container" id="todosList">
-                <!-- 动态渲染 -->
-            </div>
-            <div class="fab-wrapper" id="todosFab">
-                <button class="fab-btn" id="todoAddBtn">+</button>
-            </div>
-        </div>
-
-        <!-- ==================== 回收站视图 ==================== -->
-        <div id="trashView" class="view">
-            <div class="view-header">
-                <button class="back-btn" id="trashBackBtn">← 返回</button>
-                <span class="title">回收站</span>
-                <span style="width:48px;"></span>
-            </div>
-            <div class="list-container" id="trashList">
-                <!-- 动态渲染 -->
-            </div>
-        </div>
-
-        <!-- ==================== 底部Tab栏 ==================== -->
-        <div class="bottom-tab" id="bottomTab">
-            <button class="tab-item active" data-tab="notes">笔记</button>
-            <button class="tab-item" data-tab="todos">待办</button>
-        </div>
-
-        <!-- ==================== 模态框（添加待办） ==================== -->
+        <!-- ===== 添加待办模态框 ===== -->
         <div class="modal-overlay" id="todoModal">
             <div class="modal-box">
-                <div class="modal-title">新建待办</div>
-                <input class="modal-input" id="todoModalInput" placeholder="请输入待办内容" maxlength="200" autofocus />
-                <div class="modal-actions">
-                    <button class="btn-cancel" id="todoModalCancel">取消</button>
-                    <button class="btn-confirm" id="todoModalConfirm">确认</button>
+                <div class="modal-header">
+                    <h3>添加待办</h3>
+                    <button class="modal-close" id="closeTodoModal">✕</button>
                 </div>
+                <input type="text" id="todoInput" placeholder="输入待办内容" />
+                <div class="modal-actions">
+                    <button class="btn" id="cancelTodoBtn">取消</button>
+                    <button class="btn btn-primary" id="confirmTodoBtn">添加</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 回收站模态框 ===== -->
+        <div class="modal-overlay" id="recycleModal">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>回收站</h3>
+                    <button class="modal-close" id="closeRecycleModal">✕</button>
+                </div>
+                <div id="recycleList"></div>
             </div>
         </div>
 
     </div>
 
     <script>
+        // ============================================================
+        //  JavaScript（完全不变）
+        // ============================================================
+
         (function() {
             'use strict';
 
-            // ============================================================
-            //  数据层
-            // ============================================================
-
+            // ---------- 数据 ----------
             const STORAGE_KEY = 'note_todo_data';
+            let data = {
+                notes: [],
+                todos: []
+            };
 
-            // 默认数据结构
-            function getDefaultData() {
-                return {
-                    notes: [],
-                    todos: [] // { id, text, deletedAt: null | timestamp }
-                };
+            // ---------- DOM 引用 ----------
+            const $ = (sel) => document.querySelector(sel);
+            const $$ = (sel) => document.querySelectorAll(sel);
+
+            const notesView = $('#notesView');
+            const todosView = $('#todosView');
+            const notesGrid = $('#notesGrid');
+            const todoList = $('#todoList');
+            const recycleList = $('#recycleList');
+
+            const tabItems = $$('.tab-item');
+            const addNoteFab = $('#addNoteFab');
+            const addTodoFab = $('#addTodoFab');
+            const recycleBtn = $('#recycleBtn');
+
+            const editModal = $('#editModal');
+            const editTitle = $('#editTitle');
+            const editContent = $('#editContent');
+            const saveNoteBtn = $('#saveNoteBtn');
+
+            const todoModal = $('#todoModal');
+            const todoInput = $('#todoInput');
+            const confirmTodoBtn = $('#confirmTodoBtn');
+            const cancelTodoBtn = $('#cancelTodoBtn');
+            const closeTodoModal = $('#closeTodoModal');
+
+            const recycleModal = $('#recycleModal');
+            const closeRecycleModal = $('#closeRecycleModal');
+
+            const exportBtn = $('#exportBtn');
+            const importBtn = $('#importBtn');
+            const importFileInput = $('#importFileInput');
+
+            const toast = $('#toast');
+            const importToast = $('#importToast');
+
+            let editingNoteId = null;
+            let toastTimer = null;
+            let importToastTimer = null;
+
+            // ---------- 阻止右键 & 选中 ----------
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            // ---------- 工具函数 ----------
+            function uid() {
+                return Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
             }
 
-            let data = loadData();
+            function formatTime(ts) {
+                const d = new Date(ts);
+                return d.getFullYear() + '-' +
+                    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(d.getDate()).padStart(2, '0') + ' ' +
+                    String(d.getHours()).padStart(2, '0') + ':' +
+                    String(d.getMinutes()).padStart(2, '0');
+            }
 
+            function formatDate(ts) {
+                const d = new Date(ts);
+                return d.getFullYear() + '-' +
+                    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(d.getDate()).padStart(2, '0');
+            }
+
+            function daysBetween(t1, t2) {
+                const diff = Math.abs(t2 - t1);
+                return Math.ceil(diff / (1000 * 60 * 60 * 24));
+            }
+
+            function showToast(msg, duration) {
+                duration = duration || 1800;
+                if (toastTimer) clearTimeout(toastTimer);
+                toast.textContent = msg;
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+
+            function showImportToast(msg, duration) {
+                duration = duration || 1400;
+                if (importToastTimer) clearTimeout(importToastTimer);
+                importToast.textContent = msg;
+                importToast.classList.add('show');
+                importToastTimer = setTimeout(() => {
+                    importToast.classList.remove('show');
+                }, duration);
+            }
+
+            // ---------- 存储 ----------
             function loadData() {
                 try {
                     const raw = localStorage.getItem(STORAGE_KEY);
                     if (raw) {
                         const parsed = JSON.parse(raw);
-                        if (parsed && typeof parsed === 'object') {
-                            if (!Array.isArray(parsed.notes)) parsed.notes = [];
-                            if (!Array.isArray(parsed.todos)) parsed.todos = [];
-                            return parsed;
-                        }
+                        data.notes = parsed.notes || [];
+                        data.todos = parsed.todos || [];
+                        data.todos.forEach(t => {
+                            if (t.isDeleted === undefined) t.isDeleted = false;
+                            if (t.deletedAt === undefined) t.deletedAt = null;
+                        });
                     }
                 } catch (_) { /* ignore */ }
-                return getDefaultData();
             }
 
             function saveData() {
-                try {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                } catch (_) { /* ignore */ }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             }
 
-            // 工具：生成短id
-            function genId() {
-                return Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
+            // ---------- 渲染：笔记 ----------
+            function renderNotes() {
+                const grid = notesGrid;
+                grid.innerHTML = '';
+                if (data.notes.length === 0) {
+                    grid.innerHTML =
+                        '<div style="text-align:center;color:rgba(45,42,38,0.3);padding:40px 0;font-size:0.9rem;">暂无笔记，点击右下角 + 添加</div>';
+                    return;
+                }
+                const sorted = [...data.notes].sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
+                sorted.forEach((note, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'note-card';
+                    card.dataset.id = note.id;
+                    card.style.transitionDelay = (index * 50) + 'ms';
+
+                    const preview = note.content ? note.content.slice(0, 60) : '';
+
+                    card.innerHTML = `
+                        <div class="card-title">${escapeHtml(note.title || '无标题')}</div>
+                        <div class="card-preview">${escapeHtml(preview)}${preview.length >= 60 ? '…' : ''}</div>
+                        <div class="card-detail-wrap">
+                            <div class="card-detail" id="detail_${note.id}"></div>
+                            <div class="card-time">更新于 ${formatTime(note.updatedAt || note.createdAt)}</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+
+                    const detailContainer = card.querySelector('.card-detail');
+                    if (detailContainer) {
+                        const lines = (note.content || '').split('\n');
+                        lines.forEach((line, idx) => {
+                            const span = document.createElement('span');
+                            span.className = 'line';
+                            if (idx === 0) span.classList.add('indent-0');
+                            else if (idx === 1) span.classList.add('indent-2');
+                            else span.classList.add('indent-4');
+                            span.textContent = line || ' ';
+                            detailContainer.appendChild(span);
+                        });
+                    }
+
+                    card.addEventListener('click', function(e) {
+                        if (e.target.closest('.edit-save') || e.target.closest('.modal-close') ||
+                            e.target.closest('input') || e.target.closest('textarea') ||
+                            e.target.closest('button')) return;
+                        const isExpanded = this.classList.contains('expanded');
+                        if (isExpanded) {
+                            this.classList.remove('expanded');
+                            const wrap = this.querySelector('.card-detail-wrap');
+                            if (wrap) {
+                                wrap.style.height = wrap.scrollHeight + 'px';
+                                requestAnimationFrame(() => {
+                                    wrap.style.height = '0px';
+                                    wrap.style.opacity = '0';
+                                });
+                            }
+                        } else {
+                            this.classList.add('expanded');
+                            const wrap = this.querySelector('.card-detail-wrap');
+                            if (wrap) {
+                                wrap.style.height = '0px';
+                                wrap.style.opacity = '0';
+                                requestAnimationFrame(() => {
+                                    wrap.style.height = wrap.scrollHeight + 'px';
+                                    wrap.style.opacity = '1';
+                                });
+                            }
+                            this.style.transform = 'scale(0.98)';
+                            requestAnimationFrame(() => {
+                                this.style.transform = 'scale(1)';
+                            });
+                        }
+                    });
+
+                    card.addEventListener('dblclick', function(e) {
+                        e.stopPropagation();
+                        const id = this.dataset.id;
+                        openEditNote(id);
+                    });
+
+                    requestAnimationFrame(() => {
+                        card.classList.add('entered');
+                    });
+                });
             }
 
-            // 工具：格式化相对时间
-            function timeAgo(ts) {
-                const diff = Date.now() - ts;
-                const seconds = Math.floor(diff / 1000);
-                if (seconds < 60) return '刚刚';
-                const minutes = Math.floor(seconds / 60);
-                if (minutes < 60) return minutes + '分钟前';
-                const hours = Math.floor(minutes / 60);
-                if (hours < 24) return hours + '小时前';
-                const days = Math.floor(hours / 24);
-                if (days < 30) return days + '天前';
-                const months = Math.floor(days / 30);
-                if (months < 12) return months + '个月前';
-                return Math.floor(months / 12) + '年前';
+            // ---------- 渲染：待办 ----------
+            function renderTodos() {
+                const list = todoList;
+                list.innerHTML = '';
+                const active = data.todos.filter(t => !t.isDeleted);
+                if (active.length === 0) {
+                    list.innerHTML =
+                        '<div style="text-align:center;color:rgba(45,42,38,0.3);padding:40px 0;font-size:0.9rem;">暂无待办，点击右下角 + 添加</div>';
+                    return;
+                }
+                const sorted = [...active].sort((a, b) => a.createdAt - b.createdAt);
+                sorted.forEach((todo, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'todo-item';
+                    item.dataset.id = todo.id;
+                    item.style.transitionDelay = (index * 50) + 'ms';
+
+                    const checked = todo.isDeleted ? 'checked' : '';
+                    const doneClass = todo.isDeleted ? 'done' : '';
+
+                    item.innerHTML = `
+                        <div class="checkbox ${checked}" data-id="${todo.id}"></div>
+                        <span class="todo-text ${doneClass}">${escapeHtml(todo.text)}</span>
+                    `;
+                    list.appendChild(item);
+
+                    const cb = item.querySelector('.checkbox');
+                    cb.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = this.dataset.id;
+                        completeTodo(id);
+                    });
+
+                    requestAnimationFrame(() => {
+                        item.classList.add('entered');
+                    });
+                });
             }
 
-            // ============================================================
-            //  笔记操作
-            // ============================================================
-
-            function getNotes() {
-                return data.notes.slice().sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
-            }
-
-            function createNote(title, content) {
+            // ---------- 渲染：回收站 ----------
+            function renderRecycle() {
+                const list = recycleList;
+                list.innerHTML = '';
+                const deleted = data.todos.filter(t => t.isDeleted === true);
+                if (deleted.length === 0) {
+                    list.innerHTML = '<div class="recycle-empty">回收站为空</div>';
+                    return;
+                }
                 const now = Date.now();
+                const sorted = [...deleted].sort((a, b) => (b.deletedAt || b.createdAt) - (a.deletedAt || a.createdAt));
+                sorted.forEach((todo) => {
+                    const days = todo.deletedAt ? daysBetween(todo.deletedAt, now) : 0;
+                    const remain = Math.max(0, 30 - days);
+                    const div = document.createElement('div');
+                    div.className = 'recycle-item';
+                    div.dataset.id = todo.id;
+                    div.innerHTML = `
+                        <div class="recycle-top">
+                            <span class="recycle-text">${escapeHtml(todo.text)}</span>
+                            <div class="recycle-actions">
+                                <button class="btn-restore" data-id="${todo.id}">恢复</button>
+                                <button class="btn-delete" data-id="${todo.id}">永久删除</button>
+                            </div>
+                        </div>
+                        <div class="recycle-meta">
+                            <span>删除于 ${todo.deletedAt ? formatTime(todo.deletedAt) : '未知'}</span>
+                            <span>剩余 ${remain} 天清除</span>
+                        </div>
+                    `;
+                    list.appendChild(div);
+
+                    div.querySelector('.btn-restore').addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = this.dataset.id;
+                        restoreTodo(id);
+                    });
+                    div.querySelector('.btn-delete').addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = this.dataset.id;
+                        deleteTodoPermanently(id);
+                    });
+                });
+            }
+
+            // ---------- 业务逻辑 ----------
+            function addNote(title, content) {
+                if (!title.trim() && !content.trim()) return false;
                 const note = {
-                    id: genId(),
+                    id: uid(),
                     title: title.trim() || '无标题',
                     content: content || '',
-                    createdAt: now,
-                    updatedAt: now
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
                 };
                 data.notes.push(note);
                 saveData();
-                return note;
+                renderNotes();
+                return true;
             }
 
             function updateNote(id, title, content) {
                 const note = data.notes.find(n => n.id === id);
-                if (!note) return null;
+                if (!note) return false;
+                if (!title.trim() && !content.trim()) {
+                    deleteNote(id);
+                    return true;
+                }
                 note.title = title.trim() || '无标题';
                 note.content = content || '';
                 note.updatedAt = Date.now();
                 saveData();
-                return note;
+                renderNotes();
+                return true;
             }
 
             function deleteNote(id) {
                 data.notes = data.notes.filter(n => n.id !== id);
                 saveData();
+                renderNotes();
             }
 
-            function getNote(id) {
-                return data.notes.find(n => n.id === id) || null;
-            }
-
-            // ============================================================
-            //  待办操作
-            // ============================================================
-
-            function getActiveTodos() {
-                return data.todos.filter(t => t.deletedAt === null)
-                    .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-            }
-
-            function getTrashedTodos() {
-                return data.todos.filter(t => t.deletedAt !== null)
-                    .sort((a, b) => (b.deletedAt || 0) - (a.deletedAt || 0));
-            }
-
-            function createTodo(text) {
-                const now = Date.now();
+            function addTodo(text) {
+                if (!text.trim()) return false;
                 const todo = {
-                    id: genId(),
+                    id: uid(),
                     text: text.trim(),
-                    deletedAt: null,
-                    createdAt: now
+                    createdAt: Date.now(),
+                    isDeleted: false,
+                    deletedAt: null
                 };
                 data.todos.push(todo);
                 saveData();
-                return todo;
+                renderTodos();
+                return true;
             }
 
             function completeTodo(id) {
                 const todo = data.todos.find(t => t.id === id);
-                if (!todo || todo.deletedAt !== null) return false;
-                todo.deletedAt = Date.now();
-                saveData();
-                return true;
+                if (!todo || todo.isDeleted) return;
+                const item = document.querySelector(`.todo-item[data-id="${id}"]`);
+                if (item) {
+                    item.classList.add('removing');
+                    setTimeout(() => {
+                        todo.isDeleted = true;
+                        todo.deletedAt = Date.now();
+                        saveData();
+                        renderTodos();
+                        if (recycleModal.classList.contains('active')) {
+                            renderRecycle();
+                        }
+                    }, 250);
+                } else {
+                    todo.isDeleted = true;
+                    todo.deletedAt = Date.now();
+                    saveData();
+                    renderTodos();
+                    if (recycleModal.classList.contains('active')) {
+                        renderRecycle();
+                    }
+                }
             }
 
             function restoreTodo(id) {
                 const todo = data.todos.find(t => t.id === id);
-                if (!todo || todo.deletedAt === null) return false;
+                if (!todo) return;
+                todo.isDeleted = false;
                 todo.deletedAt = null;
                 saveData();
-                return true;
+                const item = document.querySelector(`.recycle-item[data-id="${id}"]`);
+                if (item) {
+                    item.classList.add('removing');
+                    setTimeout(() => {
+                        renderRecycle();
+                        renderTodos();
+                    }, 250);
+                } else {
+                    renderRecycle();
+                    renderTodos();
+                }
             }
 
-            function permanentDeleteTodo(id) {
+            function deleteTodoPermanently(id) {
+                const todo = data.todos.find(t => t.id === id);
+                if (!todo) return;
                 data.todos = data.todos.filter(t => t.id !== id);
                 saveData();
-                return true;
+                const item = document.querySelector(`.recycle-item[data-id="${id}"]`);
+                if (item) {
+                    item.classList.add('removing');
+                    setTimeout(() => {
+                        renderRecycle();
+                        renderTodos();
+                    }, 250);
+                } else {
+                    renderRecycle();
+                    renderTodos();
+                }
             }
 
-            // 清理过期（30天）
-            function cleanExpiredTrash() {
+            function cleanExpiredTodos() {
                 const now = Date.now();
-                const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
                 let changed = false;
                 data.todos = data.todos.filter(t => {
-                    if (t.deletedAt !== null && (now - t.deletedAt) >= THIRTY_DAYS) {
-                        changed = true;
-                        return false;
+                    if (t.isDeleted && t.deletedAt) {
+                        const days = daysBetween(t.deletedAt, now);
+                        if (days >= 30) {
+                            changed = true;
+                            return false;
+                        }
                     }
                     return true;
                 });
                 if (changed) {
                     saveData();
-                    renderAll();
+                    renderRecycle();
+                    renderTodos();
                 }
             }
 
-            // ============================================================
-            //  渲染函数
-            // ============================================================
-
-            // 笔记展开状态
-            const expandedNotes = new Set();
-
-            function renderNotes() {
-                const container = document.getElementById('notesList');
-                const notes = getNotes();
-
-                if (notes.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">+</div>
-                            <div>暂无笔记，点击右下角添加</div>
-                        </div>
-                    `;
-                    return;
+            // ---------- 打开编辑笔记 ----------
+            function openEditNote(id) {
+                let note = null;
+                if (id) {
+                    note = data.notes.find(n => n.id === id);
                 }
+                if (note) {
+                    editingNoteId = note.id;
+                    editTitle.value = note.title || '';
+                    editContent.value = note.content || '';
+                } else {
+                    editingNoteId = null;
+                    editTitle.value = '';
+                    editContent.value = '';
+                }
+                editModal.classList.add('active');
+                setTimeout(() => editTitle.focus(), 100);
+            }
 
-                let html = '';
-                for (const note of notes) {
-                    const isExpanded = expandedNotes.has(note.id);
-                    const preview = note.content ? note.content.slice(0, 40) : '';
-                    const previewSuffix = note.content && note.content.length > 40 ? '…' : '';
+            function closeEditNote() {
+                editModal.classList.remove('active');
+                editingNoteId = null;
+            }
 
-                    // 构建展开内容（按行缩进）
-                    let bodyHtml = '';
-                    if (isExpanded && note.content) {
-                        const lines = note.content.split('\n');
-                        // 过滤掉末尾空行，但保留中间空行
-                        const filteredLines = lines;
-                        // 如果所有行都是空，不显示
-                        const hasContent = filteredLines.some(l => l.trim() !== '');
-                        if (hasContent) {
-                            bodyHtml = '<div class="note-body">';
-                            for (let i = 0; i < filteredLines.length; i++) {
-                                const line = filteredLines[i];
-                                const indent = i * 2; // 2个中文字符宽度
-                                const style = indent > 0 ? ` style="padding-left:${indent}em;"` : '';
-                                // 空行保留占位
-                                const displayLine = line || '\u200B';
-                                bodyHtml += `<span class="line"${style}>${escapeHtml(displayLine)}</span>`;
-                            }
-                            bodyHtml += '</div>';
+            // ---------- 打开回收站 ----------
+            function openRecycle() {
+                renderRecycle();
+                recycleModal.classList.add('active');
+            }
+
+            function closeRecycle() {
+                recycleModal.classList.remove('active');
+            }
+
+            // ---------- 导入导出 ----------
+            function exportData() {
+                const btn = exportBtn;
+                btn.classList.add('loading');
+                const json = JSON.stringify(data, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'note_todo_backup_' + formatDate(Date.now()) + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                setTimeout(() => {
+                    btn.classList.remove('loading');
+                    showToast('导出成功');
+                }, 500);
+            }
+
+            function importData(file) {
+                const reader = new FileReader();
+                const btn = importBtn;
+                btn.classList.add('loading');
+                reader.onload = function(e) {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (!imported.notes || !imported.todos) {
+                            throw new Error('无效数据格式');
                         }
-                    }
-
-                    const timeStr = timeAgo(note.updatedAt || note.createdAt);
-
-                    html += `
-                        <div class="note-card" data-id="${note.id}">
-                            <div class="note-title">${escapeHtml(note.title)}</div>
-                            ${preview ? `<div class="note-preview">${escapeHtml(preview)}${previewSuffix}</div>` : ''}
-                            ${bodyHtml}
-                            <div class="note-meta">${timeStr}</div>
-                        </div>
-                    `;
-                }
-
-                container.innerHTML = html;
-
-                // 绑定事件（委托）
-                container.querySelectorAll('.note-card').forEach(card => {
-                    const id = card.dataset.id;
-                    // 单击展开/折叠
-                    card.addEventListener('click', function(e) {
-                        // 如果点击的是内部按钮等，忽略
-                        if (e.target.closest('.note-body')) return;
-                        if (e.target.closest('.note-meta')) return;
-                        toggleNoteExpand(id);
-                    });
-                    // 双击编辑
-                    let clickTimer = null;
-                    card.addEventListener('click', function(e) {
-                        if (e.target.closest('.note-body')) return;
-                        if (e.target.closest('.note-meta')) return;
-                        if (clickTimer) {
-                            clearTimeout(clickTimer);
-                            clickTimer = null;
-                            // 双击
-                            enterEditNote(id);
+                        if (!confirm('导入将完全替换当前所有数据，确认继续？')) {
+                            btn.classList.remove('loading');
                             return;
                         }
-                        clickTimer = setTimeout(() => {
-                            clickTimer = null;
-                        }, 280);
-                    });
-                });
+                        data.notes = imported.notes || [];
+                        data.todos = imported.todos || [];
+                        data.todos.forEach(t => {
+                            if (t.isDeleted === undefined) t.isDeleted = false;
+                            if (t.deletedAt === undefined) t.deletedAt = null;
+                        });
+                        saveData();
+                        renderNotes();
+                        renderTodos();
+                        if (recycleModal.classList.contains('active')) {
+                            renderRecycle();
+                        }
+                        btn.classList.remove('loading');
+                        showImportToast('导入成功');
+                    } catch (err) {
+                        btn.classList.remove('loading');
+                        showToast('导入失败：' + err.message);
+                    }
+                };
+                reader.onerror = function() {
+                    btn.classList.remove('loading');
+                    showToast('读取文件失败');
+                };
+                reader.readAsText(file);
             }
 
-            function toggleNoteExpand(id) {
-                if (expandedNotes.has(id)) {
-                    expandedNotes.delete(id);
-                } else {
-                    expandedNotes.add(id);
-                }
-                renderNotes();
-                // 滚动保持
-            }
-
+            // ---------- 工具：转义HTML ----------
             function escapeHtml(str) {
                 if (!str) return '';
-                return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
             }
 
-            // ============================================================
-            //  待办渲染
-            // ============================================================
-
-            function renderTodos() {
-                const container = document.getElementById('todosList');
-                const todos = getActiveTodos();
-
-                if (todos.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">+</div>
-                            <div>暂无待办，点击右下角添加</div>
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = '';
-                for (const todo of todos) {
-                    html += `
-                        <div class="todo-item" data-id="${todo.id}">
-                            <div class="todo-check" data-id="${todo.id}"></div>
-                            <span class="todo-text">${escapeHtml(todo.text)}</span>
-                        </div>
-                    `;
-                }
-                container.innerHTML = html;
-
-                // 绑定勾选事件
-                container.querySelectorAll('.todo-check').forEach(el => {
-                    el.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const id = this.dataset.id;
-                        if (completeTodo(id)) {
-                            renderTodos();
-                            // 如果回收站开着，也刷新
-                            if (document.getElementById('trashView').classList.contains('active')) {
-                                renderTrash();
-                            }
-                        }
+            // ---------- 切换Tab ----------
+            function switchTab(view) {
+                tabItems.forEach(tab => {
+                    const v = tab.dataset.view;
+                    tab.classList.toggle('active', v === view);
+                });
+                if (view === 'notes') {
+                    notesView.classList.add('active');
+                    todosView.classList.remove('active');
+                    notesView.style.animation = 'none';
+                    requestAnimationFrame(() => {
+                        notesView.style.animation = 'viewFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
                     });
-                });
-            }
-
-            // ============================================================
-            //  回收站渲染
-            // ============================================================
-
-            function renderTrash() {
-                const container = document.getElementById('trashList');
-                const items = getTrashedTodos();
-
-                if (items.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">♻</div>
-                            <div>回收站为空</div>
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = '';
-                for (const item of items) {
-                    const timeStr = item.deletedAt ? timeAgo(item.deletedAt) : '未知';
-                    html += `
-                        <div class="trash-item" data-id="${item.id}">
-                            <span class="trash-text">${escapeHtml(item.text)}</span>
-                            <span class="trash-time">删除于 ${timeStr}</span>
-                            <div class="trash-actions">
-                                <button class="btn-restore" data-id="${item.id}">恢复</button>
-                                <button class="btn-delete" data-id="${item.id}">永久删除</button>
-                            </div>
-                        </div>
-                    `;
-                }
-                container.innerHTML = html;
-
-                // 绑定事件
-                container.querySelectorAll('.btn-restore').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const id = this.dataset.id;
-                        if (restoreTodo(id)) {
-                            renderTrash();
-                            renderTodos();
-                            renderNotes(); // 刷新笔记界面的tab标记（无影响）
-                        }
+                } else {
+                    todosView.classList.add('active');
+                    notesView.classList.remove('active');
+                    todosView.style.animation = 'none';
+                    requestAnimationFrame(() => {
+                        todosView.style.animation = 'viewFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
                     });
-                });
-
-                container.querySelectorAll('.btn-delete').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const id = this.dataset.id;
-                        if (permanentDeleteTodo(id)) {
-                            renderTrash();
-                            // 待办列表不受影响，因为已删除的不在待办中
-                        }
-                    });
-                });
-            }
-
-            // ============================================================
-            //  全量渲染
-            // ============================================================
-
-            function renderAll() {
-                const activeView = document.querySelector('.view.active');
-                const viewId = activeView ? activeView.id : 'notesView';
-                renderNotes();
-                renderTodos();
-                if (document.getElementById('trashView').classList.contains('active')) {
-                    renderTrash();
-                }
-                // 根据当前视图刷新
-                switch (viewId) {
-                    case 'notesView':
-                        renderNotes();
-                        break;
-                    case 'todosView':
-                        renderTodos();
-                        break;
-                    case 'trashView':
-                        renderTrash();
-                        break;
-                    case 'noteEditView':
-                        // 不刷新
-                        break;
                 }
             }
 
-            // ============================================================
-            //  视图切换
-            // ============================================================
-
-            function switchView(viewId) {
-                // 隐藏所有视图
-                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-                // 显示目标视图
-                const target = document.getElementById(viewId);
-                if (target) target.classList.add('active');
-
-                // 显示/隐藏底部Tab
-                const tab = document.getElementById('bottomTab');
-                if (viewId === 'notesView' || viewId === 'todosView') {
-                    tab.style.display = 'flex';
-                } else {
-                    tab.style.display = 'none';
-                }
-
-                // 显示/隐藏FAB
-                const notesFab = document.getElementById('notesFab');
-                const todosFab = document.getElementById('todosFab');
-                if (viewId === 'notesView') {
-                    notesFab.style.display = 'flex';
-                    todosFab.style.display = 'none';
-                } else if (viewId === 'todosView') {
-                    notesFab.style.display = 'none';
-                    todosFab.style.display = 'flex';
-                } else {
-                    notesFab.style.display = 'none';
-                    todosFab.style.display = 'none';
-                }
-
-                // 刷新对应内容
-                if (viewId === 'notesView') renderNotes();
-                if (viewId === 'todosView') renderTodos();
-                if (viewId === 'trashView') renderTrash();
-
-                // 更新Tab高亮
-                document.querySelectorAll('.tab-item').forEach(tabItem => {
-                    tabItem.classList.toggle('active', tabItem.dataset.tab === (viewId === 'notesView' ? 'notes' :
-                        viewId === 'todosView' ? 'todos' : ''));
-                });
-            }
-
-            // ============================================================
-            //  笔记编辑逻辑
-            // ============================================================
-
-            let editingNoteId = null;
-
-            function enterEditNote(id) {
-                const note = getNote(id);
-                if (!note) return;
-                editingNoteId = id;
-                document.getElementById('noteEditTitle').value = note.title || '';
-                document.getElementById('noteEditBody').value = note.content || '';
-                switchView('noteEditView');
-                // 聚焦标题
-                setTimeout(() => {
-                    document.getElementById('noteEditTitle').focus();
-                    document.getElementById('noteEditTitle').select();
-                }, 100);
-            }
-
-            function enterNewNote() {
-                editingNoteId = null;
-                document.getElementById('noteEditTitle').value = '';
-                document.getElementById('noteEditBody').value = '';
-                switchView('noteEditView');
-                setTimeout(() => {
-                    document.getElementById('noteEditTitle').focus();
-                }, 100);
-            }
-
-            function saveNoteEdit() {
-                const title = document.getElementById('noteEditTitle').value.trim();
-                const content = document.getElementById('noteEditBody').value;
-
-                // 若标题和内容都为空，不保存
-                if (!title && !content.trim()) {
-                    switchView('notesView');
-                    return;
-                }
-
-                if (editingNoteId) {
-                    // 更新
-                    updateNote(editingNoteId, title || '无标题', content);
-                } else {
-                    // 新建
-                    createNote(title || '无标题', content);
-                }
-                switchView('notesView');
-                renderNotes();
-            }
-
-            function cancelNoteEdit() {
-                switchView('notesView');
-            }
-
-            // ============================================================
-            //  待办模态框
-            // ============================================================
-
-            function showTodoModal() {
-                const modal = document.getElementById('todoModal');
-                const input = document.getElementById('todoModalInput');
-                modal.classList.add('active');
-                input.value = '';
-                setTimeout(() => {
-                    input.focus();
-                }, 150);
-            }
-
-            function hideTodoModal() {
-                document.getElementById('todoModal').classList.remove('active');
-            }
-
-            function confirmTodo() {
-                const input = document.getElementById('todoModalInput');
-                const text = input.value.trim();
-                if (!text) {
-                    input.focus();
-                    input.style.borderColor = '#E05C00';
-                    setTimeout(() => { input.style.borderColor = ''; }, 400);
-                    return;
-                }
-                createTodo(text);
-                hideTodoModal();
-                renderTodos();
-                // 如果回收站开着，刷新（不影响）
-                if (document.getElementById('trashView').classList.contains('active')) {
-                    renderTrash();
-                }
-            }
-
-            // ============================================================
-            //  回收站入口
-            // ============================================================
-
-            function openTrash() {
-                switchView('trashView');
-                renderTrash();
-            }
-
-            // ============================================================
-            //  事件绑定
-            // ============================================================
-
+            // ---------- 初始化 ----------
             function init() {
-                // ----- Tab切换 -----
-                document.querySelectorAll('.tab-item').forEach(tab => {
+                loadData();
+                cleanExpiredTodos();
+                renderNotes();
+                renderTodos();
+
+                tabItems.forEach(tab => {
                     tab.addEventListener('click', function() {
-                        const tabName = this.dataset.tab;
-                        if (tabName === 'notes') {
-                            switchView('notesView');
-                        } else if (tabName === 'todos') {
-                            switchView('todosView');
-                        }
+                        const view = this.dataset.view;
+                        switchTab(view);
                     });
                 });
 
-                // ----- 笔记添加 -----
-                document.getElementById('noteAddBtn').addEventListener('click', enterNewNote);
+                addNoteFab.addEventListener('click', function() {
+                    openEditNote(null);
+                });
 
-                // ----- 笔记编辑保存/取消 -----
-                document.getElementById('noteEditSave').addEventListener('click', saveNoteEdit);
-                document.getElementById('noteEditCancel').addEventListener('click', cancelNoteEdit);
+                saveNoteBtn.addEventListener('click', function() {
+                    const title = editTitle.value;
+                    const content = editContent.value;
+                    if (!title.trim() && !content.trim()) {
+                        showToast('内容为空，未保存');
+                        closeEditNote();
+                        return;
+                    }
+                    if (editingNoteId) {
+                        updateNote(editingNoteId, title, content);
+                    } else {
+                        addNote(title, content);
+                    }
+                    closeEditNote();
+                    showToast('已保存');
+                });
 
-                // 键盘快捷键：Ctrl+Enter 保存
-                document.getElementById('noteEditBody').addEventListener('keydown', function(e) {
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                        e.preventDefault();
-                        saveNoteEdit();
+                editModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeEditNote();
                     }
                 });
 
-                // ----- 待办添加 -----
-                document.getElementById('todoAddBtn').addEventListener('click', showTodoModal);
+                addTodoFab.addEventListener('click', function() {
+                    todoModal.classList.add('active');
+                    setTimeout(() => todoInput.focus(), 100);
+                });
 
-                // ----- 模态框 -----
-                document.getElementById('todoModalConfirm').addEventListener('click', confirmTodo);
-                document.getElementById('todoModalCancel').addEventListener('click', hideTodoModal);
-                document.getElementById('todoModalInput').addEventListener('keydown', function(e) {
+                function confirmAddTodo() {
+                    const text = todoInput.value.trim();
+                    if (text) {
+                        addTodo(text);
+                        todoInput.value = '';
+                        todoModal.classList.remove('active');
+                        showToast('已添加');
+                    } else {
+                        showToast('请输入内容');
+                    }
+                }
+
+                confirmTodoBtn.addEventListener('click', confirmAddTodo);
+                cancelTodoBtn.addEventListener('click', function() {
+                    todoModal.classList.remove('active');
+                    todoInput.value = '';
+                });
+                closeTodoModal.addEventListener('click', function() {
+                    todoModal.classList.remove('active');
+                    todoInput.value = '';
+                });
+                todoModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        todoModal.classList.remove('active');
+                        todoInput.value = '';
+                    }
+                });
+                todoInput.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        confirmTodo();
-                    }
-                    if (e.key === 'Escape') {
-                        hideTodoModal();
+                        confirmAddTodo();
                     }
                 });
-                // 点击模态框外部关闭
-                document.getElementById('todoModal').addEventListener('click', function(e) {
+
+                recycleBtn.addEventListener('click', openRecycle);
+                closeRecycleModal.addEventListener('click', closeRecycle);
+                recycleModal.addEventListener('click', function(e) {
                     if (e.target === this) {
-                        hideTodoModal();
+                        closeRecycle();
                     }
                 });
 
-                // ----- 回收站 -----
-                document.getElementById('trashEntryBtn').addEventListener('click', openTrash);
-                document.getElementById('trashBackBtn').addEventListener('click', function() {
-                    switchView('notesView');
+                exportBtn.addEventListener('click', exportData);
+
+                importBtn.addEventListener('click', function() {
+                    importFileInput.click();
+                });
+                importFileInput.addEventListener('change', function(e) {
+                    if (this.files && this.files[0]) {
+                        importData(this.files[0]);
+                    }
+                    this.value = '';
                 });
 
-                // ----- 启动定时清理（每分钟检查） -----
-                setInterval(cleanExpiredTrash, 60 * 1000);
-                // 启动时立即检查一次
-                setTimeout(cleanExpiredTrash, 500);
-
-                // ----- 初始渲染 -----
-                switchView('notesView');
-                renderNotes();
-                renderTodos();
-
-                // 监听页面可见性变化时清理
-                document.addEventListener('visibilitychange', function() {
-                    if (!document.hidden) {
-                        cleanExpiredTrash();
-                        renderAll();
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        if (editModal.classList.contains('active')) closeEditNote();
+                        if (todoModal.classList.contains('active')) {
+                            todoModal.classList.remove('active');
+                            todoInput.value = '';
+                        }
+                        if (recycleModal.classList.contains('active')) closeRecycle();
+                    }
+                    if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+                        if (editModal.classList.contains('active')) {
+                            e.preventDefault();
+                            saveNoteBtn.click();
+                        }
                     }
                 });
 
-                // 防止双击选中文本
-                document.addEventListener('mousedown', function(e) {
-                    if (e.detail > 1) e.preventDefault();
-                }, { passive: false });
+                setInterval(cleanExpiredTodos, 60000);
 
-                console.log('📝 便签与待办已启动');
+                notesGrid.addEventListener('dblclick', function(e) {
+                    const card = e.target.closest('.note-card');
+                    if (card) {
+                        const id = card.dataset.id;
+                        if (id) openEditNote(id);
+                    }
+                });
+
+                document.querySelectorAll('.modal-overlay, .modal-box').forEach(el => {
+                    el.addEventListener('contextmenu', (e) => e.preventDefault());
+                });
+
+                switchTab('notes');
             }
-
-            // ============================================================
-            //  启动
-            // ============================================================
 
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
