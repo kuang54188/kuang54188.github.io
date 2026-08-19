@@ -127,8 +127,49 @@
 
         #timeDisplay {
             opacity: 0;
-            transform: scale(0.5);
-            animation: searchBoxEntry 0.8s ease-out 0.2s forwards;
+            animation: timeWeatherEntry 0.8s ease-out 0.2s forwards;
+        }
+
+        /* Weather entry animation - same as clock. Only runs when shown
+           (display switches from none -> flex), so it stays hidden when
+           disabled and animates in like the clock on enable/page load.
+           Uses opacity-only (no transform) so no stacking context is left
+           behind after the animation — this keeps mix-blend-mode working
+           against the real background for the inverse-color text. */
+        #weatherDisplay {
+            opacity: 0;
+            animation: timeWeatherEntry 0.8s ease-out 0.2s forwards;
+        }
+
+        @keyframes timeWeatherEntry {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Time & weather TEXT: color is set by JS (applyInverseTextColor) to the
+           exact inverse of the actual background. This is more reliable than
+           mix-blend-mode, which breaks under opacity animations / isolated
+           stacking contexts and leaves the text invisible on light backgrounds.
+           The rule below only provides a safe default; JS overrides it on load
+           and whenever the theme / background mode changes. */
+        #clockText,
+        #weatherTemp,
+        #weatherDesc,
+        #weatherCity {
+            color: #333333;
+            text-shadow: none;
+        }
+
+        /* Debug mode lifts the text-selection restriction everywhere.
+           The inline user-select:none on various elements is overridden
+           here so text can be selected while debugging. When debug mode
+           is off, the attribute is "false" and this rule does not apply,
+           so the original restrictions remain. */
+        body[data-debug="true"] * {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
         }
 
         body {
@@ -670,18 +711,20 @@
             #favTabBtn,
             #engineTabBtn,
             #settingsTabBtn,
-            #hotNewsTabBtn {
+            #hotNewsTabBtn,
+            #notesTabBtn {
                 max-width: none !important;
                 padding: 6px 8px !important;
                 font-size: 12px !important;
-                width: calc(25% - 8px) !important;
+                width: calc(20% - 8px) !important;
                 aspect-ratio: 1 / 1 !important;
             }
 
             #favTabBtn svg,
             #engineTabBtn svg,
             #settingsTabBtn svg,
-            #hotNewsTabBtn svg {
+            #hotNewsTabBtn svg,
+            #notesTabBtn svg {
                 width: 18px !important;
                 height: 18px !important;
             }
@@ -1244,8 +1287,8 @@
                 rgba(255, 255, 255, 0.45) 50%,
                 rgba(255, 255, 255, 0.55) 100%
             ) !important;
-            backdrop-filter: blur(6px) saturate(150%) brightness(1.02) !important;
-            -webkit-backdrop-filter: blur(6px) saturate(150%) brightness(1.02) !important;
+            backdrop-filter: blur(3px) saturate(120%) brightness(1.02) !important;
+            -webkit-backdrop-filter: blur(3px) saturate(120%) brightness(1.02) !important;
             color: inherit !important;
             text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
         }
@@ -1264,8 +1307,8 @@
                 rgba(255, 255, 255, 0.45) 50%,
                 rgba(255, 255, 255, 0.55) 100%
             ) !important;
-            backdrop-filter: blur(8px) saturate(150%) brightness(1.02) !important;
-            -webkit-backdrop-filter: blur(8px) saturate(150%) brightness(1.02) !important;
+            backdrop-filter: blur(4px) saturate(120%) brightness(1.02) !important;
+            -webkit-backdrop-filter: blur(4px) saturate(120%) brightness(1.02) !important;
             color: inherit !important;
             text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
         }
@@ -1485,6 +1528,10 @@
         }
 
         body:not([data-bg-mode="wallpaper"]) #mainContent {
+            /* Nudge the whole stack up so the search box (below the clock /
+               weather) sits at the viewport's vertical center instead of
+               appearing slightly low. */
+            margin-top: -30px;
             transition: margin-top 0.6s ease;
         }
 
@@ -2167,8 +2214,8 @@
             border: none !important;
             border-radius: var(--global-radius) !important;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0.55) 100%) !important;
-            backdrop-filter: blur(8px) saturate(150%) brightness(1.02) !important;
-            -webkit-backdrop-filter: blur(8px) saturate(150%) brightness(1.02) !important;
+            backdrop-filter: blur(4px) saturate(120%) brightness(1.02) !important;
+            -webkit-backdrop-filter: blur(4px) saturate(120%) brightness(1.02) !important;
             color: inherit !important;
             text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
         }
@@ -2416,11 +2463,11 @@
     </div>
 
     <!-- 天气显示（时钟下方、搜索框上方） -->
-    <div id="weatherDisplay" style="display: none; justify-content: center; align-items: center; padding: 0 0 10px 0; gap: 8px; font-family: 'Microsoft YaHei', '微软雅黑', sans-serif; font-size: 15px; color: #555; user-select: none; cursor: pointer; opacity: 0.9;" onclick="loadWeather(true)" title="点击刷新天气">
+    <div id="weatherDisplay" style="display: none; justify-content: center; align-items: center; padding: 0 0 10px 0; gap: 8px; font-family: 'Microsoft YaHei', '微软雅黑', sans-serif; font-size: 15px; user-select: none; cursor: pointer;" onclick="loadWeather(true)" title="点击刷新天气">
         <span id="weatherIcon" style="display: inline-flex; align-items: center; width: 20px; height: 20px;"></span>
         <span id="weatherTemp"></span>
-        <span id="weatherDesc" style="opacity: 0.85;"></span>
-        <span id="weatherCity" style="opacity: 0.6; font-size: 13px;"></span>
+        <span id="weatherDesc"></span>
+        <span id="weatherCity" style="font-size: 13px;"></span>
     </div>
 
     <div class="search-container" id="searchContainer" style="position: relative; background: transparent;">
@@ -3222,32 +3269,6 @@
                     </div>
                 </div>
 
-                <div style="margin-bottom: 15px;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                        <label class="toggle-switch"><input type="checkbox" id="searchBoxSizeToggle" onchange="toggleSearchBoxSize(this.checked)"><span class="toggle-slider"></span></label>
-                        <span style="font-family: 'YouYuan'; font-size: 14px;">自定义搜索框尺寸</span>
-                    </div>
-                </div>
-                <div id="searchBoxWidthWrap" style="margin-bottom: 15px; opacity: 0.5; pointer-events: none;">
-                    <label style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 8px;">
-                        搜索框宽度：
-                    </label>
-                    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0;">
-                        <span style="font-family: 'YouYuan'; font-size: 12px; color: #666;">窄</span>
-                        <input type="range" id="searchBoxWidthSlider" min="50" max="100" value="100" oninput="updateSearchBoxWidth(this.value)" style="flex: 1; cursor: pointer;" disabled>
-                        <span style="font-family: 'YouYuan'; font-size: 12px; color: #666;">宽</span>
-                    </div>
-                </div>
-                <div id="searchBoxHeightWrap" style="margin-bottom: 15px; opacity: 0.5; pointer-events: none;">
-                    <label style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 8px;">
-                        搜索框高度：
-                    </label>
-                    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0;">
-                        <span style="font-family: 'YouYuan'; font-size: 12px; color: #666;">矮</span>
-                        <input type="range" id="searchBoxHeightSlider" min="30" max="80" value="50" oninput="updateSearchBoxHeight(this.value)" style="flex: 1; cursor: pointer;" disabled>
-                        <span style="font-family: 'YouYuan'; font-size: 12px; color: #666;">高</span>
-                    </div>
-                </div>
             </div>
 
             <!-- 高级设置 -->
@@ -3286,6 +3307,13 @@
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
 <label class="toggle-switch"><input type="checkbox" id="debugModeToggle" onchange="toggleDebugMode()"><span class="toggle-slider"></span></label>
 <span style="font-family: 'YouYuan'; font-size: 14px;">启用调试模式</span>
+</div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+<label class="toggle-switch"><input type="checkbox" id="changelogNeverShowToggle" onchange="toggleChangelogNeverShow(this.checked)"><span class="toggle-slider"></span></label>
+<span style="font-family: 'YouYuan'; font-size: 14px;">永不提示更新日志</span>
 </div>
                 </div>
 
@@ -3352,6 +3380,21 @@
             <div style="display: flex; gap: 15px; justify-content: center;">
                 <button id="customPromptCancel" style="flex: 1; padding: 10px 20px; border: none; border-radius: var(--global-radius); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); background: #F0F0F0; cursor: pointer; font-size: 14px; font-family: 'YouYuan', Arial, sans-serif;">取消</button>
                 <button id="customPromptOk" style="flex: 1; padding: 10px 20px; border: none; border-radius: var(--global-radius); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); background: #F0F0F0; color: #000000; cursor: pointer; font-size: 14px; font-family: 'YouYuan', Arial, sans-serif;">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Changelog Dialog (auto-shown when a newer release is available) -->
+    <div id="changelogModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 21000; opacity: 0; transition: opacity 0.3s ease;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #F0F0F0; border: none; border-radius: var(--global-radius); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); padding: 25px; min-width: 300px; max-width: 90%; width: 460px; max-height: 80vh; display: flex; flex-direction: column; box-sizing: border-box;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <h3 style="font-family: 'YouYuan', Arial, sans-serif; font-size: 18px; margin: 0;">更新日志</h3>
+                <span id="changelogDate" style="font-family: 'YouYuan', Arial, sans-serif; font-size: 13px; color: #888;"></span>
+            </div>
+            <pre id="changelogContent" style="font-family: 'YouYuan', Arial, sans-serif; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; overflow-y: auto; flex: 1; margin: 0 0 20px 0; padding: 0; max-height: 55vh;"></pre>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="changelogExportBtn" onclick="exportAllData()" style="flex: 1; padding: 10px 20px; border: none; border-radius: var(--global-radius); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); background: #F0F0F0; cursor: pointer; font-size: 14px; font-family: 'YouYuan', Arial, sans-serif;">导出全量数据</button>
+                <button id="changelogCloseBtn" onclick="dismissChangelog()" style="flex: 1; padding: 10px 20px; border: none; border-radius: var(--global-radius); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); background: #F0F0F0; color: #000000; cursor: pointer; font-size: 14px; font-family: 'YouYuan', Arial, sans-serif; font-weight: bold;">不再提示</button>
             </div>
         </div>
     </div>
@@ -3924,10 +3967,7 @@
             
             // Restore Tab buttons visibility
             loadTabButtons();
-            
-            // Restore search box size
-            applySavedSearchBoxSize();
-            
+
             // Setup dropdown
             const dropdownBtn = document.getElementById('dropdownMenuBtn');
             if (dropdownBtn) {
@@ -4611,8 +4651,9 @@
         });
         */
         
-        // Disable right-click context menu
+        // Disable right-click context menu (lifted when debug mode is on)
         document.addEventListener('contextmenu', function(e) {
+            if (document.body.getAttribute('data-debug') === 'true') return;
             e.preventDefault();
             return false;
         });
@@ -5164,12 +5205,43 @@
             return localStorage.getItem('weatherEnabled') === 'true';
         }
 
-        // Apply theme color to weather display (light/dark aware)
+        // Time & weather text color: set to the exact inverse of the actual
+        // background (true 反色), regardless of light/dark mode. Called from
+        // applyTheme() (so it tracks theme changes) and after bg-mode changes.
+        function applyInverseTextColor() {
+            const els = [
+                document.getElementById('clockText'),
+                document.getElementById('weatherTemp'),
+                document.getElementById('weatherDesc'),
+                document.getElementById('weatherCity')
+            ];
+            const bgMode = document.body.getAttribute('data-bg-mode') || 'none';
+            let textColor, shadow;
+            if (bgMode === 'wallpaper') {
+                // Image background: can't sample pixels, use white + soft shadow
+                textColor = '#ffffff';
+                shadow = '0 1px 3px rgba(0,0,0,0.5)';
+            } else {
+                // Sample the body's actual background color and invert it
+                let r = 240, g = 240, b = 240; // fallback = #F0F0F0
+                try {
+                    const bg = window.getComputedStyle(document.body).backgroundColor;
+                    const m = bg && bg.match(/\d+/g);
+                    if (m && m.length >= 3) { r = +m[0]; g = +m[1]; b = +m[2]; }
+                } catch (e) { /* keep fallback */ }
+                textColor = 'rgb(' + (255 - r) + ',' + (255 - g) + ',' + (255 - b) + ')';
+                shadow = 'none';
+            }
+            for (let i = 0; i < els.length; i++) {
+                if (!els[i]) continue;
+                els[i].style.color = textColor;
+                els[i].style.textShadow = shadow;
+            }
+        }
+
+        // Backward-compatible alias (applyTheme calls this)
         function applyWeatherTheme() {
-            const el = document.getElementById('weatherDisplay');
-            if (!el) return;
-            const isDark = document.body.getAttribute('data-theme') === 'dark';
-            el.style.color = isDark ? '#cccccc' : '#555555';
+            applyInverseTextColor();
         }
 
         function toggleWeatherDisplay() {
@@ -5472,9 +5544,6 @@
                         loadForeignIcons: localStorage.getItem('loadForeignIcons') === 'true',
                         showFavIcons: localStorage.getItem('showFavIcons') !== 'false',
                         searchBoxUrlAccess: localStorage.getItem('searchBoxUrlAccess') || 'always',
-                        searchBoxWidth: localStorage.getItem('searchBoxWidth') || '100',
-                        searchBoxHeight: localStorage.getItem('searchBoxHeight') || '50',
-                        searchBoxSizeEnabled: localStorage.getItem('searchBoxSizeEnabled') === 'true',
                         enableLaunchAnim: localStorage.getItem('enableLaunchAnim') !== 'false',
                         disableAllAnim: localStorage.getItem('disableAllAnim') === 'true',
                         wallpaperBlur: localStorage.getItem('wallpaperBlur') || '0',
@@ -5541,9 +5610,6 @@
                     loadForeignIcons: localStorage.getItem('loadForeignIcons') === 'true',
                     showFavIcons: localStorage.getItem('showFavIcons') !== 'false',
                     searchBoxUrlAccess: localStorage.getItem('searchBoxUrlAccess') || 'always',
-                    searchBoxWidth: localStorage.getItem('searchBoxWidth') || '100',
-                    searchBoxHeight: localStorage.getItem('searchBoxHeight') || '50',
-                    searchBoxSizeEnabled: localStorage.getItem('searchBoxSizeEnabled') === 'true',
                     enableLaunchAnim: localStorage.getItem('enableLaunchAnim') !== 'false',
                     disableAllAnim: localStorage.getItem('disableAllAnim') === 'true',
                     wallpaperBlur: localStorage.getItem('wallpaperBlur') || '0',
@@ -5572,7 +5638,75 @@
             a.click();
             URL.revokeObjectURL(url);
         }
-        
+
+        // ===================== Changelog (更新日志) =====================
+        // 每次发布更新时，请修改此处的发布日期（格式 YYYY-MM-DD）
+        const RELEASE_DATE = "2026-08-19";
+        const CHANGELOG_STORAGE_KEY = "lastChangelogDate";
+        const NEVER_SHOW_CHANGELOG_KEY = "neverShowChangelog";
+
+        // 初始化：页面加载时检查是否需要弹窗
+        function initChangelog() {
+            try {
+                const neverShow = localStorage.getItem(NEVER_SHOW_CHANGELOG_KEY) === "true";
+                const lastShownDate = localStorage.getItem(CHANGELOG_STORAGE_KEY) || "";
+                const toggleEl = document.getElementById("changelogNeverShowToggle");
+                if (toggleEl) toggleEl.checked = neverShow;
+                // 当前发布日期 > 用户存储的日期 -> 弹窗（除非关闭了开关）
+                if (!neverShow && RELEASE_DATE > lastShownDate) {
+                    showChangelog();
+                }
+            } catch (e) {
+                console.error("initChangelog error:", e);
+            }
+        }
+
+        // 拉取 txt.txt 并显示更新日志弹窗
+        async function showChangelog() {
+            const modal = document.getElementById("changelogModal");
+            const dateEl = document.getElementById("changelogDate");
+            const contentEl = document.getElementById("changelogContent");
+            if (!modal) return;
+            if (dateEl) dateEl.textContent = RELEASE_DATE;
+            // 读取日志内容（txt.html）
+            if (contentEl) {
+                try {
+                    const resp = await fetch("txt.html?t=" + Date.now());
+                    if (resp.ok) {
+                        contentEl.textContent = await resp.text();
+                    } else {
+                        contentEl.textContent = "(无法加载 txt.html)";
+                    }
+                } catch (e) {
+                    contentEl.textContent = "(无法加载 txt.html)";
+                }
+            }
+            modal.style.display = "flex";
+            // 触发回流后再设置 opacity 以播放渐入动画
+            void modal.offsetWidth;
+            modal.style.opacity = "1";
+        }
+
+        // 设置中“永不提示更新日志”开关
+        function toggleChangelogNeverShow(checked) {
+            localStorage.setItem(NEVER_SHOW_CHANGELOG_KEY, checked ? "true" : "false");
+            if (typeof settingsModified !== "undefined") settingsModified = true;
+        }
+
+        // 关闭弹窗（不再提示），并记录当前已查看的发布日期
+        function dismissChangelog() {
+            const modal = document.getElementById("changelogModal");
+            if (modal) {
+                modal.style.opacity = "0";
+                setTimeout(() => { modal.style.display = "none"; }, 300);
+            }
+            // 记录本次发布日期为已查看
+            localStorage.setItem(CHANGELOG_STORAGE_KEY, RELEASE_DATE);
+        }
+
+        // 页面加载后初始化更新日志检查
+        window.addEventListener("load", initChangelog);
+
         function importAllData() {
             document.getElementById('allDataImportFile').click();
         }
@@ -5818,16 +5952,6 @@
                             localStorage.setItem('searchBoxUrlAccess', allData.settings.searchBoxUrlAccess);
                             updateUrlAccessRadio();
                         }
-                        // Restore search box size
-                        if (allData.settings.searchBoxWidth !== undefined) {
-                            localStorage.setItem('searchBoxWidth', allData.settings.searchBoxWidth);
-                        }
-                        if (allData.settings.searchBoxHeight !== undefined) {
-                            localStorage.setItem('searchBoxHeight', allData.settings.searchBoxHeight);
-                        }
-                        if (allData.settings.searchBoxSizeEnabled !== undefined) {
-                            localStorage.setItem('searchBoxSizeEnabled', allData.settings.searchBoxSizeEnabled);
-                        }
                         // Restore animation settings
                         if (allData.settings.enableLaunchAnim !== undefined) {
                             localStorage.setItem('enableLaunchAnim', allData.settings.enableLaunchAnim);
@@ -5864,18 +5988,6 @@
                         if (allData.settings.weatherCity !== undefined) {
                             localStorage.setItem('weatherCity', allData.settings.weatherCity);
                         }
-                        
-                        // Restore search box size
-                        if (allData.settings.searchBoxWidth !== undefined) {
-                            localStorage.setItem('searchBoxWidth', allData.settings.searchBoxWidth);
-                        }
-                        if (allData.settings.searchBoxHeight !== undefined) {
-                            localStorage.setItem('searchBoxHeight', allData.settings.searchBoxHeight);
-                        }
-                        if (allData.settings.searchBoxSizeEnabled !== undefined) {
-                            localStorage.setItem('searchBoxSizeEnabled', allData.settings.searchBoxSizeEnabled);
-                        }
-                        applySavedSearchBoxSize();
 
                         if (allData.settings.loadForeignIcons !== undefined) {
                             localStorage.setItem('loadForeignIcons', allData.settings.loadForeignIcons);
@@ -5980,7 +6092,7 @@
                     localStorage.removeItem('cachedSuggestions');
                     localStorage.removeItem('cachedHotNews');
                 } else if (cb.value === 'settings') {
-                    ['themeMode','themeColor','buttonStyle','bgMode','bgColor','showTimeDisplay','showPoem','showScanner','highContrastMode','borderRadius','debugMode','demoMode','loadForeignIcons','cleanSearchMode','cleanSearchKeyword','privacyMode','showFavCreateTime','autoSortFavorites','noFavIcons','saveSearchHistory','showSearchSuggestions','cacheSuggestions','cacheDuration','showFavIcons','searchBoxUrlAccess','searchBoxWidth','searchBoxHeight','searchBoxSizeEnabled'].forEach(key => localStorage.removeItem(key));
+                    ['themeMode','themeColor','buttonStyle','bgMode','bgColor','showTimeDisplay','showPoem','showScanner','highContrastMode','borderRadius','debugMode','demoMode','loadForeignIcons','cleanSearchMode','cleanSearchKeyword','privacyMode','showFavCreateTime','autoSortFavorites','noFavIcons','saveSearchHistory','showSearchSuggestions','cacheSuggestions','cacheDuration','showFavIcons','searchBoxUrlAccess'].forEach(key => localStorage.removeItem(key));
                     location.reload();
                 } else if (cb.value === 'apiUrls') {
                     localStorage.removeItem('apiUrls');
@@ -6031,9 +6143,6 @@
             localStorage.removeItem('focusZoomEnabled');
             localStorage.removeItem('debugMode');
             localStorage.removeItem('loadForeignIcons');
-            localStorage.removeItem('searchBoxWidth');
-            localStorage.removeItem('searchBoxHeight');
-            localStorage.removeItem('searchBoxSizeEnabled');
             localStorage.removeItem('bottomDisplayMode');
             localStorage.removeItem('showScanner');
             localStorage.removeItem('searchBoxUrlAccess');
@@ -6084,13 +6193,6 @@
             const cleanSearchModeToggle = document.getElementById('cleanSearchMode');
             if (cleanSearchModeToggle) cleanSearchModeToggle.checked = false;
 
-            // Bug 9: Reset search box size UI
-            const searchBoxSizeToggle = document.getElementById('searchBoxSizeToggle');
-            if (searchBoxSizeToggle) searchBoxSizeToggle.checked = false;
-            const widthWrap = document.getElementById('searchBoxWidthWrap');
-            if (widthWrap) widthWrap.style.display = 'none';
-            const heightWrap = document.getElementById('searchBoxHeightWrap');
-            if (heightWrap) heightWrap.style.display = 'none';
 
             // Bug 10: Reset show time display
             const showTimeToggle = document.getElementById('showTimeToggle');
@@ -6126,7 +6228,6 @@
             applyButtonStyle();
             applyBgMode();
             applySavedBorderRadius();
-            applySavedSearchBoxSize();
             initWallpaperSources();
             renderCustomEngines();
 
@@ -6191,6 +6292,8 @@
 
             // Save debug mode state
             localStorage.setItem('debugMode', debugModeActive);
+            // Toggle right-click & text-selection restrictions (off while debugging)
+            document.body.setAttribute('data-debug', debugModeActive ? 'true' : 'false');
         }
 
         function saveAllApiUrls() {
@@ -6317,6 +6420,8 @@
                 // Hide debug content
                 if (debugContent) debugContent.style.display = 'none';
             }
+            // Restore right-click & text-selection restriction state
+            document.body.setAttribute('data-debug', debugModeActive ? 'true' : 'false');
 
             // Load border radius state
             const savedBorderRadius = localStorage.getItem('borderRadius');
@@ -6348,85 +6453,6 @@
                     slider.value = index;
                 }
                 document.documentElement.style.setProperty('--global-radius', savedRadius + 'px');
-            }
-        }
-
-        // Search box width slider
-        function updateSearchBoxWidth(value) {
-            localStorage.setItem('searchBoxWidth', value);
-            settingsModified = true;
-            const toggle = document.getElementById('searchBoxSizeToggle');
-            if (toggle && toggle.checked) {
-                const searchBox = document.querySelector('.search-box');
-                if (searchBox) {
-                    searchBox.style.width = 'calc(' + value + '% - 40px)';
-                    searchBox.style.maxWidth = 'calc(100vw - 40px)';
-                }
-            }
-        }
-
-        // Search box height slider
-        function updateSearchBoxHeight(value) {
-            localStorage.setItem('searchBoxHeight', value);
-            settingsModified = true;
-            const toggle = document.getElementById('searchBoxSizeToggle');
-            if (toggle && toggle.checked) {
-                const searchBox = document.querySelector('.search-box');
-                if (searchBox) {
-                    searchBox.style.height = value + 'px';
-                }
-            }
-        }
-
-        function toggleSearchBoxSize(enabled) {
-            localStorage.setItem('searchBoxSizeEnabled', enabled);
-            settingsModified = true;
-            const widthWrap = document.getElementById('searchBoxWidthWrap');
-            const heightWrap = document.getElementById('searchBoxHeightWrap');
-            const widthSlider = document.getElementById('searchBoxWidthSlider');
-            const heightSlider = document.getElementById('searchBoxHeightSlider');
-            const searchBox = document.querySelector('.search-box');
-
-            if (enabled) {
-                if (widthWrap) { widthWrap.style.opacity = '1'; widthWrap.style.pointerEvents = 'auto'; }
-                if (heightWrap) { heightWrap.style.opacity = '1'; heightWrap.style.pointerEvents = 'auto'; }
-                if (widthSlider) widthSlider.disabled = false;
-                if (heightSlider) heightSlider.disabled = false;
-                const w = localStorage.getItem('searchBoxWidth') || '100';
-                const h = localStorage.getItem('searchBoxHeight') || '50';
-                if (widthSlider) widthSlider.value = w;
-                if (heightSlider) heightSlider.value = h;
-                if (searchBox) {
-                    searchBox.style.width = 'calc(' + w + '% - 40px)';
-                    searchBox.style.maxWidth = 'calc(100vw - 40px)';
-                    searchBox.style.height = h + 'px';
-                }
-            } else {
-                if (widthWrap) { widthWrap.style.opacity = '0.5'; widthWrap.style.pointerEvents = 'none'; }
-                if (heightWrap) { heightWrap.style.opacity = '0.5'; heightWrap.style.pointerEvents = 'none'; }
-                if (widthSlider) widthSlider.disabled = true;
-                if (heightSlider) heightSlider.disabled = true;
-                if (searchBox) {
-                    searchBox.style.width = '';
-                    searchBox.style.maxWidth = '';
-                    searchBox.style.height = '';
-                }
-            }
-        }
-
-        // Apply saved search box size on page load
-        function applySavedSearchBoxSize() {
-            const width = localStorage.getItem('searchBoxWidth') || '100';
-            const height = localStorage.getItem('searchBoxHeight') || '50';
-            const enabled = localStorage.getItem('searchBoxSizeEnabled') === 'true';
-            const toggle = document.getElementById('searchBoxSizeToggle');
-            if (toggle) toggle.checked = enabled;
-            const widthSlider = document.getElementById('searchBoxWidthSlider');
-            const heightSlider = document.getElementById('searchBoxHeightSlider');
-            if (widthSlider) widthSlider.value = width;
-            if (heightSlider) heightSlider.value = height;
-            if (enabled) {
-                toggleSearchBoxSize(true);
             }
         }
 
@@ -6570,10 +6596,8 @@
             let html = '';
             
             html += `<button class="dock-item" onclick="openFavorites()" title="收藏">
-                        <div class="dock-icon" style="background: #FF6B6B; display: flex; align-items: center; justify-content: center;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width: 24px; height: 24px;">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                            </svg>
+                        <div class="dock-icon">
+                            <img src="favicon.png" alt="收藏" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: var(--global-radius);">
                         </div>
                     </button>`;
             
@@ -6592,6 +6616,8 @@
             });
             
             scrollArea.innerHTML = html;
+            // Bound favicon load time (slow/far servers don't keep the user waiting)
+            boundFaviconLoads(scrollArea);
             // Re-apply theme to newly rendered dock items so dark mode colors take effect
             if (typeof applyThemeToInlineStyles === 'function') applyThemeToInlineStyles();
         }
@@ -6684,6 +6710,8 @@
             });
             
             list.innerHTML = html;
+            // Bound favicon load time (slow/far servers don't keep the user waiting)
+            boundFaviconLoads(list);
             // Lazy load favorite icons (data-src -> src)
             list.querySelectorAll('img[data-src]').forEach(function(img) {
                 img.src = img.getAttribute('data-src');
@@ -6864,6 +6892,33 @@
             }
         }
 
+        // Bound favicon load time. Remote favicon servers can be far away / slow
+        // or hang; the <img onerror> candidate-cycling only fires AFTER a server
+        // actually responds, so a hanging server keeps the user waiting for the
+        // full network timeout (~20-30s). This caps each icon's wait at
+        // FAVICON_TIMEOUT_MS: if it hasn't successfully loaded by then, hide the
+        // <img> and reveal the colored-initial fallback immediately.
+        var FAVICON_TIMEOUT_MS = 4000;
+        function boundFaviconLoads(root) {
+            if (!root) return;
+            var imgs = root.querySelectorAll('img[data-cands]');
+            for (var k = 0; k < imgs.length; k++) {
+                (function(img) {
+                    if (img.complete && img.naturalWidth > 0) return; // already loaded OK
+                    var fallback = img.parentElement && img.parentElement.querySelector('.fav-initial, .dock-initial');
+                    var timer = setTimeout(function() {
+                        if (img.naturalWidth > 0) return; // loaded in the meantime
+                        img.style.display = 'none';
+                        if (fallback) fallback.style.display = 'flex';
+                    }, FAVICON_TIMEOUT_MS);
+                    img.addEventListener('load', function() { clearTimeout(timer); }, { once: true });
+                    // If a candidate errors, the inline onerror handler cycles to the
+                    // next one; the timer stays armed and will cut off a slow/hanging
+                    // candidate, and clears as soon as one succeeds.
+                })(imgs[k]);
+            }
+        }
+
         function getUrlColor(url) {
             let hash = 0;
             for (let i = 0; i < url.length; i++) {
@@ -6991,6 +7046,8 @@
             }
             
             list.innerHTML = html;
+            // Bound favicon load time (slow/far servers don't keep the user waiting)
+            boundFaviconLoads(list);
             // Lazy load favorite icons (data-src -> src)
             list.querySelectorAll('img[data-src]').forEach(function(img) {
                 img.src = img.getAttribute('data-src');
@@ -8565,6 +8622,8 @@
                 const fo2 = document.getElementById('wallpaperFilterOverlay');
                 if (fo2) fo2.remove();
             }
+            // Re-apply inverse text color so clock/weather follow the new background
+            if (typeof applyInverseTextColor === 'function') applyInverseTextColor();
         }
         
         function applyOutlineToAll() {
@@ -9136,6 +9195,10 @@
             // Use requestAnimationFrame to avoid blocking the main thread
             requestAnimationFrame(function() {
                 applyThemeToInlineStyles();
+                // Re-init weather (safety net: ensures it shows + refreshes on full load)
+                if (typeof initWeatherDisplay === 'function') initWeatherDisplay();
+                // Re-apply inverse text color after theme + bg are fully settled
+                if (typeof applyInverseTextColor === 'function') applyInverseTextColor();
             });
         });
     </script>
