@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -197,13 +197,9 @@
             height: var(--search-box-height, auto);
             background: #F0F0F0;
             box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff;
-            transition: transform 0.3s ease, color 0.4s ease, padding 0.3s ease, box-shadow 0.3s ease;
+            transition: color 0.4s ease, box-shadow 0.3s ease;
             color: #000000;
             caret-color: #000000;
-        }
-
-        .search-box:focus {
-            transform: scale(1.02);
         }
 
         .settings-radio-grid {
@@ -233,7 +229,7 @@
             height: 56px;
             border: none;
             background: transparent;
-            border-radius: 12px;
+            border-radius: var(--global-radius);
             cursor: pointer;
             transition: transform 0.2s ease, background 0.2s ease;
             flex-shrink: 0;
@@ -245,7 +241,7 @@
         .dock-icon {
             width: 44px;
             height: 44px;
-            border-radius: 10px;
+            border-radius: var(--global-radius);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -262,7 +258,7 @@
             justify-content: center;
             width: 100%;
             height: 100%;
-            border-radius: 10px;
+            border-radius: var(--global-radius);
         }
         
         /* Dark mode dock styles */
@@ -275,9 +271,18 @@
         }
 
         .search-box.has-text {
-            padding: 12px 95px 12px 20px;
+            /* Keep padding/size identical to default state. Do NOT animate opacity
+               on the whole input — the large box-shadow would fade out and back in,
+               making the box look like it changes size. */
+            padding: 12px 55px 12px 120px;
             color: #000000;
-            animation: textFadeIn 0.4s ease;
+        }
+
+        /* Explicit focus style: prevent any browser-default focus ring/outline
+           from altering the box appearance. Keep size identical to default. */
+        .search-box:focus {
+            outline: none;
+            padding: 12px 55px 12px 120px;
         }
 
         #engineHintInSearchBox {
@@ -391,7 +396,7 @@
             pointer-events: auto;
         }
 
-        /* Dropdown button visibility - hidden when search not focused */
+        /* Dropdown button visibility - hidden by default, shown via .visible class */
         #dropdownMenuBtn {
             transition: opacity 0.3s ease, transform 0.3s ease;
             opacity: 0;
@@ -670,7 +675,6 @@
                 padding: 6px 8px !important;
                 font-size: 12px !important;
                 width: calc(25% - 8px) !important;
-                border-radius: 50% !important;
                 aspect-ratio: 1 / 1 !important;
             }
 
@@ -933,7 +937,8 @@
         body[data-theme="dark"] .tab-btn,
         body[data-theme="dark"] #favTabBtn,
         body[data-theme="dark"] #engineTabBtn,
-        body[data-theme="dark"] #settingsTabBtn {
+        body[data-theme="dark"] #settingsTabBtn,
+        body[data-theme="dark"] #notesTabBtn {
             background: #3a3a3a !important;
             box-shadow: 20px 20px 62px #2a2a2a, -20px -20px 62px #4a4a4a !important;
             color: #e0e0e0 !important;
@@ -1939,12 +1944,6 @@
             }
         }
 
-                @media (max-width: 768px) {
-            .settings-radio-grid label:has(input[value="glass"]) {
-                display: none !important;
-            }
-        }
-
             /* Engine tab: always show as mobile-style list */
         #engineSelectorInTab .engine-item {
             padding: 8px 10px;
@@ -2035,7 +2034,7 @@
             background: #ffffff !important;
         }
 
-        /* Fix elderly mode - clear button and logo expand links */
+        /* Fix elderly mode - clear button */
         body[data-elder-mode="true"] #clearInputBtn {
             opacity: 0 !important;
         }
@@ -2409,19 +2408,19 @@
             <feGaussianBlur in="SourceGraphic" stdDeviation="0.5" result="blur"/>
         </filter>
     </svg>
-    <!-- Logo - top left corner, clicks to navigate to /d.html -->
-    <div id="logoContainer" style="position: fixed; top: 20px; left: 20px; display: flex; align-items: center; gap: 8px; z-index: 9999; user-select: none;">
-        <button type="button" id="kgLogoBtn" onclick="goToDPage(this)" style="display: flex; align-items: center; gap: 8px; cursor: pointer; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; padding: 8px 14px; font-family: inherit; transition: box-shadow 0.3s ease, transform 0.2s ease;">
-            <img src="favicon.png" alt="KG" style="width: 28px; height: 28px; object-fit: cover; border-radius: 50%;">
-            <span id="kgLogoText" style="font-family: 'YouYuan', Arial, sans-serif; font-size: 18px; font-weight: bold; color: #333; letter-spacing: 2px;">千克之梦</span>
-        </button>
-    </div>
-
     <!-- 主内容区域（时钟+搜索框，壁纸模式下整体偏移） -->
     <div id="mainContent" style="display: flex; flex-direction: column; align-items: center;">
     <!-- 时钟显示（搜索框上方） -->
     <div id="timeDisplay" style="display: flex; justify-content: center; align-items: center; padding: 0 0 8px 0; cursor: pointer; user-select: none;">
         <span id="clockText" style="font-family: 'Microsoft YaHei', '微软雅黑', sans-serif; font-size: 45px; font-weight: 300; color: #333; letter-spacing: 2px;"></span>
+    </div>
+
+    <!-- 天气显示（时钟下方、搜索框上方） -->
+    <div id="weatherDisplay" style="display: none; justify-content: center; align-items: center; padding: 0 0 10px 0; gap: 8px; font-family: 'Microsoft YaHei', '微软雅黑', sans-serif; font-size: 15px; color: #555; user-select: none; cursor: pointer; opacity: 0.9;" onclick="loadWeather(true)" title="点击刷新天气">
+        <span id="weatherIcon" style="display: inline-flex; align-items: center; width: 20px; height: 20px;"></span>
+        <span id="weatherTemp"></span>
+        <span id="weatherDesc" style="opacity: 0.85;"></span>
+        <span id="weatherCity" style="opacity: 0.6; font-size: 13px;"></span>
     </div>
 
     <div class="search-container" id="searchContainer" style="position: relative; background: transparent;">
@@ -2458,6 +2457,12 @@
                 </svg>
                 <span class="dropdown-text">引擎</span>
             </div>
+            <div onclick="openNotesFromDropdown(); closeDropdownMenu();" style="display: flex; align-items: center; justify-content: center; padding: 0 8px; cursor: pointer; font-family: 'YouYuan', Arial, sans-serif; font-size: 13px; color: #000; gap: 5px; white-space: nowrap; transition: background 0.2s ease;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; flex-shrink: 0;">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span class="dropdown-text">便签</span>
+            </div>
             <div style="display: flex; align-items: center; justify-content: center; padding: 0 8px; cursor: default; font-family: 'YouYuan', Arial, sans-serif; font-size: 12px; color: #666; gap: 4px; white-space: nowrap; border-left: 1px solid rgba(0,0,0,0.1);">
                 <span class="dropdown-text">网址</span>
                 <label style="display: flex; align-items: center; gap: 2px; cursor: pointer; font-size: 12px;"><input type="radio" name="urlAccessMode" value="always" onchange="setUrlAccessMode('always')" style="cursor: pointer; width: 12px; height: 12px;">永</label>
@@ -2466,7 +2471,7 @@
             </div>
         </div>
         <!-- Dropdown menu button (replaces scan + engine toggle) -->
-        <button class="search-button" id="dropdownMenuBtn">
+        <button class="search-button" id="dropdownMenuBtn" onmousedown="event.preventDefault()" onclick="toggleDropdownMenu(event)">
             <svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
                 <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
@@ -2619,23 +2624,28 @@
         <div style="display: flex; justify-content: center; align-items: center; position: relative; padding: 20px 20px 0 20px;">
             <!-- Tab Navigation (centered) -->
             <div id="tabButtonsContainer" style="display: flex; gap: 10px;">
-                <button id="favTabBtn" onclick="switchToFavoritesTab()" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="favTabBtn" class="tab-btn" onclick="switchToFavoritesTab()" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
                         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
                     </svg>
                 </button>
-                <button id="engineTabBtn" onclick="switchToEngineTab()" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="engineTabBtn" class="tab-btn" onclick="switchToEngineTab()" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <img id="engineTabIcon" src="https://www.baidu.com/favicon.ico" style="width: 24px; height: 24px; object-fit: contain; display: none;" alt="引擎">
                     <span id="engineTabText" style="font-family: 'YouYuan', Arial, sans-serif; font-size: 20px; font-weight: bold;">引</span>
                 </button>
-                <button id="hotNewsTabBtn" onclick="switchToHotNewsTab()" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="hotNewsTabBtn" class="tab-btn" onclick="switchToHotNewsTab()" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
                         <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
                         <polyline points="2 17 12 22 22 17"></polyline>
                         <polyline points="2 12 12 17 22 12"></polyline>
                     </svg>
                 </button>
-                <button id="settingsTabBtn" onclick="handleSettingsClick()" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
+                <button id="notesTabBtn" class="tab-btn" onclick="switchToNotesTab()" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </button>
+                <button id="settingsTabBtn" class="tab-btn" onclick="handleSettingsClick()" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: none; border-radius: var(--global-radius); background: #F0F0F0; box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; color: #000000; cursor: pointer; font-weight: bold;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -2799,18 +2809,14 @@
                 <div style="display: flex; gap: 10px; align-items: center;">
                     
                     <select id="hotNewsPlatformTab" onchange="loadHotNewsTab(true)" style="padding: 10px 15px; border: none; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0; font-family: 'YouYuan', Arial, sans-serif; font-size: 14px; outline: none; cursor: pointer;">
-                        <option value="baidu">百度</option>
-                        <option value="shaoshupai">少数派</option>
-                        <option value="weibo">微博</option>
-                        <option value="zhihu">知乎</option>
+                        <option value="baidu">百度热搜</option>
+                        <option value="weibo">微博热搜</option>
+                        <option value="zhihu">知乎热榜</option>
                         <option value="toutiao">今日头条</option>
-                        <option value="36kr">36氪</option>
-                        <option value="sspai">少数派</option>
-                        <option value="bilibili">哔哩哔哩</option>
-                        <option value="douyin">抖音</option>
-                        <option value="tieba">百度贴吧</option>
-                        <option value="juejin">掘金</option>
-                        <option value="github">GitHub</option>
+                        <option value="bilibili">B站热门</option>
+                        <option value="douyin">抖音热点</option>
+                        <option value="weixin">微信热榜</option>
+                        <option value="thepaper">澎湃新闻</option>
                     </select>
                     <button onclick="loadHotNewsTab(true)" style="padding: 10px 15px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan', Arial, sans-serif; font-size: 14px; display: flex; align-items: center; gap: 5px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; transition: transform 0.5s ease;" id="hotNewsRefreshIcon">
@@ -2850,44 +2856,19 @@
 
                 <div style="margin-bottom: 15px;">
                     <label class="settings-label" style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 10px; font-weight: bold;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                        显示左上角 千克之梦 标识：
-                    </label>
-                    <div class="settings-radio-grid">
-                        <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 13px; cursor: pointer; gap: 4px;">
-                            <label class="radio-switch"><input type="radio" name="kgLogoMode" value="show" checked onchange="setKgLogoMode('show')"><span class="radio-slider"></span></label>
-                            打开
-                        </label>
-                        <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 13px; cursor: pointer; gap: 4px;">
-                            <label class="radio-switch"><input type="radio" name="kgLogoMode" value="iconOnly" onchange="setKgLogoMode('iconOnly')"><span class="radio-slider"></span></label>
-                            隐藏文字
-                        </label>
-                        <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 13px; cursor: pointer; gap: 4px;">
-                            <label class="radio-switch"><input type="radio" name="kgLogoMode" value="hide" onchange="setKgLogoMode('hide')"><span class="radio-slider"></span></label>
-                            关闭
-                        </label>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label class="settings-label" style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 10px; font-weight: bold;">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                         主题模式：
                     </label>
                     <div class="settings-radio-grid" style="margin-bottom: 10px;">
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-                            <label class="radio-switch"><input type="radio" name="themeMode" value="light" checked onchange="setThemeMode('light')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                            <span class="radio-switch"><input type="radio" name="themeMode" value="light" checked onchange="setThemeMode('light')"><span class="radio-slider"></span></span>
                             浅色模式
                         </label>
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-                            <label class="radio-switch"><input type="radio" name="themeMode" value="dark" onchange="setThemeMode('dark')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            <span class="radio-switch"><input type="radio" name="themeMode" value="dark" onchange="setThemeMode('dark')"><span class="radio-slider"></span></span>
                             深色模式
                         </label>
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-                            <label class="radio-switch"><input type="radio" name="themeMode" value="auto" onchange="setThemeMode('auto')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                            <span class="radio-switch"><input type="radio" name="themeMode" value="auto" onchange="setThemeMode('auto')"><span class="radio-slider"></span></span>
                             跟随系统
                         </label>
                     </div>
@@ -2895,29 +2876,24 @@
 
                 <div style="margin-bottom: 15px;">
                     <label class="settings-label" style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 10px; font-weight: bold;">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                         背景选择：
                     </label>
                     <div class="settings-radio-grid" style="margin-bottom: 10px;">
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-                            <label class="radio-switch"><input type="radio" name="bgMode" value="none" checked onchange="setBgMode('none')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="3" x2="21" y2="21"></line></svg>
+                            <span class="radio-switch"><input type="radio" name="bgMode" value="none" checked onchange="setBgMode('none')"><span class="radio-slider"></span></span>
                             无
                         </label>
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-                            <label class="radio-switch"><input type="radio" name="bgMode" value="solid" onchange="setBgMode('solid')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle></svg>
+                            <span class="radio-switch"><input type="radio" name="bgMode" value="solid" onchange="setBgMode('solid')"><span class="radio-slider"></span></span>
                             纯色
                         </label>
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-                            <label class="radio-switch"><input type="radio" name="bgMode" value="wallpaper" onchange="setBgMode('wallpaper')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                            <span class="radio-switch"><input type="radio" name="bgMode" value="wallpaper" onchange="setBgMode('wallpaper')"><span class="radio-slider"></span></span>
                             壁纸模式
                         </label>
                     </div>
                     <div id="wallpaperSourceManagerBtn" style="display: none; margin-left: 30px; margin-bottom: 10px;">
                         <button onclick="openWallpaperSourceModal()" class="settings-btn" style="padding: 8px 15px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 13px; display: flex; align-items: center; gap: 5px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
                             壁纸来源管理
                         </button>
                     </div>
@@ -2941,7 +2917,6 @@
                     <div id="wallpaperControls" style="display: none; margin-left: 10px; align-items: center; gap: 10px; flex-wrap: wrap;">
                         <span id="currentWallpaperName" style="font-family: 'YouYuan'; font-size: 12px; color: #666; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
                         <button onclick="refreshWallpaper()" title="换一张" style="padding: 6px 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 12px; display: flex; align-items: center; gap: 3px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
                             换一张
                         </button>
                         <label class="toggle-switch" title="聚焦搜索框时放大壁纸" style="margin-left: 5px;">
@@ -2958,39 +2933,32 @@
 
                 <div style="margin-bottom: 15px;">
                     <label class="settings-label" style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 10px; font-weight: bold;">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
                         主题：
                     </label>
                     <div class="settings-radio-grid" style="margin-bottom: 10px;">
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-                            <label class="radio-switch"><input type="radio" name="buttonStyle" value="neumorphism" checked onchange="setButtonStyle('neumorphism')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                            <span class="radio-switch"><input type="radio" name="buttonStyle" value="neumorphism" checked onchange="setButtonStyle('neumorphism')"><span class="radio-slider"></span></span>
                             拟物模式
                         </label>
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-<label class="radio-switch"><input type="radio" name="buttonStyle" value="outline" onchange="setButtonStyle('outline')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+<span class="radio-switch"><input type="radio" name="buttonStyle" value="outline" onchange="setButtonStyle('outline')"><span class="radio-slider"></span></span>
                             线框模式
                         </label>
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-<label class="radio-switch"><input type="radio" name="buttonStyle" value="glass" onchange="setButtonStyle('glass')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
-                            液态玻璃
+<span class="radio-switch"><input type="radio" name="buttonStyle" value="glass" onchange="setButtonStyle('glass')"><span class="radio-slider"></span></span>
+	                            液态玻璃
                         </label>
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-<label class="radio-switch"><input type="radio" name="buttonStyle" value="rounded" onchange="setButtonStyle('rounded')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><rect x="3" y="3" width="18" height="18" rx="6" ry="6"></rect></svg>
+<span class="radio-switch"><input type="radio" name="buttonStyle" value="rounded" onchange="setButtonStyle('rounded')"><span class="radio-slider"></span></span>
                             普通圆角
                         </label>
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-<label class="radio-switch"><input type="radio" name="buttonStyle" value="transparent" onchange="setButtonStyle('transparent')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 0 20" fill="currentColor" opacity="0.3"></path></svg>
+<span class="radio-switch"><input type="radio" name="buttonStyle" value="transparent" onchange="setButtonStyle('transparent')"><span class="radio-slider"></span></span>
                             白色透明
                         </label>
 
                         <label class="settings-label" style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 14px; cursor: pointer;">
-<label class="radio-switch"><input type="radio" name="buttonStyle" value="elder" onchange="setButtonStyle('elder')"><span class="radio-slider"></span></label>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 5px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+<span class="radio-switch"><input type="radio" name="buttonStyle" value="elder" onchange="setButtonStyle('elder')"><span class="radio-slider"></span></span>
                             老年模式（简化界面，去除所有特效）
                         </label>
                     </div>
@@ -2998,7 +2966,6 @@
 
                 <div style="margin-bottom: 15px;">
                     <label class="settings-label" style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 8px; font-weight: bold;">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 0 20" fill="currentColor" opacity="0.3"></path></svg>
                         主题效果：
                     </label>
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
@@ -3019,23 +2986,34 @@
 <span style="font-family: 'YouYuan'; font-size: 14px;">显示时间</span>
 </div>
                 </div>
+
+                <!-- 天气显示设置 -->
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+<label class="toggle-switch"><input type="checkbox" id="weatherToggle" onchange="toggleWeatherDisplay()"><span class="toggle-slider"></span></label>
+<span style="font-family: 'YouYuan'; font-size: 14px;">显示天气</span>
+</div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-left: 30px;">
+                        <label style="font-family: 'YouYuan'; font-size: 13px; color: #666; white-space: nowrap;">城市：</label>
+                        <input type="text" id="weatherCityInput" placeholder="例如：Beijing 或 北京" onkeydown="if(event.key==='Enter'){applyWeatherSettingsAndClose();}" style="flex: 1; max-width: 240px; padding: 8px 12px; border: none; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0; font-family: 'YouYuan'; font-size: 13px; outline: none;">
+                    </div>
+                </div>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 10px; font-weight: bold;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         底部显示：
                     </label>
                     <div class="settings-radio-grid">
                         <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 13px; cursor: pointer; gap: 4px;">
-                            <label class="radio-switch"><input type="radio" name="bottomDisplayMode" value="off" onchange="setBottomDisplayMode('off')"><span class="radio-slider"></span></label>
+                            <span class="radio-switch"><input type="radio" name="bottomDisplayMode" value="off" onchange="setBottomDisplayMode('off')"><span class="radio-slider"></span></span>
                             关
                         </label>
                         <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 13px; cursor: pointer; gap: 4px;">
-                            <label class="radio-switch"><input type="radio" name="bottomDisplayMode" value="poem" checked onchange="setBottomDisplayMode('poem')"><span class="radio-slider"></span></label>
+                            <span class="radio-switch"><input type="radio" name="bottomDisplayMode" value="poem" checked onchange="setBottomDisplayMode('poem')"><span class="radio-slider"></span></span>
                             古诗
                         </label>
                         <label style="display: flex; align-items: center; font-family: 'YouYuan'; font-size: 13px; cursor: pointer; gap: 4px;">
-                            <label class="radio-switch"><input type="radio" name="bottomDisplayMode" value="dock" onchange="setBottomDisplayMode('dock')"><span class="radio-slider"></span></label>
+                            <span class="radio-switch"><input type="radio" name="bottomDisplayMode" value="dock" onchange="setBottomDisplayMode('dock')"><span class="radio-slider"></span></span>
                             Dock栏
                         </label>
                     </div>
@@ -3098,28 +3076,23 @@
 
                 <div style="display: flex; gap: 15px; margin-top: 15px;">
                     <button id="importFavBtn" class="settings-btn" onclick="importFavorites()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         收藏数据导入
                     </button>
                     <button id="exportFavBtn" class="settings-btn" onclick="exportFavorites()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 5 17 10"></polyline><line x1="12" y1="5" x2="12" y2="15"></line></svg>
                         收藏数据导出
                     </button>
                 </div>
                 
                 <div style="display: flex; gap: 15px; margin-top: 15px;">
                     <button class="settings-btn" onclick="exportSelectedData()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 5 17 10"></polyline><line x1="12" y1="5" x2="12" y2="15"></line></svg>
                         选择性导出
                     </button>
                     <button class="settings-btn" onclick="exportAllData()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 5 17 10"></polyline><line x1="12" y1="5" x2="12" y2="15"></line></svg>
                         全量数据导出
                     </button>
                 </div>
                 <div style="display: flex; gap: 15px; margin-top: 15px;">
                     <button class="settings-btn" onclick="importAllData()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         全量数据导入
                     </button>
                 </div>
@@ -3182,7 +3155,6 @@
                 
                 <div style="margin-bottom: 15px;">
                     <label class="settings-label" style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 10px; font-weight: bold;">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                         一键清理数据：
                     </label>
                     <div style="margin-bottom: 10px;">
@@ -3217,11 +3189,9 @@
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button id="clearDataBtn" class="settings-btn" onclick="clearSelectedData()" style="padding: 10px 20px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #000000; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                             清理选中数据
                         </button>
                         <button class="settings-btn" onclick="selectAllClearOptions()" style="padding: 10px 20px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #000000; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                             全选
                         </button>
                     </div>
@@ -3229,11 +3199,9 @@
                 
                 <div style="display: flex; gap: 15px; margin-top: 15px;">
                     <button id="resetSettingsBtn" class="settings-btn" onclick="resetSettings()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #000000; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
                         重置所有设置（保留收藏）
                     </button>
                     <button class="settings-btn" onclick="clearAllData()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; color: #ff0000; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                         清空所有数据
                     </button>
                 </div>
@@ -3245,7 +3213,6 @@
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
                         圆角调节：
                     </label>
                     <div style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0;">
@@ -3263,7 +3230,6 @@
                 </div>
                 <div id="searchBoxWidthWrap" style="margin-bottom: 15px; opacity: 0.5; pointer-events: none;">
                     <label style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="12" x2="21" y2="12"></line></svg>
                         搜索框宽度：
                     </label>
                     <div style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0;">
@@ -3274,7 +3240,6 @@
                 </div>
                 <div id="searchBoxHeightWrap" style="margin-bottom: 15px; opacity: 0.5; pointer-events: none;">
                     <label style="display: block; font-family: 'YouYuan'; font-size: 14px; margin-bottom: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line></svg>
                         搜索框高度：
                     </label>
                     <div style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0;">
@@ -3292,12 +3257,11 @@
                 <!-- API Configuration -->
                 <div style="margin-bottom: 15px; padding: 15px; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0;">
                     <div style="font-family: 'YouYuan'; font-size: 14px; font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
                         API 地址配置
                     </div>
                     <div style="margin-bottom: 10px;">
                         <label style="font-family: 'YouYuan'; font-size: 12px; color: #666; display: block; margin-bottom: 5px;">热点新闻 API <span style="color: #999; font-size: 11px;">（JSON）</span>：</label>
-                        <input type="text" id="hotNewsApiUrlInput" value="https://orz.ai/api/v1/dailynews/" style="width: 100%; padding: 8px 12px; border: none; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0; font-family: 'YouYuan'; font-size: 13px; outline: none;">
+                        <input type="text" id="hotNewsApiUrlInput" value="https://news.orz.ai/api/v1/dailynews/" style="width: 100%; padding: 8px 12px; border: none; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0; font-family: 'YouYuan'; font-size: 13px; outline: none;">
                     </div>
                     <div style="margin-bottom: 10px;">
                         <label style="font-family: 'YouYuan'; font-size: 12px; color: #666; display: block; margin-bottom: 5px;">搜索建议 API（百度）<span style="color: #999; font-size: 11px;">（JSONP）</span>：</label>
@@ -3310,6 +3274,10 @@
                     <div style="margin-bottom: 10px;">
                         <label style="font-family: 'YouYuan'; font-size: 12px; color: #666; display: block; margin-bottom: 5px;">网站元信息 API <span style="color: #999; font-size: 11px;">（JSON）</span>：</label>
                         <input type="text" id="websiteMetaApiUrlInput" value="https://orz.ai/api/v1/tools/website-meta/" style="width: 100%; padding: 8px 12px; border: none; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0; font-family: 'YouYuan'; font-size: 13px; outline: none;">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-family: 'YouYuan'; font-size: 12px; color: #666; display: block; margin-bottom: 5px;">天气 API <span style="color: #999; font-size: 11px;">（用 {city} 作为城市占位符，须返回 wttr.in 兼容 JSON）</span>：</label>
+                        <input type="text" id="weatherApiUrlInput" value="https://wttr.in/{city}?format=j1" style="width: 100%; padding: 8px 12px; border: none; border-radius: var(--global-radius); box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff; background: #F0F0F0; font-family: 'YouYuan'; font-size: 13px; outline: none;">
                     </div>
                     <button class="settings-btn" onclick="saveAllApiUrls()" style="padding: 8px 15px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 13px;">保存所有 API 配置</button>
                 </div>
@@ -3338,7 +3306,6 @@
                 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="settings-btn" onclick="location.reload()" style="flex: 1; min-width: 120px; padding: 10px 15px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
                         刷新网页
                     </button>
                 </div>
@@ -3358,6 +3325,11 @@
                     </ul>
                 </div>
             </div>
+        </div>
+
+        <!-- Notes Content (embeds bc.html) -->
+        <div id="notesContent" style="display: none; padding: 10px 20px 20px 20px; height: calc(100vh - 100px); box-sizing: border-box;">
+            <iframe src="bc.html" style="width: 100%; height: 100%; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; display: block;"></iframe>
         </div>
     </div>
 
@@ -3415,11 +3387,12 @@
 
         // API URL Configuration (must be at top - used by functions below)
         let apiUrls = {
-            hotNews: localStorage.getItem('apiUrl_hotNews') || 'https://orz.ai/api/v1/dailynews/',
+            hotNews: localStorage.getItem('apiUrl_hotNews') || 'https://news.orz.ai/api/v1/dailynews/',
             suggestion: localStorage.getItem('apiUrl_suggestion') || 'https://suggestion.baidu.com/su',
             poem: localStorage.getItem('apiUrl_poem') || 'https://v1.jinrishici.com/all.json',
             bingWallpaper: localStorage.getItem('apiUrl_bingWallpaper') || 'https://bing.img.run/1920x1080.php',
-            websiteMeta: localStorage.getItem('apiUrl_websiteMeta') || 'https://orz.ai/api/v1/tools/website-meta/'
+            websiteMeta: localStorage.getItem('apiUrl_websiteMeta') || 'https://orz.ai/api/v1/tools/website-meta/',
+            weather: localStorage.getItem('apiUrl_weather') || 'https://wttr.in/{city}?format=j1'
         };
         let hotNewsApiUrl = apiUrls.hotNews;
 
@@ -3844,23 +3817,27 @@
             }
         }
 
-        // Check if dropdown text overflows search box width, hide text if so
+        // Check if dropdown text overflows search box width, hide text if so.
+        // IMPORTANT: always reset text visibility BEFORE measuring, otherwise the
+        // previous measurement (with text hidden) would bias the new one and cause
+        // a "hide on click 1, show on click 2" toggle loop.
         function checkDropdownTextOverflow() {
             const menu = document.getElementById('dropdownMenu');
             const searchBox = document.getElementById('searchInput');
             if (!menu || !searchBox || menu.style.display === 'none') return;
-            
+
+            const textSpans = menu.querySelectorAll('.dropdown-text');
+            // 1) Reset to natural state so scrollWidth reflects full content.
+            textSpans.forEach(s => { s.style.display = ''; });
+
             const searchBoxWidth = searchBox.getBoundingClientRect().width;
             const menuWidth = menu.scrollWidth;
-            
-            const textSpans = menu.querySelectorAll('.dropdown-text');
+
             if (menuWidth > searchBoxWidth) {
-                // Text overflows, hide text
-                textSpans.forEach(s => s.style.display = 'none');
-            } else {
-                // Enough space, show text
-                textSpans.forEach(s => s.style.display = '');
+                // 2) Not enough room — hide text labels.
+                textSpans.forEach(s => { s.style.display = 'none'; });
             }
+            // else: keep text visible (already reset above)
         }
 
         // Check on resize
@@ -3881,6 +3858,11 @@
         function openSettingsFromDropdown() {
             showModalWithFade('favoritesModal');
             switchToSettingsTab();
+        }
+
+        function openNotesFromDropdown() {
+            showModalWithFade('favoritesModal');
+            switchToNotesTab();
         }
         
         function setUrlAccessMode(mode) {
@@ -4070,11 +4052,6 @@
                 }
             }
             
-            // Load KG Logo display setting
-            const kgLogoMode = localStorage.getItem('kgLogoMode') || 'show';
-            const logoRadio = document.querySelector('input[name="kgLogoMode"][value="' + kgLogoMode + '"]');
-            if (logoRadio) logoRadio.checked = true;
-            setKgLogoMode(kgLogoMode);
         }
         
         // Change theme color
@@ -4220,10 +4197,13 @@
         
         // Load dock items first (before display settings)
         loadDockItems();
-        
+
         // Load display settings from cookies
         loadDisplaySettings();
-        
+
+        // Initialize weather display (loads immediately if enabled + city set)
+        initWeatherDisplay();
+
         // Defer loading hot news API URL for faster startup
         setTimeout(loadHotNewsApiUrl, 500);
 
@@ -4459,7 +4439,8 @@
         function updateSearchButtonVisibility() {
             const keyword = input.value.trim();
             const isFocused = document.activeElement === input;
-            const isMenuOpen = document.getElementById('dropdownMenu')?.style.display !== 'none' && document.getElementById('dropdownMenu')?.style.opacity !== '0';
+            const _menuEl = document.getElementById('dropdownMenu');
+            const isMenuOpen = !!_menuEl && _menuEl.style.display === 'flex';
             const isUrl = keyword && (checkIfUrl(keyword) || ['always','temp'].includes(localStorage.getItem('searchBoxUrlAccess') || 'off'));
 
             // Toggle URL icon vs search icon
@@ -4481,8 +4462,13 @@
                 input.classList.add('has-text');
                 if (searchBtn) searchBtn.classList.add('visible');
                 if (clearInputBtn) clearInputBtn.classList.add('visible');
-                if (dropdownMenuBtn && !isMenuOpen) {
+                // Always hide dropdown button when typing — it overlaps the text.
+                // Also close the dropdown menu so it doesn't keep the button alive.
+                if (dropdownMenuBtn) {
                     dropdownMenuBtn.classList.remove('visible');
+                }
+                if (isMenuOpen) {
+                    closeDropdownMenu();
                 }
                 // Hide engine hint with fade
                 if (engineHintInSearchBox) {
@@ -4863,19 +4849,19 @@
             localStorage.setItem('customEngines', JSON.stringify(engines));
         }
 
-        function confirmAddCustomEngine() {
+        async function confirmAddCustomEngine() {
             var name = document.getElementById('customEngineName').value.trim();
             var url = document.getElementById('customEngineUrl').value.trim();
             var icon = document.getElementById('customEngineIcon').value.trim();
-            
+
             if (!name || !url) {
-                alert('请填写名称和地址');
+                await customAlert('请填写名称和地址');
                 return;
             }
-            
+
             // Convert <内容> to empty string for the URL pattern
             if (!url.includes('<内容>')) {
-                alert('地址中需要包含 <内容> 作为搜索词占位符');
+                await customAlert('地址中需要包含 <内容> 作为搜索词占位符');
                 return;
             }
             
@@ -4912,8 +4898,8 @@
             
             // Re-render engine grids
             renderCustomEngines();
-            
-            alert('添加成功！');
+
+            await customAlert('添加成功！');
         }
 
         function renderCustomEngines() {
@@ -4956,8 +4942,8 @@
             bindEngineItems();
         }
 
-        function deleteCustomEngine(id) {
-            if (!confirm('确定删除这个搜索引擎吗？')) return;
+        async function deleteCustomEngine(id) {
+            if (!await customConfirm('确定删除这个搜索引擎吗？')) return;
             var engines = getCustomEngines();
             engines = engines.filter(function(e) { return e.id !== id; });
             saveCustomEngines(engines);
@@ -5093,6 +5079,222 @@
             // Save preference to localStorage
             localStorage.setItem('showTimeDisplay', showTime);
         }
+
+        // ========== Weather display (wttr.in) ==========
+        // SVG icon inner markup (Feather-style, 24x24, stroke inherits currentColor)
+        const WEATHER_ICONS = {
+            sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>',
+            cloud: '<path d="M17.5 19a4.5 4.5 0 1 0 0-9h-1.8A7 7 0 1 0 4 16.92"/>',
+            cloudSun: '<circle cx="7" cy="9" r="3"/><path d="M7 2v1M2.5 4.5l.7.7M1 9h1M3.2 13.5l.7-.7M11.5 4.5l-.7.7"/><path d="M17.5 19a4.5 4.5 0 1 0 0-9h-1.8A4.5 4.5 0 0 0 7 11"/>',
+            rain: '<path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><path d="M8 19v2M12 19v3M16 19v2"/>',
+            heavyRain: '<path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><path d="M8 18v3M12 18v4M16 18v3"/>',
+            snow: '<path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 18v2M12 18v2M16 18v2M6 21l2-1M10 21l2-1M14 21l2-1"/>',
+            fog: '<path d="M5 5h14M3 9h18M5 13h14M3 17h18M5 21h14"/>',
+            thunder: '<path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 13 17 11 22"/>',
+            sleet: '<path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><path d="M8 18v2M16 18v2M12 20v3"/>',
+            loader: '<line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>',
+            warning: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+            thermometer: '<path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4 4 0 1 0 5 0z"/>'
+        };
+        function weatherSvg(iconKey) {
+            const inner = WEATHER_ICONS[iconKey] || WEATHER_ICONS.cloud;
+            return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="display:block;">' + inner + '</svg>';
+        }
+        // wttr.in weatherCode -> SVG icon key + 中文描述
+        const WEATHER_CODE_MAP = {
+            '113': { icon: 'sun', desc: '晴' },
+            '116': { icon: 'cloudSun', desc: '多云' },
+            '119': { icon: 'cloud', desc: '阴' },
+            '122': { icon: 'cloud', desc: '密云' },
+            '143': { icon: 'fog', desc: '薄雾' },
+            '176': { icon: 'rain', desc: '小雨' },
+            '179': { icon: 'sleet', desc: '雨雪' },
+            '182': { icon: 'sleet', desc: '雨夹雪' },
+            '185': { icon: 'sleet', desc: '雨夹雪' },
+            '200': { icon: 'thunder', desc: '雷雨' },
+            '227': { icon: 'snow', desc: '小雪' },
+            '230': { icon: 'snow', desc: '暴雪' },
+            '248': { icon: 'fog', desc: '雾' },
+            '260': { icon: 'fog', desc: '雾' },
+            '263': { icon: 'rain', desc: '小雨' },
+            '266': { icon: 'rain', desc: '小雨' },
+            '281': { icon: 'sleet', desc: '冻雨' },
+            '284': { icon: 'sleet', desc: '冻雨' },
+            '293': { icon: 'rain', desc: '小雨' },
+            '296': { icon: 'rain', desc: '小雨' },
+            '299': { icon: 'rain', desc: '中雨' },
+            '302': { icon: 'rain', desc: '中雨' },
+            '305': { icon: 'heavyRain', desc: '大雨' },
+            '308': { icon: 'heavyRain', desc: '大雨' },
+            '311': { icon: 'heavyRain', desc: '暴雨' },
+            '314': { icon: 'heavyRain', desc: '暴雨' },
+            '317': { icon: 'sleet', desc: '雨雪' },
+            '320': { icon: 'snow', desc: '小雪' },
+            '323': { icon: 'snow', desc: '小雪' },
+            '326': { icon: 'snow', desc: '小雪' },
+            '329': { icon: 'snow', desc: '大雪' },
+            '332': { icon: 'snow', desc: '大雪' },
+            '335': { icon: 'snow', desc: '暴雪' },
+            '338': { icon: 'snow', desc: '暴雪' },
+            '350': { icon: 'sleet', desc: '冻雨' },
+            '353': { icon: 'rain', desc: '阵雨' },
+            '356': { icon: 'rain', desc: '中阵雨' },
+            '359': { icon: 'heavyRain', desc: '大阵雨' },
+            '362': { icon: 'sleet', desc: '雨雪' },
+            '365': { icon: 'sleet', desc: '雨雪' },
+            '368': { icon: 'snow', desc: '小雪' },
+            '371': { icon: 'snow', desc: '大雪' },
+            '374': { icon: 'sleet', desc: '雨夹雪' },
+            '377': { icon: 'sleet', desc: '雨夹雪' },
+            '386': { icon: 'thunder', desc: '雷阵雨' },
+            '389': { icon: 'thunder', desc: '雷阵雨' },
+            '392': { icon: 'snow', desc: '雷雪' },
+            '395': { icon: 'snow', desc: '雷暴雪' }
+        };
+
+        // Weather cache TTL (ms) — wttr.in updates every ~15min
+        const WEATHER_CACHE_TTL = 15 * 60 * 1000;
+        let weatherLoading = false;
+
+        function getWeatherCity() {
+            return (localStorage.getItem('weatherCity') || '').trim();
+        }
+
+        function isWeatherEnabled() {
+            return localStorage.getItem('weatherEnabled') === 'true';
+        }
+
+        // Apply theme color to weather display (light/dark aware)
+        function applyWeatherTheme() {
+            const el = document.getElementById('weatherDisplay');
+            if (!el) return;
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            el.style.color = isDark ? '#cccccc' : '#555555';
+        }
+
+        function toggleWeatherDisplay() {
+            settingsModified = true;
+            const t = document.getElementById('weatherToggle');
+            const enabled = t ? t.checked : false;
+            localStorage.setItem('weatherEnabled', enabled ? 'true' : 'false');
+            const el = document.getElementById('weatherDisplay');
+            if (!el) return;
+            if (enabled) {
+                // Show + try to load
+                el.style.display = 'flex';
+                applyWeatherTheme();
+                loadWeather(true);
+            } else {
+                el.style.display = 'none';
+            }
+        }
+
+        // Read city input, persist, then close the favorites/settings modal so it "takes effect"
+        function applyWeatherSettingsAndClose() {
+            const cityInput = document.getElementById('weatherCityInput');
+            if (cityInput) {
+                localStorage.setItem('weatherCity', cityInput.value.trim());
+            }
+            // If weather is enabled, refresh now
+            if (isWeatherEnabled()) {
+                const el = document.getElementById('weatherDisplay');
+                if (el) el.style.display = 'flex';
+                applyWeatherTheme();
+                loadWeather(true);
+            }
+            if (typeof closeFavorites === 'function') {
+                closeFavorites();
+            }
+        }
+
+        async function loadWeather(force) {
+            if (weatherLoading) return;
+            const el = document.getElementById('weatherDisplay');
+            if (!el) return;
+            if (!isWeatherEnabled()) { el.style.display = 'none'; return; }
+            const city = getWeatherCity();
+            if (!city) {
+                // No city configured: show a hint instead of failing silently
+                document.getElementById('weatherIcon').innerHTML = weatherSvg('thermometer');
+                document.getElementById('weatherTemp').textContent = '请在设置中填写城市';
+                document.getElementById('weatherDesc').textContent = '';
+                document.getElementById('weatherCity').textContent = '';
+                el.style.display = 'flex';
+                applyWeatherTheme();
+                return;
+            }
+
+            // Use cache unless forced refresh
+            if (!force) {
+                try {
+                    const cached = JSON.parse(localStorage.getItem('weatherCache') || 'null');
+                    if (cached && cached.ts && (Date.now() - cached.ts) < WEATHER_CACHE_TTL) {
+                        renderWeather(cached.data, city);
+                        return;
+                    }
+                } catch (e) { /* ignore */ }
+            }
+
+            weatherLoading = true;
+            document.getElementById('weatherIcon').innerHTML = weatherSvg('loader');
+            document.getElementById('weatherTemp').textContent = '加载中…';
+            document.getElementById('weatherDesc').textContent = '';
+            document.getElementById('weatherCity').textContent = '';
+            el.style.display = 'flex';
+            applyWeatherTheme();
+
+            try {
+                const urlTemplate = apiUrls.weather || 'https://wttr.in/{city}?format=j1';
+                const url = urlTemplate.replace('{city}', encodeURIComponent(city));
+                const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                const data = await resp.json();
+                renderWeather(data, city);
+                localStorage.setItem('weatherCache', JSON.stringify({ ts: Date.now(), data: data }));
+            } catch (err) {
+                document.getElementById('weatherIcon').innerHTML = weatherSvg('warning');
+                document.getElementById('weatherTemp').textContent = '天气加载失败';
+                document.getElementById('weatherDesc').textContent = '';
+                document.getElementById('weatherCity').textContent = city;
+                console.warn('[Weather] load failed:', err.message);
+            } finally {
+                weatherLoading = false;
+            }
+        }
+
+        function renderWeather(data, requestedCity) {
+            const cur = data && data.current_condition && data.current_condition[0];
+            if (!cur) return;
+            const code = cur.weatherCode || '';
+            const mapped = WEATHER_CODE_MAP[code] || { icon: 'thermometer', desc: (cur.weatherDesc && cur.weatherDesc[0] && cur.weatherDesc[0].value) || '' };
+            const temp = cur.temp_C != null ? cur.temp_C + '°C' : '';
+            document.getElementById('weatherIcon').innerHTML = weatherSvg(mapped.icon);
+            document.getElementById('weatherTemp').textContent = temp;
+            document.getElementById('weatherDesc').textContent = mapped.desc;
+            document.getElementById('weatherCity').textContent = requestedCity;
+        }
+
+        // Init weather UI from localStorage (called on page load and after import)
+        function initWeatherDisplay() {
+            const enabled = isWeatherEnabled();
+            const t = document.getElementById('weatherToggle');
+            if (t) t.checked = enabled;
+            const cityInput = document.getElementById('weatherCityInput');
+            if (cityInput) cityInput.value = getWeatherCity();
+            const apiInput = document.getElementById('weatherApiUrlInput');
+            if (apiInput && apiUrls.weather) apiInput.value = apiUrls.weather;
+
+            const el = document.getElementById('weatherDisplay');
+            if (!el) return;
+            if (enabled) {
+                el.style.display = 'flex';
+                applyWeatherTheme();
+                loadWeather(false);
+            } else {
+                el.style.display = 'none';
+            }
+        }
+        // ========== End weather ==========
 
         // Clock display
         function updateClock() {
@@ -5268,8 +5470,6 @@
                         demoMode: localStorage.getItem('demoMode') === 'true',
                         borderRadius: localStorage.getItem('borderRadius') || '34',
                         loadForeignIcons: localStorage.getItem('loadForeignIcons') === 'true',
-                        showKgLogo: localStorage.getItem('showKgLogo') !== 'false',
-                        kgLogoMode: localStorage.getItem('kgLogoMode') || 'show',
                         showFavIcons: localStorage.getItem('showFavIcons') !== 'false',
                         searchBoxUrlAccess: localStorage.getItem('searchBoxUrlAccess') || 'always',
                         searchBoxWidth: localStorage.getItem('searchBoxWidth') || '100',
@@ -5278,7 +5478,14 @@
                         enableLaunchAnim: localStorage.getItem('enableLaunchAnim') !== 'false',
                         disableAllAnim: localStorage.getItem('disableAllAnim') === 'true',
                         wallpaperBlur: localStorage.getItem('wallpaperBlur') || '0',
-                        wallpaperBrightness: localStorage.getItem('wallpaperBrightness') || '100'
+                        wallpaperBrightness: localStorage.getItem('wallpaperBrightness') || '100',
+                        themeBlur: localStorage.getItem('themeBlur') || '0',
+                        themeOpacity: localStorage.getItem('themeOpacity') || '100',
+                        showAllSettings: localStorage.getItem('showAllSettings') || 'false',
+                        showTabButtons: localStorage.getItem('showTabButtons') !== 'false',
+                        focusZoomEnabled: localStorage.getItem('focusZoomEnabled') === 'true',
+                        weatherEnabled: localStorage.getItem('weatherEnabled') === 'true',
+                        weatherCity: localStorage.getItem('weatherCity') || ''
                     };
                     selectedData.wallpaperSources = wallpaperSources;
                     selectedData.currentWallpaperSourceId = currentWallpaperSourceId;
@@ -5332,8 +5539,6 @@
                     demoMode: localStorage.getItem('demoMode') === 'true',
                     borderRadius: localStorage.getItem('borderRadius') || '34',
                     loadForeignIcons: localStorage.getItem('loadForeignIcons') === 'true',
-                    showKgLogo: localStorage.getItem('showKgLogo') !== 'false',
-                    kgLogoMode: localStorage.getItem('kgLogoMode') || 'show',
                     showFavIcons: localStorage.getItem('showFavIcons') !== 'false',
                     searchBoxUrlAccess: localStorage.getItem('searchBoxUrlAccess') || 'always',
                     searchBoxWidth: localStorage.getItem('searchBoxWidth') || '100',
@@ -5346,7 +5551,10 @@
                     themeBlur: localStorage.getItem('themeBlur') || '0',
                     themeOpacity: localStorage.getItem('themeOpacity') || '100',
                     showAllSettings: localStorage.getItem('showAllSettings') || 'false',
-                    showTabButtons: localStorage.getItem('showTabButtons') !== 'false'
+                    showTabButtons: localStorage.getItem('showTabButtons') !== 'false',
+                    focusZoomEnabled: localStorage.getItem('focusZoomEnabled') === 'true',
+                    weatherEnabled: localStorage.getItem('weatherEnabled') === 'true',
+                    weatherCity: localStorage.getItem('weatherCity') || ''
                 },
                 wallpaperSources: wallpaperSources,
                 currentWallpaperSourceId: currentWallpaperSourceId,
@@ -5647,6 +5855,15 @@
                         if (allData.settings.showTabButtons !== undefined) {
                             localStorage.setItem('showTabButtons', allData.settings.showTabButtons ? 'true' : 'false');
                         }
+                        if (allData.settings.focusZoomEnabled !== undefined) {
+                            localStorage.setItem('focusZoomEnabled', allData.settings.focusZoomEnabled ? 'true' : 'false');
+                        }
+                        if (allData.settings.weatherEnabled !== undefined) {
+                            localStorage.setItem('weatherEnabled', allData.settings.weatherEnabled ? 'true' : 'false');
+                        }
+                        if (allData.settings.weatherCity !== undefined) {
+                            localStorage.setItem('weatherCity', allData.settings.weatherCity);
+                        }
                         
                         // Restore search box size
                         if (allData.settings.searchBoxWidth !== undefined) {
@@ -5660,15 +5877,8 @@
                         }
                         applySavedSearchBoxSize();
 
-                        // Restore logo display settings
                         if (allData.settings.loadForeignIcons !== undefined) {
                             localStorage.setItem('loadForeignIcons', allData.settings.loadForeignIcons);
-                        }
-                        if (allData.settings.showKgLogo !== undefined) {
-                            localStorage.setItem('showKgLogo', allData.settings.showKgLogo);
-                        }
-                        if (allData.settings.kgLogoMode !== undefined) {
-                            localStorage.setItem('kgLogoMode', allData.settings.kgLogoMode);
                         }
 
                         // Restore animation settings
@@ -5770,7 +5980,7 @@
                     localStorage.removeItem('cachedSuggestions');
                     localStorage.removeItem('cachedHotNews');
                 } else if (cb.value === 'settings') {
-                    ['themeMode','themeColor','buttonStyle','bgMode','bgColor','showTimeDisplay','showPoem','showScanner','highContrastMode','borderRadius','debugMode','demoMode','loadForeignIcons','showKgLogo','kgLogoMode','cleanSearchMode','cleanSearchKeyword','privacyMode','showFavCreateTime','autoSortFavorites','noFavIcons','saveSearchHistory','showSearchSuggestions','cacheSuggestions','cacheDuration','showFavIcons','searchBoxUrlAccess','searchBoxWidth','searchBoxHeight','searchBoxSizeEnabled'].forEach(key => localStorage.removeItem(key));
+                    ['themeMode','themeColor','buttonStyle','bgMode','bgColor','showTimeDisplay','showPoem','showScanner','highContrastMode','borderRadius','debugMode','demoMode','loadForeignIcons','cleanSearchMode','cleanSearchKeyword','privacyMode','showFavCreateTime','autoSortFavorites','noFavIcons','saveSearchHistory','showSearchSuggestions','cacheSuggestions','cacheDuration','showFavIcons','searchBoxUrlAccess','searchBoxWidth','searchBoxHeight','searchBoxSizeEnabled'].forEach(key => localStorage.removeItem(key));
                     location.reload();
                 } else if (cb.value === 'apiUrls') {
                     localStorage.removeItem('apiUrls');
@@ -5820,8 +6030,6 @@
             localStorage.removeItem('currentWallpaperSourceId');
             localStorage.removeItem('focusZoomEnabled');
             localStorage.removeItem('debugMode');
-            localStorage.removeItem('kgLogoMode');
-            localStorage.removeItem('showKgLogo');
             localStorage.removeItem('loadForeignIcons');
             localStorage.removeItem('searchBoxWidth');
             localStorage.removeItem('searchBoxHeight');
@@ -5990,7 +6198,8 @@
                 { key: 'hotNews', inputId: 'hotNewsApiUrlInput' },
                 { key: 'suggestion', inputId: 'suggestionApiUrlInput' },
                 { key: 'poem', inputId: 'poemApiUrlInput' },
-                { key: 'websiteMeta', inputId: 'websiteMetaApiUrlInput' }
+                { key: 'websiteMeta', inputId: 'websiteMetaApiUrlInput' },
+                { key: 'weather', inputId: 'weatherApiUrlInput' }
             ];
             configs.forEach(function(cfg) {
                 var input = document.getElementById(cfg.inputId);
@@ -6011,7 +6220,8 @@
                 { key: 'hotNews', inputId: 'hotNewsApiUrlInput' },
                 { key: 'suggestion', inputId: 'suggestionApiUrlInput' },
                 { key: 'poem', inputId: 'poemApiUrlInput' },
-                { key: 'websiteMeta', inputId: 'websiteMetaApiUrlInput' }
+                { key: 'websiteMeta', inputId: 'websiteMetaApiUrlInput' },
+                { key: 'weather', inputId: 'weatherApiUrlInput' }
             ];
             configs.forEach(function(cfg) {
                 var input = document.getElementById(cfg.inputId);
@@ -6119,27 +6329,6 @@
             }
         }
         
-        // Square mode toggle
-        function setKgLogoMode(mode) {
-            settingsModified = true;
-            const logo = document.getElementById('kgLogoBtn');
-            const logoText = document.getElementById('kgLogoText');
-            localStorage.setItem('kgLogoMode', mode);
-            
-            if (mode === 'show') {
-                // 打开：显示图标+文字
-                if (logo) logo.style.display = 'flex';
-                if (logoText) logoText.style.display = 'inline';
-            } else if (mode === 'iconOnly') {
-                // 隐藏文字：只显示图标
-                if (logo) logo.style.display = 'flex';
-                if (logoText) logoText.style.display = 'none';
-            } else {
-                // 关闭：全部隐藏
-                if (logo) logo.style.display = 'none';
-            }
-        }
-
         function updateBorderRadius(value) {
             const radiusValues = ['0', '4', '8', '12', '16', '20', '24', '28', '34', '34'];
             const radius = radiusValues[value] || '34';
@@ -6396,13 +6585,15 @@
                 
                 html += `<button class="dock-item" onclick="openDockUrl('${item.url.replace(/'/g, "\\'")}', this)" title="${item.name}">
                             <div class="dock-icon">
-                                ${showFavIcons && faviconUrl ? `<img src="${faviconUrl}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 10px;" alt="">` : ''}
+                                ${showFavIcons && faviconUrl ? `<img src="${faviconUrl}" data-cands='${JSON.stringify(getFaviconCandidates(item.url))}' data-i="0" onerror="var c=JSON.parse(this.getAttribute('data-cands')||'[]');var i=parseInt(this.getAttribute('data-i')||'0',10)+1;if(i<c.length){this.setAttribute('data-i',i);this.src=c[i];}else{this.style.display='none';this.nextElementSibling.style.display='flex';}" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: var(--global-radius);" alt="">` : ''}
                                 <div class="dock-initial" style="background-color: ${color}; display: ${(!showFavIcons || !faviconUrl) ? 'flex' : 'none'};">${initials}</div>
                             </div>
                         </button>`;
             });
             
             scrollArea.innerHTML = html;
+            // Re-apply theme to newly rendered dock items so dark mode colors take effect
+            if (typeof applyThemeToInlineStyles === 'function') applyThemeToInlineStyles();
         }
         
         function openDockUrl(url, element) {
@@ -6485,7 +6676,7 @@
                         </button>
                     </div>
                     <div class="fav-icon">
-                        ${showFavIcons && faviconUrl ? `<img src="${faviconUrl}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: var(--global-radius);" alt="">` : ''}
+                        ${showFavIcons && faviconUrl ? `<img src="${faviconUrl}" data-cands='${JSON.stringify(getFaviconCandidates(fav.url))}' data-i="0" onerror="var c=JSON.parse(this.getAttribute('data-cands')||'[]');var i=parseInt(this.getAttribute('data-i')||'0',10)+1;if(i<c.length){this.setAttribute('data-i',i);this.src=c[i];}else{this.style.display='none';this.nextElementSibling.style.display='flex';}" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: var(--global-radius);" alt="">` : ''}
                         <div class="fav-initial" style="background-color: ${color}; display: ${(!showFavIcons || !faviconUrl) ? 'flex' : 'none'};">${initials}</div>
                     </div>
                     <div class="fav-name">${item.name}</div>
@@ -6502,9 +6693,11 @@
             if (currentButtonStyle === 'outline') {
                 applyOutlineToAll();
             }
-            
+            // Re-apply theme to newly rendered items so dark mode colors take effect
+            if (typeof applyThemeToInlineStyles === 'function') applyThemeToInlineStyles();
+
         }
-        
+
         async function renameCurrentFolder() {
             if (!currentFolderId) return;
             const folder = folders.find(f => f.id === currentFolderId);
@@ -6626,9 +6819,46 @@
             if (showIcons && !showIcons.checked) {
                 return '';
             }
+            var candidates = getFaviconCandidates(url);
+            return candidates[0] || '';
+        }
+
+        // Build ordered list of favicon candidate URLs for a given site URL.
+        // Tries common favicon paths/extensions, then a third-party service as last resort.
+        function getFaviconCandidates(url) {
             try {
-                const urlObj = new URL(url);
-                return `https://${urlObj.hostname}/favicon.ico`;
+                var urlObj = new URL(url);
+                var host = urlObj.hostname;
+                var origin = 'https://' + host;
+                // Direct site favicons in priority order
+                var candidates = [
+                    origin + '/favicon.ico',
+                    origin + '/favicon.png',
+                    origin + '/favicon.jpg',
+                    origin + '/favicon.jpeg',
+                    origin + '/favicon.svg',
+                    origin + '/favicon-32.png',
+                    origin + '/favicon-96.png',
+                    origin + '/apple-touch-icon.png',
+                    // Common static subpath
+                    origin + '/static/favicon.ico',
+                    origin + '/static/favicon.png',
+                    origin + '/img/favicon.ico',
+                    origin + '/assets/favicon.ico',
+                    // Third-party fallback (works for sites without any favicon.ico)
+                    'https://icon.horse/icon/' + host
+                ];
+                return candidates;
+            } catch(e) {
+                return [];
+            }
+        }
+
+        // Legacy single-fallback function kept for compatibility; returns icon.horse URL.
+        function getFaviconFallback(url) {
+            try {
+                var urlObj = new URL(url);
+                return 'https://icon.horse/icon/' + urlObj.hostname;
             } catch(e) {
                 return '';
             }
@@ -6747,7 +6977,7 @@
                 html += `<div class="fav-item" draggable="false" data-index="${originalIndex}" onclick="openFavoriteUrl('${safeUrl}', this)">
                     ${actionsHtml}
                     <div class="fav-icon">
-                        ${showFavIcons && faviconUrl ? `<img src="${faviconUrl}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: var(--global-radius);" alt="">` : ''}
+                        ${showFavIcons && faviconUrl ? `<img src="${faviconUrl}" data-cands='${JSON.stringify(getFaviconCandidates(fav.url))}' data-i="0" onerror="var c=JSON.parse(this.getAttribute('data-cands')||'[]');var i=parseInt(this.getAttribute('data-i')||'0',10)+1;if(i<c.length){this.setAttribute('data-i',i);this.src=c[i];}else{this.style.display='none';this.nextElementSibling.style.display='flex';}" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: var(--global-radius);" alt="">` : ''}
                         <div class="fav-initial" style="background-color: ${color}; display: ${(!showFavIcons || !faviconUrl) ? 'flex' : 'none'};">${initials}</div>
                     </div>
                     <div class="fav-name">${fav.name}</div>
@@ -6770,6 +7000,8 @@
             if (currentButtonStyle === 'outline') {
                 applyOutlineToAll();
             }
+            // Re-apply theme to newly rendered favorites so dark mode colors take effect
+            if (typeof applyThemeToInlineStyles === 'function') applyThemeToInlineStyles();
         }
         
         function openFavorites() {
@@ -6788,18 +7020,18 @@
                 modal.style.opacity = '0';
                 setTimeout(() => {
                     modal.style.display = 'none';
-                    
+
                     // After modal is hidden, show elements directly without animation
                     const searchContainer = document.querySelector('.search-container');
                     const bottomButtons = document.querySelectorAll('.bottom-btn');
-                    
+
                     if (searchContainer) {
                         searchContainer.style.transition = 'none';
                         searchContainer.style.animation = 'none';
                         searchContainer.style.opacity = '1';
                         searchContainer.style.transform = 'scale(1)';
                     }
-                    
+
                     if (bottomButtons && bottomButtons.length > 0) {
                         bottomButtons.forEach(btn => {
                             btn.style.transition = 'none';
@@ -6808,7 +7040,19 @@
                             btn.style.transform = 'scale(1)';
                         });
                     }
-                    
+
+                    // Apply weather settings entered in the settings panel:
+                    // persist city input + reload weather immediately so it "takes effect" on close.
+                    try {
+                        const cityInput = document.getElementById('weatherCityInput');
+                        if (cityInput) {
+                            localStorage.setItem('weatherCity', cityInput.value.trim());
+                        }
+                        if (typeof initWeatherDisplay === 'function') {
+                            initWeatherDisplay();
+                        }
+                    } catch (e) { /* ignore */ }
+
                     // Note: removed auto-reload on close to prevent unwanted page refreshes
                 }, 300);
             }
@@ -6901,6 +7145,16 @@
         function deleteFavorite(index) {
             showCustomConfirm('确定要删除这个收藏吗？', function(confirmed) {
                 if (confirmed) {
+                    const fav = favorites[index];
+                    // Also remove matching dock item (by url) so dock stays in sync
+                    if (fav && fav.url) {
+                        const dockIdx = dockItems.findIndex(item => item.url === fav.url);
+                        if (dockIdx >= 0) {
+                            dockItems.splice(dockIdx, 1);
+                            saveDockItems();
+                            renderDock();
+                        }
+                    }
                     favorites.splice(index, 1);
                     saveFavorites();
                 }
@@ -6913,10 +7167,14 @@
                 showCustomConfirm('暂无收藏可删除', function() {});
                 return;
             }
-            
+
             showCustomConfirm('确定要删除所有收藏吗？此操作不可恢复！', function(confirmed) {
                 if (confirmed) {
                     favorites = [];
+                    // Clear dock items too since they reference favorites
+                    dockItems = [];
+                    saveDockItems();
+                    renderDock();
                     saveFavorites();
                 }
             });
@@ -7135,9 +7393,9 @@
         // Tab switching functions with smooth transition
         // Unified tab switching with slide animation
         let currentTabIndex = 0;
-        const tabOrder = ['favoritesContent', 'engineContent', 'hotNewsContent', 'settingsContent'];
-        const tabBtnIds = ['favTabBtn', 'engineTabBtn', 'hotNewsTabBtn', 'settingsTabBtn'];
-        const tabCallbacks = [renderFavorites, lazyLoadEngineIcons, loadHotNewsTab, null];
+        const tabOrder = ['favoritesContent', 'engineContent', 'hotNewsContent', 'notesContent', 'settingsContent'];
+        const tabBtnIds = ['favTabBtn', 'engineTabBtn', 'hotNewsTabBtn', 'notesTabBtn', 'settingsTabBtn'];
+        const tabCallbacks = [renderFavorites, lazyLoadEngineIcons, loadHotNewsTab, null, null];
         function lazyLoadEngineIcons() {
             const ec = document.getElementById('engineContent');
             if (!ec) return;
@@ -7155,7 +7413,7 @@
             if (targetIndex < 0 || targetIndex >= tabOrder.length) return;
             tabSwitching = true;
 
-            const allContents = ['favoritesContent', 'engineContent', 'settingsContent', 'hotNewsContent'];
+            const allContents = ['favoritesContent', 'engineContent', 'hotNewsContent', 'notesContent', 'settingsContent'];
             const currentContentId = tabOrder[currentTabIndex];
             const targetContentId = tabOrder[targetIndex];
 
@@ -7235,11 +7493,15 @@
         }
 
         function switchToSettingsTab() {
-            switchTab(3);
+            switchTab(4);
         }
 
         function switchToHotNewsTab() {
             switchTab(2);
+        }
+
+        function switchToNotesTab() {
+            switchTab(3);
         }
 
         // Touch swipe support for tab switching
@@ -7305,16 +7567,24 @@
                         const rank = index + 1;
                         const rankColor = rank <= 3 ? '#FF6B6B' : '#999';
                         const delay = index * 0.05;
-                        html += `<div onclick="openNews('${item.url.replace(/'/g, "\\'")}', this)" style="display: flex; align-items: flex-start; padding: 12px 15px; margin-bottom: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan', Arial, sans-serif; transition: transform 0.2s ease; opacity: 0; animation: fadeInUp 0.4s ease ${delay}s forwards;">
+                        const desc = item.desc || item.content || '';
+                        const titleLen = (item.title || '').length;
+                        const descLen = (desc || '').length;
+                        // Card span: longer content (title>20 or desc>50) spans 2 columns on wide grid
+                        const span = (titleLen > 20 || descLen > 50) ? 2 : 1;
+                        html += `<div class="news-item" onclick="openNews('${item.url.replace(/'/g, "\\'")}', this)" data-span="${span}" style="display: flex; align-items: flex-start; padding: 12px 15px; margin-bottom: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan', Arial, sans-serif; transition: transform 0.2s ease; opacity: 0; animation: fadeInUp 0.4s ease ${delay}s forwards;">
                             <span style="color: ${rankColor}; font-weight: bold; font-size: 18px; margin-right: 12px; min-width: 24px; text-align: center;">${rank}</span>
                             <div style="flex: 1;">
                                 <div style="font-size: 15px; font-weight: bold; line-height: 1.4; margin-bottom: 4px;">${item.title}</div>
-                                ${item.desc ? `<div style="font-size: 12px; color: #666; line-height: 1.4;">${item.desc}</div>` : ''}
-                                ${item.score ? `<div style="font-size: 11px; color: #999; margin-top: 4px;">🔥 ${Number(item.score).toLocaleString()}</div>` : ''}
+                                ${desc ? `<div style="font-size: 12px; color: #666; line-height: 1.4;">${desc}</div>` : ''}
                             </div>
                         </div>`;
                     });
                     list.innerHTML = html;
+                    // Apply responsive grid layout based on viewport width
+                    applyHotNewsGridLayout();
+                    // Re-apply theme to newly rendered news items so dark mode colors take effect
+                    if (typeof applyThemeToInlineStyles === 'function') applyThemeToInlineStyles();
                     hotNewsLoaded = true; // Mark as loaded
                 } else {
                     list.innerHTML = '<div style="text-align: center; color: #999; padding: 40px; font-family: \'YouYuan\', Arial, sans-serif;">暂无数据</div>';
@@ -7334,7 +7604,44 @@
                 }
             }
         }
-        
+
+        // Responsive grid layout for hot news: wide screens use CSS grid cards,
+        // narrow screens keep the original vertical list. Card width adapts to content length.
+        function applyHotNewsGridLayout() {
+            const list = document.getElementById('hotNewsListTab');
+            if (!list) return;
+            const w = window.innerWidth;
+            // Wide screen (tablet/desktop): enable grid
+            if (w >= 900) {
+                list.style.display = 'grid';
+                // auto-fill with min 260px columns; long cards (data-span=2) span 2 columns
+                list.style.gridTemplateColumns = 'repeat(auto-fill, minmax(260px, 1fr))';
+                list.style.gap = '10px';
+                list.querySelectorAll('.news-item').forEach(el => {
+                    const span = parseInt(el.getAttribute('data-span') || '1', 10);
+                    el.style.gridColumn = span >= 2 ? 'span 2' : 'span 1';
+                    // remove margin-bottom in grid mode (gap handles spacing)
+                    el.style.marginBottom = '0';
+                });
+            } else {
+                // Narrow screen: vertical list (original)
+                list.style.display = 'block';
+                list.style.gridTemplateColumns = '';
+                list.style.gap = '';
+                list.querySelectorAll('.news-item').forEach(el => {
+                    el.style.gridColumn = '';
+                    el.style.marginBottom = '10px';
+                });
+            }
+        }
+
+        // Re-apply grid layout on window resize
+        window.addEventListener('resize', function() {
+            if (document.getElementById('hotNewsListTab')) {
+                applyHotNewsGridLayout();
+            }
+        });
+
         // Event listeners for favorites
         const favBtn = document.getElementById('favBtn');
         if (favBtn) {
@@ -7603,8 +7910,15 @@
             applyThemeDirectly();
             
             const isDark = document.body.getAttribute('data-theme') === 'dark';
+            // Set color-scheme on both <html> and <body> so native controls (select, input, scrollbar)
+            // follow the user's chosen theme, NOT the system prefers-color-scheme.
+            document.documentElement.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
+            document.documentElement.style.setProperty('-webkit-color-scheme', isDark ? 'dark' : 'light');
             document.body.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
             document.body.style.setProperty('-webkit-color-scheme', isDark ? 'dark' : 'light');
+
+            // Keep weather display color in sync with theme
+            if (typeof applyWeatherTheme === 'function') applyWeatherTheme();
         }
         
         // Listen for system theme changes
@@ -7702,63 +8016,38 @@
         }
         
         function applyThemeDirectly() {
+            // Theme styling is now handled PURELY by CSS rules using body[data-button-style="..."]
+            // selectors with !important. This avoids the inline-style pollution problem where
+            // JS-set inline styles persist after switching back to neumorphism.
+            // For glass mode, backdrop-filter must be applied via JS because CSS can't compute
+            // per-element blur dynamically based on the themeBlur setting.
             const theme = currentButtonStyle;
             const isDark = document.body.getAttribute('data-theme') === 'dark';
-            
-            // Skip default neumorphism and elder (elder handled by CSS *)
+
             if (theme === 'neumorphism' || theme === 'elder') return;
 
-            // Directly target key elements instead of traversing all DOM (more reliable)
-            const keySelectors = [
-                '#searchInput', '#kgLogoBtn', '.bottom-btn', '.tab-btn',
-                '#favBtn', '#dropdownMenuBtn', '#searchBtn', '#micBtn',
-                '#addFavBtn', '#favSearchInput', '.modal-close-btn',
-                '.engine-item', '.favorite-item', '.history-item', '.news-item'
-            ];
-            
-            const elements = new Set();
-            keySelectors.forEach(sel => {
-                try {
-                    document.querySelectorAll(sel).forEach(el => elements.add(el));
-                } catch(e) {}
-            });
-
-            elements.forEach(el => {
-                try {
-                    // Clear backdrop-filter from previous theme (only glass uses it)
-                    el.style.removeProperty('backdrop-filter');
-                    el.style.removeProperty('-webkit-backdrop-filter');
-
-                    if (theme === 'outline') {
-                        el.style.boxShadow = 'none';
-                        el.style.border = '2px solid currentColor';
-                        el.style.borderRadius = '34px';
-                        el.style.background = 'transparent';
-                    } else if (theme === 'rounded') {
-                        el.style.boxShadow = 'none';
-                        el.style.border = 'none';
-                        el.style.borderRadius = '34px';
-                        el.style.background = isDark ? 'rgba(80, 80, 80, 0.5)' : 'rgba(200, 200, 200, 0.4)';
-                    } else if (theme === 'glass') {
-                        if (isDark) {
-                            el.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.2) inset, 0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)';
-                            el.style.background = 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.2) 100%)';
-                        } else {
-                            el.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.5) inset, 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1)';
-                            el.style.background = 'linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0.55) 100%)';
-                        }
-                        el.style.border = 'none';
-                        el.style.borderRadius = '34px';
+            // Only handle glass mode's backdrop-filter here; everything else is pure CSS.
+            if (theme === 'glass') {
+                const keySelectors = [
+                    '#searchInput', '.bottom-btn', '.tab-btn',
+                    '#favBtn', '#dropdownMenuBtn', '#searchBtn', '#micBtn',
+                    '#addFavBtn', '#favSearchInput', '.modal-close-btn',
+                    '.engine-item', '.favorite-item', '.history-item', '.news-item',
+                    '#dockScrollArea', '.dock-icon', '.settings-btn', '.settings-section h3', '.fav-add-btn',
+                    '.fav-search-input', '.wallpaper-source-item', '#folderSearchInput', '#createFolderBtn'
+                ];
+                const elements = new Set();
+                try { document.querySelectorAll('[style*="box-shadow"]').forEach(el => elements.add(el)); } catch(e) {}
+                keySelectors.forEach(sel => {
+                    try { document.querySelectorAll(sel).forEach(el => elements.add(el)); } catch(e) {}
+                });
+                elements.forEach(el => {
+                    try {
                         el.style.backdropFilter = 'blur(8px) saturate(150%) brightness(1.02)';
                         el.style.webkitBackdropFilter = 'blur(8px) saturate(150%) brightness(1.02)';
-                    } else if (theme === 'transparent') {
-                        el.style.boxShadow = 'none';
-                        el.style.border = 'none';
-                        el.style.borderRadius = '34px';
-                        el.style.background = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.85)';
-                    }
-                } catch(e) {}
-            });
+                    } catch(e) {}
+                });
+            }
         }
         
         function updateThemeBlur(value) {
@@ -7779,19 +8068,28 @@
             const blur = parseInt(localStorage.getItem('themeBlur') || '0', 10);
             const opacity = parseInt(localStorage.getItem('themeOpacity') || '100', 10);
             const isDark = document.body.getAttribute('data-theme') === 'dark';
-            
+            const theme = currentButtonStyle;
+
             const keySelectors = [
-                '#searchInput', '#kgLogoBtn', '.bottom-btn', '.tab-btn',
+                '#searchInput', '.bottom-btn', '.tab-btn',
                 '#favBtn', '#dropdownMenuBtn', '#searchBtn', '#micBtn',
                 '#addFavBtn', '#favSearchInput', '.modal-close-btn',
-                '.engine-item', '.favorite-item', '.history-item', '.news-item'
+                '.engine-item', '.favorite-item', '.history-item', '.news-item',
+                '#dockScrollArea', '.dock-icon', '.settings-btn', '.settings-section h3', '.fav-add-btn',
+                '.fav-search-input', '.wallpaper-source-item', '#folderSearchInput', '#createFolderBtn'
             ];
-            
+
             const elements = new Set();
+            try { document.querySelectorAll('[style*="box-shadow"]').forEach(el => elements.add(el)); } catch(e) {}
             keySelectors.forEach(sel => {
                 try { document.querySelectorAll(sel).forEach(el => elements.add(el)); } catch(e) {}
             });
-            
+
+            // Only apply blur/opacity background override in transparent or glass themes.
+            // In neumorphism/outline/rounded, modifying inline background would pollute the
+            // original neumorphism background and break theme switching back.
+            const applyBackground = (theme === 'transparent' || theme === 'glass');
+
             elements.forEach(el => {
                 try {
                     if (blur > 0) {
@@ -7801,11 +8099,18 @@
                         el.style.removeProperty('backdrop-filter');
                         el.style.removeProperty('-webkit-backdrop-filter');
                     }
-                    const alpha = opacity / 100;
-                    if (isDark) {
-                        el.style.background = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
-                    } else {
-                        el.style.background = 'rgba(255,255,255,' + (alpha * 0.85) + ')';
+                    if (applyBackground) {
+                        // Save original inline background once so we can restore it when leaving transparent/glass
+                        if (el.dataset && el.dataset.origBg === undefined) {
+                            if (!el.dataset) el.dataset = {};
+                            el.dataset.origBg = el.style.background || '';
+                        }
+                        const alpha = opacity / 100;
+                        if (isDark) {
+                            el.style.background = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
+                        } else {
+                            el.style.background = 'rgba(255,255,255,' + (alpha * 0.85) + ')';
+                        }
                     }
                 } catch(e) {}
             });
@@ -7908,7 +8213,6 @@
 
         // ===== Wallpaper Source Management System =====
         const DEFAULT_WALLPAPER_SOURCES = [
-            { id: 'bing-today', name: 'Bing今日壁纸', url: 'https://bing.img.run/1920x1080.php', type: '综合' },
             { id: 'bing-default', name: '随机PC壁纸', url: 'https://t.mwm.moe/pc', type: '综合' },
             { id: 'luvying', name: '随机二次元壁纸', url: 'https://api.luvying.com/acgimg', type: '二次元' },
             { id: 'suyan-acg', name: '随机二次元(备用)', url: 'https://acg.suyanw.cn/Anime', type: '二次元' },
@@ -8269,12 +8573,37 @@
         }
         
         function restoreNeumorphism() {
-            // No longer needed since we don't modify inline styles
-            // Kept as no-op for compatibility
+            // Restore original inline styles saved by applyThemeBlurOpacity() before transparent/glass
+            // overrode the background. Also clear backdrop-filter set by glass mode.
+            const keySelectors = [
+                '#searchInput', '.bottom-btn', '.tab-btn',
+                '#favBtn', '#dropdownMenuBtn', '#searchBtn', '#micBtn',
+                '#addFavBtn', '#favSearchInput', '.modal-close-btn',
+                '.engine-item', '.favorite-item', '.history-item', '.news-item',
+                '#dockScrollArea', '.dock-icon', '.dock-initial',
+                '.settings-btn', '.settings-section h3', '.fav-add-btn',
+                '.fav-search-input', '.wallpaper-source-item', '#folderSearchInput', '#createFolderBtn'
+            ];
+            const elements = new Set();
+            try { document.querySelectorAll('[data-orig-bg]').forEach(el => elements.add(el)); } catch(e) {}
+            try { document.querySelectorAll('[style*="backdrop-filter"]').forEach(el => elements.add(el)); } catch(e) {}
+            keySelectors.forEach(sel => {
+                try { document.querySelectorAll(sel).forEach(el => elements.add(el)); } catch(e) {}
+            });
+            elements.forEach(el => {
+                try {
+                    if (el.dataset && el.dataset.origBg !== undefined) {
+                        el.style.background = el.dataset.origBg;
+                        delete el.dataset.origBg;
+                    }
+                    el.style.removeProperty('backdrop-filter');
+                    el.style.removeProperty('-webkit-backdrop-filter');
+                } catch(e) {}
+            });
         }
         
         // Load button style preference
-        const savedButtonStyle = localStorage.getItem('buttonStyle');
+        let savedButtonStyle = localStorage.getItem('buttonStyle');
         if (savedButtonStyle) {
             currentButtonStyle = savedButtonStyle;
             const radioButtons = document.querySelectorAll('input[name="buttonStyle"]');
@@ -8771,12 +9100,6 @@
         
         function closeDrawingCanvas() {
             document.getElementById('drawingCanvas').style.display = 'none';
-        }
-        
-        function goToDPage(element) {
-            playLaunchAnimation(element, '#F0F0F0', function() {
-                window.location.href = '/d.html';
-            });
         }
         
         function openNews(url, element) {
