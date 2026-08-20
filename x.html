@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -146,18 +146,16 @@
             to { opacity: 1; }
         }
 
-        /* Time & weather TEXT: color is set by JS (applyInverseTextColor) to the
-           exact inverse of the actual background. This is more reliable than
-           mix-blend-mode, which breaks under opacity animations / isolated
-           stacking contexts and leaves the text invisible on light backgrounds.
-           The rule below only provides a safe default; JS overrides it on load
-           and whenever the theme / background mode changes. */
+        /* Time & weather TEXT: black fill + white outline (黑色字体白色描边).
+           Independent of light/dark mode — always readable on any background.
+           paint-order keeps the crisp black fill on top of the white stroke. */
         #clockText,
         #weatherTemp,
         #weatherDesc,
         #weatherCity {
-            color: #333333;
-            text-shadow: none;
+            color: #000000;
+            -webkit-text-stroke: 1.2px #ffffff;
+            paint-order: stroke fill;
         }
 
         /* Debug mode lifts the text-selection restriction everywhere.
@@ -267,14 +265,28 @@
             align-items: center;
             justify-content: center;
             width: 56px;
-            height: 56px;
+            min-height: 56px;
             border: none;
             background: transparent;
             border-radius: var(--global-radius);
             cursor: pointer;
             transition: transform 0.2s ease, background 0.2s ease;
             flex-shrink: 0;
+            padding: 2px 0;
         }
+        .dock-name {
+            font-family: 'YouYuan', Arial, sans-serif;
+            font-size: 10px;
+            color: #666;
+            margin-top: 3px;
+            max-width: 56px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            line-height: 1.2;
+        }
+        body[data-theme="dark"] .dock-name { color: #aaa; }
         .dock-item:hover {
             transform: scale(1.1);
             background: rgba(0, 0, 0, 0.05);
@@ -286,8 +298,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #F0F0F0;
-            box-shadow: 4px 4px 8px #cccccc, -4px -4px 8px #ffffff;
+            background: transparent;
+            box-shadow: none;
         }
         .dock-initial {
             color: white;
@@ -301,14 +313,14 @@
             height: 100%;
             border-radius: var(--global-radius);
         }
-        
+
         /* Dark mode dock styles */
         body[data-theme="dark"] .dock-item:hover {
             background: rgba(255, 255, 255, 0.1);
         }
         body[data-theme="dark"] .dock-icon {
-            background: #3a3a3a;
-            box-shadow: 4px 4px 8px #2a2a2a, -4px -4px 8px #4a4a4a;
+            background: transparent;
+            box-shadow: none;
         }
 
         .search-box.has-text {
@@ -2717,13 +2729,12 @@
                         <input type="checkbox" id="editModeToggle" onchange="toggleEditMode(this.checked); renderFavorites(document.getElementById('favSearchInput').value);">
                         <span class="toggle-slider"></span>
                     </label>
-                    <button id="createFolderBtn" class="fav-add-btn" style="padding: 10px 15px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-weight: bold; white-space: nowrap; font-family: 'YouYuan', Arial, sans-serif; display: flex; align-items: center; gap: 5px;">
+                    <button id="createFolderBtn" class="fav-add-btn" title="新建文件夹" style="padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-weight: bold; white-space: nowrap; font-family: 'YouYuan', Arial, sans-serif; display: flex; align-items: center; justify-content: center; gap: 5px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; flex-shrink: 0;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                             <line x1="12" y1="11" x2="12" y2="17"></line>
                             <line x1="9" y1="14" x2="15" y2="14"></line>
                         </svg>
-                        <span>新建文件夹</span>
                     </button>
                     <button id="addFavBtn" class="fav-add-btn" style="padding: 10px 20px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-weight: bold; white-space: nowrap; font-family: 'YouYuan', Arial, sans-serif; display: flex; align-items: center; gap: 5px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; flex-shrink: 0;">
@@ -3116,24 +3127,12 @@
 
                 <div style="margin-bottom: 15px;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-<label class="toggle-switch"><input type="checkbox" id="noFavIcons" checked onchange="localStorage.setItem('noFavIcons', this.checked)"><span class="toggle-slider"></span></label>
-<span style="font-family: 'YouYuan'; font-size: 14px;">不加载收藏图标</span>
+<label class="toggle-switch"><input type="checkbox" id="showDockNameToggle" onchange="localStorage.setItem('showDockName', this.checked); renderDock();"><span class="toggle-slider"></span></label>
+<span style="font-family: 'YouYuan'; font-size: 14px;">显示Dock栏软件名称</span>
 </div>
                 </div>
 
                 <div style="display: flex; gap: 15px; margin-top: 15px;">
-                    <button id="importFavBtn" class="settings-btn" onclick="importFavorites()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        收藏数据导入
-                    </button>
-                    <button id="exportFavBtn" class="settings-btn" onclick="exportFavorites()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        收藏数据导出
-                    </button>
-                </div>
-                
-                <div style="display: flex; gap: 15px; margin-top: 15px;">
-                    <button class="settings-btn" onclick="exportSelectedData()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        选择性导出
-                    </button>
                     <button class="settings-btn" onclick="exportAllData()" style="flex: 1; padding: 10px; border: none; border-radius: var(--global-radius); box-shadow: 20px 20px 62px #cccccc, -20px -20px 62px #ffffff; background: #F0F0F0; cursor: pointer; font-family: 'YouYuan'; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         全量数据导出
                     </button>
@@ -4241,8 +4240,21 @@
         // Load display settings from cookies
         loadDisplaySettings();
 
-        // Initialize weather display (loads immediately if enabled + city set)
-        initWeatherDisplay();
+        // Defer non-critical, network-heavy work (dock icons, weather) until the
+        // page is interactive, so far/slow servers don't block first paint.
+        // These run in parallel (no await between them) and each has its own
+        // timeout (favicons: FAVICON_TIMEOUT_MS; weather: see loadWeather).
+        (function deferNonCritical() {
+            var run = function() {
+                renderDock();           // populate dock icons now (was missing on load)
+                initWeatherDisplay();   // weather fetch (async, non-blocking)
+            };
+            if (window.requestIdleCallback) {
+                window.requestIdleCallback(run, { timeout: 1000 });
+            } else {
+                setTimeout(run, 50);
+            }
+        })();
 
         // Defer loading hot news API URL for faster startup
         setTimeout(loadHotNewsApiUrl, 500);
@@ -5003,7 +5015,13 @@
 
         // Render custom engines on page load
         document.addEventListener('DOMContentLoaded', function() {
-            renderCustomEngines();
+            // Defer custom engines render to idle to keep TTI fast
+            var runRenderCustom = function() { renderCustomEngines(); };
+            if (window.requestIdleCallback) {
+                window.requestIdleCallback(runRenderCustom, { timeout: 500 });
+            } else {
+                setTimeout(runRenderCustom, 80);
+            }
         });
         
         // Scan QR code button - removed, now links to external site
@@ -5205,9 +5223,8 @@
             return localStorage.getItem('weatherEnabled') === 'true';
         }
 
-        // Time & weather text color: set to the exact inverse of the actual
-        // background (true 反色), regardless of light/dark mode. Called from
-        // applyTheme() (so it tracks theme changes) and after bg-mode changes.
+        // Time & weather text: white fill + black outline (白色字体黑色描边),
+        // independent of light/dark mode. Re-applied on theme / bg changes.
         function applyInverseTextColor() {
             const els = [
                 document.getElementById('clockText'),
@@ -5215,27 +5232,11 @@
                 document.getElementById('weatherDesc'),
                 document.getElementById('weatherCity')
             ];
-            const bgMode = document.body.getAttribute('data-bg-mode') || 'none';
-            let textColor, shadow;
-            if (bgMode === 'wallpaper') {
-                // Image background: can't sample pixels, use white + soft shadow
-                textColor = '#ffffff';
-                shadow = '0 1px 3px rgba(0,0,0,0.5)';
-            } else {
-                // Sample the body's actual background color and invert it
-                let r = 240, g = 240, b = 240; // fallback = #F0F0F0
-                try {
-                    const bg = window.getComputedStyle(document.body).backgroundColor;
-                    const m = bg && bg.match(/\d+/g);
-                    if (m && m.length >= 3) { r = +m[0]; g = +m[1]; b = +m[2]; }
-                } catch (e) { /* keep fallback */ }
-                textColor = 'rgb(' + (255 - r) + ',' + (255 - g) + ',' + (255 - b) + ')';
-                shadow = 'none';
-            }
             for (let i = 0; i < els.length; i++) {
                 if (!els[i]) continue;
-                els[i].style.color = textColor;
-                els[i].style.textShadow = shadow;
+                els[i].style.color = '#000000';
+                els[i].style.webkitTextStroke = '1.2px #ffffff';
+                els[i].style.paintOrder = 'stroke fill';
             }
         }
 
@@ -5620,7 +5621,10 @@
                     showTabButtons: localStorage.getItem('showTabButtons') !== 'false',
                     focusZoomEnabled: localStorage.getItem('focusZoomEnabled') === 'true',
                     weatherEnabled: localStorage.getItem('weatherEnabled') === 'true',
-                    weatherCity: localStorage.getItem('weatherCity') || ''
+                    weatherCity: localStorage.getItem('weatherCity') || '',
+                    showDockName: localStorage.getItem('showDockName') === 'true',
+                    neverShowChangelog: localStorage.getItem('neverShowChangelog') === 'true',
+                    lastChangelogDate: localStorage.getItem('lastChangelogDate') || ''
                 },
                 wallpaperSources: wallpaperSources,
                 currentWallpaperSourceId: currentWallpaperSourceId,
@@ -5641,7 +5645,7 @@
 
         // ===================== Changelog (更新日志) =====================
         // 每次发布更新时，请修改此处的发布日期（格式 YYYY-MM-DD）
-        const RELEASE_DATE = "2026-08-19";
+        const RELEASE_DATE = "2026-08-20";
         const CHANGELOG_STORAGE_KEY = "lastChangelogDate";
         const NEVER_SHOW_CHANGELOG_KEY = "neverShowChangelog";
 
@@ -5987,6 +5991,22 @@
                         }
                         if (allData.settings.weatherCity !== undefined) {
                             localStorage.setItem('weatherCity', allData.settings.weatherCity);
+                        }
+                        // Restore showDockName + UI sync
+                        if (allData.settings.showDockName !== undefined) {
+                            localStorage.setItem('showDockName', allData.settings.showDockName ? 'true' : 'false');
+                            const toggle = document.getElementById('showDockNameToggle');
+                            if (toggle) toggle.checked = allData.settings.showDockName;
+                            if (typeof renderDock === 'function') renderDock();
+                        }
+                        // Restore changelog popup settings
+                        if (allData.settings.neverShowChangelog !== undefined) {
+                            localStorage.setItem('neverShowChangelog', allData.settings.neverShowChangelog ? 'true' : 'false');
+                            const neverToggle = document.getElementById('changelogNeverShowToggle');
+                            if (neverToggle) neverToggle.checked = allData.settings.neverShowChangelog;
+                        }
+                        if (allData.settings.lastChangelogDate !== undefined) {
+                            localStorage.setItem('lastChangelogDate', allData.settings.lastChangelogDate);
                         }
 
                         if (allData.settings.loadForeignIcons !== undefined) {
@@ -6606,12 +6626,14 @@
                 const color = getUrlColor(item.url);
                 const faviconUrl = getFavicon(item.url);
                 const showFavIcons = document.getElementById('showFavIconsToggle')?.checked !== false;
-                
+                const showDockName = localStorage.getItem('showDockName') === 'true';
+
                 html += `<button class="dock-item" onclick="openDockUrl('${item.url.replace(/'/g, "\\'")}', this)" title="${item.name}">
                             <div class="dock-icon">
                                 ${showFavIcons && faviconUrl ? `<img src="${faviconUrl}" data-cands='${JSON.stringify(getFaviconCandidates(item.url))}' data-i="0" onerror="var c=JSON.parse(this.getAttribute('data-cands')||'[]');var i=parseInt(this.getAttribute('data-i')||'0',10)+1;if(i<c.length){this.setAttribute('data-i',i);this.src=c[i];}else{this.style.display='none';this.nextElementSibling.style.display='flex';}" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: var(--global-radius);" alt="">` : ''}
                                 <div class="dock-initial" style="background-color: ${color}; display: ${(!showFavIcons || !faviconUrl) ? 'flex' : 'none'};">${initials}</div>
                             </div>
+                            ${showDockName ? `<span class="dock-name">${item.name}</span>` : ''}
                         </button>`;
             });
             
@@ -7615,7 +7637,19 @@
             list.innerHTML = '<div style="text-align: center; color: #999; padding: 40px; font-family: \'YouYuan\', Arial, sans-serif; animation: fadeIn 0.3s ease;">加载中...</div>';
             
             try {
-                const response = await fetch(`${hotNewsApiUrl}?platform=${platform}`);
+                // News API has no CORS header, so a direct browser fetch is
+                // blocked. Try direct first (for CORS-friendly APIs), then fall
+                // back to a CORS proxy so hot news always loads.
+                const directUrl = `${hotNewsApiUrl}?platform=${platform}`;
+                let response;
+                try {
+                    response = await fetch(directUrl);
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                } catch (corsErr) {
+                    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(directUrl);
+                    response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                }
                 const data = await response.json();
                 
                 if (data.status === '200' && data.data && data.data.length > 0) {
@@ -8726,6 +8760,11 @@
             if (el) el.checked = true;
         }
 
+        // Load dock name display preference (default off)
+        const showDockNamePref = localStorage.getItem('showDockName') === 'true';
+        const showDockNameEl = document.getElementById('showDockNameToggle');
+        if (showDockNameEl) showDockNameEl.checked = showDockNamePref;
+
         // Load time display preference
         const showTimePreference = localStorage.getItem('showTimeDisplay');
         if (showTimePreference !== null) {
@@ -9183,10 +9222,10 @@
                 if (document.readyState === 'complete') {
                     return;
                 }
-                // Force trigger load event
+                // Force trigger load event (shorter timeout for faster perceived startup)
                 window.dispatchEvent(new Event('load'));
                 console.log('Load event forced');
-            }, 2000); // Wait 2 seconds after DOM is ready
+            }, 800); // Wait 800ms after DOM is ready (faster startup)
         });
 
         // Final fallback: re-apply button style on window load to ensure persistence
