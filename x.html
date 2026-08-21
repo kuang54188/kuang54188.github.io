@@ -6015,7 +6015,7 @@
 
         // ===================== Changelog (更新日志) =====================
         // 每次发布更新时，请修改此处的发布日期（格式 YYYY-MM-DD）
-        const RELEASE_DATE = "2026-08-20";
+        const RELEASE_DATE = "2026-08-21";
         const CHANGELOG_STORAGE_KEY = "lastChangelogDate";
         const NEVER_SHOW_CHANGELOG_KEY = "neverShowChangelog";
 
@@ -7070,6 +7070,16 @@
             });
             
             scrollArea.innerHTML = html;
+            // Desktop: mouse wheel scrolls the dock horizontally
+            if (!scrollArea._dockWheelBound) {
+                scrollArea._dockWheelBound = true;
+                scrollArea.addEventListener('wheel', function (e) {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        scrollArea.scrollLeft += e.deltaY;
+                    }
+                }, { passive: false });
+            }
             // Bound favicon load time (slow/far servers don't keep the user waiting)
             boundFaviconLoads(scrollArea);
             // Re-apply theme to newly rendered dock items so dark mode colors take effect
