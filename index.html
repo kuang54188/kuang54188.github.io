@@ -640,6 +640,9 @@
       font-weight: 700;
       color: var(--ow-text-color);
       white-space: nowrap;
+      /* 软件名称描边：深色描边让文字在亮色截图上也清晰可读（描边置于填充之下） */
+      -webkit-text-stroke: 1px rgba(0, 0, 0, 0.55);
+      paint-order: stroke fill;
       will-change: transform, opacity, filter;
       transform: translate(0, -50%);
     }
@@ -939,7 +942,9 @@
       align-items: flex-end;
       justify-content: flex-start;
       border-radius: 22px;
-      /* ReactBits GlassSurface 真实玻璃（同导航栏）：透明磨砂 + 折射 + 多层柔影 */
+      box-sizing: border-box;
+      border: 1.5px solid rgba(255, 255, 255, 0.28);
+      /* ReactBits GlassSurface 真实 glass（同导航栏）：透明磨砂 + 折射 + 多层柔影 */
       --glass-frost: 0.18;
       --glass-saturation: 1.35;
       --filter-id: url(#glass-filter-card);
@@ -990,18 +995,23 @@
         transform: translateX(-50%);
         max-width: 92vw;
         font-size: 22px;
+        line-height: 1.45;
         text-align: center;
+        /* 手机端允许自动换行，不再强制单行（避免长介绍文字溢出/截断） */
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: anywhere;
       }
       .cards {
         width: 90vw;
         height: 220px;
       }
       .card {
-        margin: -55px 0 0 -40px;
-        width: 80px;
-        height: 110px;
-        font-size: 12px;
-        padding: 8px;
+        margin: -63.5px 0 0 -46px;
+        width: 92px;
+        height: 127px;
+        font-size: 14px;
+        padding: 9px;
       }
       .pill-nav { top: 12px; padding: 8px 10px; }
       .pill { height: 36px; padding: 0 14px; font-size: 13px; }
@@ -1991,6 +2001,12 @@
       const wheelEl = document.getElementById('genreWheel');
       if (!wheelEl) return;
 
+      // 资源基址：自动适配 GitHub Pages 子目录 / “同名文件夹”嵌套部署。
+      // 例：站点实际在 user.github.io/repo/repo/，但页面以 user.github.io/repo/ 访问，
+      // 相对路径会解析到外层空目录导致图片 404；下面用两种基址自愈。
+      const ASSET_BASE = location.pathname.replace(/[^/]*$/, '');
+      const ASSET_SEG = ASSET_BASE.replace(/^\/+|\/+$/g, '').split('/').pop() || '';
+
       // 轮盘旋转由页面滚动位置驱动（渐进式滚动），无需状态机/整屏跳跃。
       // 映射范围跳过首尾空白占位页：frac=0 → 我的世界(1)，frac=1 → 起始页(L-2)，
       // 因此从导航点击「介绍」进入时，轮盘停在「我的世界服务器启动器」而非占位页。
@@ -2027,6 +2043,26 @@
           if (window.__openShot) window.__openShot(shotEl.src);
         });
       }
+      // 截图加载：依次尝试“当前目录”与“再深一层同名目录”两种基址，
+      // 兼容 GitHub Pages 把站点放在与仓库同名的子文件夹里导致的路径错位。
+      function loadShot(el, idx) {
+        if (!shots[idx]) return;
+        const path = shots[idx];
+        const cands = [ASSET_BASE + path];
+        if (ASSET_SEG) cands.push(ASSET_BASE + ASSET_SEG + '/' + path);
+        let i = 0;
+        const next = () => {
+          if (i >= cands.length) {
+            console.warn('[截图加载失败] 已尝试多种路径均失败，请确认 IndexData 文件夹已上传且文件名（含中文/大小写）完全匹配：', path);
+            el.classList.remove('show');
+            return;
+          }
+          const url = cands[i++];
+          el.onerror = next;
+          el.src = url;
+        };
+        next();
+      }
       function showSoftInfo(idx) {
         const isEmpty = items[idx] === '';
         if (shotEl) {
@@ -2036,7 +2072,7 @@
             shotEl.removeAttribute('src');
             shotEl.style.pointerEvents = 'none';
           } else {
-            shotEl.src = shots[idx];
+            loadShot(shotEl, idx);
             shotEl.alt = items[idx] + ' 截图';
             shotEl.style.pointerEvents = 'auto';
             shotEl.classList.add('show');
