@@ -52,6 +52,9 @@
     }
     /* 触屏设备：强制逐屏吸附。proximity 模式下手机快速一甩会带惯性冲过多个界面，
        mandatory 保证每次滑动只停在相邻的吸附点，节奏可控 */
+    /* 关闭滚动锚定：防止介绍文字解密/截图加载引起的高度变化拽偏滚动位置。
+       「一滑直冲页尾」由下方 onScroll 内的瞬移护栏拦截回弹 */
+    html, body { overflow-anchor: none; }
     @media (pointer: coarse) {
       body { scroll-snap-type: y mandatory; }
     }
@@ -1592,12 +1595,27 @@
     let expArrived = false;
     // 当前主页面滚动位置与界面，供“带派不老铁”按主页面进度显示
     let curSection = 0, curY = 0;
+    // 瞬移护栏：强制吸附下单次滚动事件的合法位移远小于一屏；
+    // 超过 1.6 屏即为浏览器「重新吸附直冲页尾」异常（动态视口+动量的已知问题），立刻弹回最近一屏
+    const COARSE = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    let lastGuardY = null;
     const pillThumb = document.querySelector('.pill-thumb');
     const pillMarker = document.querySelector('.pill-marker');
     const pillTrack = document.querySelector('.pill-track');
     function onScroll() {
       const vh = window.innerHeight;
       const y = window.scrollY;
+      // 瞬移护栏：仅触屏生效。首次事件只记录基准；之后若单次事件位移超 1.6 屏，
+      // 判定为非法瞬移，无动画弹回最近的 snap-page 顶部并结束本次处理
+      if (COARSE) {
+        if (lastGuardY === null) { lastGuardY = y; }
+        else if (Math.abs(y - lastGuardY) > vh * 1.6) {
+          const nearest = Math.max(0, Math.min(7, Math.round(y / vh))) * vh;
+          lastGuardY = nearest;
+          if (Math.abs(nearest - y) > 2) { window.scrollTo(0, nearest); return; }
+          return;
+        } else { lastGuardY = y; }
+      }
       // 滑块随整页滚动进度在导航轨道上从左向右滑动
       if (pillThumb) {
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
