@@ -585,6 +585,15 @@
       margin-left: 0;
       z-index: 3; /* 高于居中截图(z-index:1)，左侧轮盘字体可遮挡图片 */
     }
+    /* 轮盘屏障：透明层盖住轮盘，拦截触摸/指针/滚轮事件，使用户无法转动轮盘；
+       touch-action:pan-y 保证竖直滑动仍交给页面正常滚动，其余行为一概不变 */
+    .wheel-shield {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      background: transparent;
+      touch-action: pan-y;
+    }
     /* 轮盘介绍文案（解密乱码动画，参考 文字展示示例.txt）
        固定位于整个界面最底下，强制一行；字号随浏览器宽度用 vw 缩放（宽度变小字也变小），
        保证始终完整显示在一行内、绝不截断 */
@@ -989,11 +998,9 @@
       .option-wheel { --ow-font-size: 1.7rem; }
       .wheel-wrap { max-width: 92vw; }
       .wheel-desc {
-        right: auto;
-        left: 50%;
-        top: auto;
-        bottom: 14vh;
-        transform: translateX(-50%);
+        /* 水平居中由 .intro-foot 的 flex（align-items:center)负责。
+           此处绝不能再用 left/translateX 定位：本元素无 position，
+           left 不生效而 translateX 会把整块文字推离中心（安卓端偏位的根源） */
         max-width: 92vw;
         font-size: 22px;
         line-height: 1.45;
@@ -1173,6 +1180,8 @@
     <div class="intro-content">
       <div class="wheel-wrap">
         <div class="option-wheel" id="genreWheel" role="listbox" tabindex="0" aria-label="选项轮盘"></div>
+        <!-- 屏障：覆盖轮盘，阻止用户转动（不改变其他任何行为） -->
+        <div class="wheel-shield" aria-hidden="true"></div>
       </div>
       <!-- 截图置于正中（原介绍文字位置），左侧轮盘字体可遮挡之 -->
       <img class="intro-shot" id="introShot" alt="" />
@@ -2015,14 +2024,18 @@
       // 映射范围跳过首尾空白占位页：frac=0 → 我的世界(1)，frac=1 → 起始页(L-2)，
       // 因此从导航点击「介绍」进入时，轮盘停在「我的世界服务器启动器」而非占位页。
       window.__wheelSetFrac = function (frac) {
-        const first = 1, last = items.length - 2; // 真实项范围：我的世界(1) … 起始页(L-2)
+        // 滚动全程覆盖所有格子（含头尾空白占位页），否则占位页永远不可见
+        const first = 0, last = items.length - 1;
         applyTarget(first + frac * (last - first), false);
       };
 
-      // 第 0 项与第末项为空白占位页（无名称/介绍/截图/提示），页数显示 1
-      const items = ['', '我的世界服务器启动器', 'kgBing壁纸', 'KG收银', 'Windows10&11仿MacOS', '门铃', 'KGDreamchrome扩展', 'KgPan', 'Kg跃点网络优先切换', '千克Windows壁纸Pro', '起始页', ''];
+      // 头部 2 个、尾部 3 个为空白占位页（无名称/介绍/截图/提示）；真实软件共 10 款，页数恒为 10
+      const WHEEL_LEAD = 2;   // 头部空白占位页数量
+      const WHEEL_TRAIL = 3;  // 尾部空白占位页数量
+      const items = ['', '', '我的世界服务器启动器', 'kgBing壁纸', 'KG收银', 'Windows10&11仿MacOS', '门铃', 'KGDreamchrome扩展', 'KgPan', 'Kg跃点网络优先切换', '千克Windows壁纸Pro', '起始页', '', '', ''];
       // 各软件对应截图（IndexData 文件夹）
       const shots = [
+        '',
         '',
         'IndexData/MC服务器启动器.png',
         'IndexData/壁纸.png',
@@ -2034,10 +2047,12 @@
         'IndexData/Kg跃点网络优先切换.png',
         'IndexData/壁纸pro版本.png',
         'IndexData/起始页.png',
+        '',
+        '',
         ''
       ];
       // 适用平台：Windows10&11仿MacOS=系统，门铃=安卓，KGDream扩展与起始页=网页，其余=Windows；首尾空白项=''
-      const platMap = ['', 'win', 'win', 'win', 'sys', 'android', 'web', 'win', 'win', 'win', 'web', ''];
+      const platMap = ['', '', 'win', 'win', 'win', 'sys', 'android', 'web', 'win', 'win', 'win', 'web', '', '', ''];
       const platText = { win: 'Windows', android: '安卓', sys: '系统', web: '网页' };
       const footEl = document.getElementById('introFoot');
       const shotEl = document.getElementById('introShot');
@@ -2107,15 +2122,18 @@
       // 页码 / 进度指示：初始化总数，并在切换时更新当前序号
       const wheelCurEl = document.getElementById('wheelCur');
       const wheelTotalEl = document.getElementById('wheelTotal');
-      // 总页数 = 真实软件数（不含首尾两个空白占位页），即 12 - 2 = 10
-      if (wheelTotalEl) wheelTotalEl.textContent = String(items.length - 2).padStart(2, '0');
-      // 页码显示：空白占位页统一显示 1；真实项序号 = 其在数组中的下标（我的世界=01…起始页=10）
+      // 总页数 = 真实软件数（不含首尾共 5 个空白占位页），即 15 - 5 = 10
+      if (wheelTotalEl) wheelTotalEl.textContent = String(items.length - WHEEL_LEAD - WHEEL_TRAIL).padStart(2, '0');
+      // 页码显示：头部占位页显示 01，尾部占位页显示 10；
+      // 真实项页码 = 下标 - 头部占位数 + 1（我的世界=01 … 起始页=10）
       function pageLabel(i) {
-        if (items[i] === '') return '01';
-        return String(i).padStart(2, '0');
+        if (i < WHEEL_LEAD) return '01';
+        if (i >= items.length - WHEEL_TRAIL) return String(items.length - WHEEL_LEAD - WHEEL_TRAIL).padStart(2, '0');
+        return String(i - WHEEL_LEAD + 1).padStart(2, '0');
       }
       // 与轮盘项一一对应的右侧介绍文案（参考 文字展示示例.txt 的解密文字风格）
       const descs = [
+        '',
         '',
         '一键开服，联机无忧。\n点一下就能把服务器开起来，朋友秒进，联机从未如此简单。',
         '自动抓取必应每日美图。\n每天自动换一张必应首页的高清壁纸，桌面永远不重样。',
@@ -2127,6 +2145,8 @@
         '改跃点，提网速。\n调一下网络跃点，让数据走最快的路，网速明显提升。',
         '超多源壁纸软件，C#新架构。\n聚合多个壁纸源，C#重写后更轻更快，壁纸随便换。',
         '极简起始页，让浏览回归纯粹。\n没有干扰，只有你收藏的站点，下滑开始体验。',
+        '',
+        '',
         ''
       ];
 
@@ -2174,7 +2194,7 @@
       const remPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
       const rowH = Math.max(fontSizeRem * spacing * remPx, 1);
 
-      let pos = 0, target = 1, selected = -1; // 初始停在「我的世界服务器启动器」（第 1 个真实项）
+      let pos = 0, target = WHEEL_LEAD, selected = -1; // 初始对准「我的世界服务器启动器」（首个真实项）
       let raf = null, last = 0;
       const itemEls = [];
 
