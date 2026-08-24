@@ -915,7 +915,7 @@
     }
 
     /* ===== 导航滑块：随滚动从上到下、滑块从左到右（无级）===== */
-    /* ===== 纯文字卡片：主页上的 4 张，复刻 BounceCards 弹性推开 + 每卡不同字体色 ===== */
+    /* ===== 纯文字卡片：主页上的 5 张，复刻 BounceCards 弹性推开 + 每卡不同字体色 ===== */
     .home-cards {
       position: fixed;
       inset: 0;
@@ -972,6 +972,7 @@
     .card:nth-child(2) { color: #00B894; }
     .card:nth-child(3) { color: #0984E3; }
     .card:nth-child(4) { color: #E17055; }
+    .card:nth-child(5) { color: #E84393; }
     .card:hover {
       --glass-frost: 0.28;
       box-shadow:
@@ -1118,6 +1119,7 @@
       <a class="card glass-surface glass-surface--svg" href="lite.html">千克起始页精简版</a>
       <a class="card glass-surface glass-surface--svg" href="#down" data-target="down">下载</a>
       <a class="card glass-surface glass-surface--svg" href="#privacy" data-target="privacy">协议</a>
+      <a class="card glass-surface glass-surface--svg" href="e.html">极简搜索</a>
     </div>
   </div>
   <div class="snap-page"></div>
@@ -1929,20 +1931,22 @@
         const w = window.innerWidth;
         pushScale = Math.min(1, w / 640);
         if (w <= 640) {
-          // 安卓：重叠散开 + 每 2 个换行（上下两行，每行 2 张散开重叠）
+          // 安卓：重叠散开（上 2 下 3 金字塔），x 幅度随屏宽缩放
           base = [
-            `translateY(-66px) rotate(8deg) translateX(${-60 * pushScale}px)`,
-            `translateY(-66px) rotate(-8deg) translateX(${60 * pushScale}px)`,
-            `translateY(66px) rotate(8deg) translateX(${-60 * pushScale}px)`,
-            `translateY(66px) rotate(-8deg) translateX(${60 * pushScale}px)`
+            `translateY(-66px) rotate(8deg) translateX(${-70 * pushScale}px)`,
+            `translateY(-66px) rotate(-8deg) translateX(${70 * pushScale}px)`,
+            `translateY(66px) rotate(8deg) translateX(${-100 * pushScale}px)`,
+            'translateY(66px) rotate(0deg) translateX(0px)',
+            `translateY(66px) rotate(-8deg) translateX(${100 * pushScale}px)`
           ];
         } else {
-          // 桌面：4 张一排重叠散开
+          // 桌面：5 张一排重叠散开（间距 120px，与原扇形规则一致）
           base = [
-            'rotate(8deg) translateX(-180px)',
-            'rotate(4deg) translateX(-60px)',
-            'rotate(-4deg) translateX(60px)',
-            'rotate(-8deg) translateX(180px)'
+            'rotate(8deg) translateX(-240px)',
+            'rotate(4deg) translateX(-120px)',
+            'rotate(0deg) translateX(0px)',
+            'rotate(-4deg) translateX(120px)',
+            'rotate(-8deg) translateX(240px)'
           ];
         }
       }
