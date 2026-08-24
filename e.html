@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>极简搜索</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wrap {
+    width: min(620px, 94vw);
+    position: relative;
+    transform: translateY(-20px);
+  }
+  /* ---------- 搜索栏 ---------- */
+  .bar {
+    display: flex;
+    align-items: stretch;
+    border: 2px solid #000;
+    background: #fff;
+    box-shadow: 6px 6px 0 #000;
+  }
+  .engine { position: relative; display: flex; }
+  #engineBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 13px;
+    background: #fff;
+    color: #000;
+    border: none;
+    border-right: 2px solid #000;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #engineBtn:hover, #engineBtn.on { background: #000; color: #fff; }
+  .arrow {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid currentColor;
+  }
+  #kw {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    padding: 14px 16px;
+    font-size: 16px;
+    background: #fff;
+    color: #000;
+  }
+  #kw::placeholder { color: #999; }
+  #go {
+    border: none;
+    border-left: 2px solid #000;
+    background: #000;
+    color: #fff;
+    padding: 0 28px;
+    font-size: 15px;
+    letter-spacing: 4px;
+    text-indent: 4px;
+    cursor: pointer;
+  }
+  #go:hover { background: #fff; color: #000; }
+  /* 清空按钮：有文字时显示，位于输入框与搜索按钮之间 */
+  #clear {
+    border: none;
+    border-left: 1px solid #e8e8e8;
+    background: #fff;
+    color: #999;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0 15px;
+    cursor: pointer;
+  }
+  #clear:hover { color: #000; }
+  /* ---------- 下拉面板（引擎菜单 / 搜索建议共用风格） ---------- */
+  .panel {
+    list-style: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    background: #fff;
+    border: 2px solid #000;
+    box-shadow: 6px 6px 0 #000;
+    z-index: 20;
+    overflow: auto;
+  }
+  #engineMenu {
+    left: 0;
+    min-width: 100%;
+  }
+  #engineMenu li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .mark {
+    width: 8px; height: 8px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    flex: none;
+  }
+  li.sel .mark { background: #000; }
+  #suggest {
+    left: 0; right: 0;
+  }
+  #suggest li {
+    padding: 11px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  #suggest li:last-child { border-bottom: none; }
+  #suggest li.none { cursor: default; color: #999; }
+  /* ---------- 搜索历史 ---------- */
+  #history { left: 0; right: 0; }
+  #history li {
+    padding: 11px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  #history li:last-child { border-bottom: none; }
+  #history li.none { cursor: default; color: #999; }
+  .h-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .h-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* 单条删除按钮：常显，圆形描边 */
+  .del {
+    flex: none;
+    width: 22px; height: 22px;
+    line-height: 20px;
+    padding: 0;
+    text-align: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .h-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: #999;
+    border-bottom: 1px solid #e8e8e8;
+    cursor: default;
+  }
+  #clearHist {
+    padding: 3px 10px;
+    border: 1px solid #000;
+    background: #fff;
+    color: #000;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  #clearHist:hover { background: #000; color: #fff; }
+  /* 悬停与键盘选中：黑底白字 */
+  #engineMenu li:hover, #engineMenu li.active,
+  #suggest li:hover, #suggest li.active,
+  #history li.h-item:hover {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
+  #engineMenu li:hover .mark, #engineMenu li.active .mark { border-color: #fff; }
+  li.sel:hover .mark, li.sel.active .mark { background: #fff; }
+  /* ---------- 动画 ---------- */
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(.4); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .panel { animation: panelIn .18s ease-out; }
+  #suggest li, #history li.h-item, #engineMenu li { animation: rowIn .22s ease-out both; }
+  #clear { animation: popIn .14s ease-out; }
+  /* 输入框聚焦时整条搜索栏微微抬起，阴影加深 */
+  .bar { transition: transform .18s ease, box-shadow .18s ease; }
+  .bar:focus-within { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #000; }
+  /* 所有交互元素统一黑白过渡 */
+  #engineBtn, #go, #clear, #clearHist, .del,
+  #engineMenu li, #suggest li, #history li.h-item {
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+  }
+  /* 系统开了“减少动态效果”就全部关掉 */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  .hidden { display: none; }
+  /* ---------- 旧版主页内嵌 ---------- */
+  .embed {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: #fff;
+    transform: translateX(100%); /* 平时藏在屏幕右侧外 */
+    transition: transform .38s cubic-bezier(.22, .61, .36, 1);
+    will-change: transform;
+  }
+  body.embed-open .embed { transform: translateX(0); }
+  #embedFrame { display: block; width: 100%; height: 100%; border: none; background: #fff; }
+  /* 右下角常驻切换按钮：箭头样式，两层界面之上都不消失 */
+  #toggleEmbed {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 100;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #000;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #000;
+    transition: background-color .15s ease, color .15s ease;
+  }
+  #toggleEmbed:hover { background: #000; color: #fff; }
+  /* 纯 CSS 箭头：默认朝左（回旧版＝后退），展开后转成朝右（返回新版） */
+  #toggleEmbed .chev {
+    width: 11px;
+    height: 11px;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    margin-right: -4px; /* 箭头视觉居中修正 */
+    transform: rotate(225deg);
+    transition: transform .38s cubic-bezier(.22, .61, .36, 1);
+  }
+  body.embed-open #toggleEmbed .chev { transform: rotate(45deg); }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="bar">
+    <div class="engine">
+      <button id="engineBtn" type="button">
+        <span id="engineName">百度</span>
+        <i class="arrow"></i>
+      </button>
+      <ul id="engineMenu" class="panel hidden"></ul>
+    </div>
+    <input id="kw" type="text" autocomplete="off" autofocus placeholder="输入关键词">
+    <button id="clear" type="button" class="hidden" title="清空">&times;</button>
+    <button id="go" type="button">搜索</button>
+  </div>
+
+  <ul id="suggest" class="panel hidden"></ul>
+  <ul id="history" class="panel hidden"></ul>
+</main>
+
+<!-- 旧版主页：点击右下角按钮后从右侧滑入 -->
+<div id="embed" class="embed">
+  <iframe id="embedFrame" title="旧版主页"></iframe>
+</div>
+<button id="toggleEmbed" type="button" title="旧版主页"><i class="chev"></i></button>
+
+<script>
+/* ================= 搜索引擎 ================= */
+var ENGINES = [
+  { name: '百度',        url: 'https://www.baidu.com/s?wd=' },
+  { name: '必应',        url: 'https://www.bing.com/search?q=' },
+  { name: '谷歌',        url: 'https://www.google.com/search?q=' },
+  { name: '搜狗',        url: 'https://www.sogou.com/web?query=' },
+  { name: '360搜索',     url: 'https://www.so.com/s?q=' },
+  { name: '头条搜索',    url: 'https://so.toutiao.com/search?keyword=' },
+  { name: 'DuckDuckGo',  url: 'https://duckduckgo.com/?q=' },
+  { name: '雅虎',        url: 'https://search.yahoo.com/search?p=' },
+  { name: 'Ecosia',      url: 'https://www.ecosia.org/search?q=' },
+  { name: 'Startpage',   url: 'https://www.startpage.com/sp/search?query=' }
+];
+var STORE_KEY = 'jianjian_engine';
+
+var cur = 0;
+try {
+  var saved = parseInt(localStorage.getItem(STORE_KEY), 10);
+  if (saved >= 0 && saved < ENGINES.length) cur = saved;
+} catch (e) {}
+
+var kw       = document.getElementById('kw');
+var goBtn    = document.getElementById('go');
+var engBtn   = document.getElementById('engineBtn');
+var engName  = document.getElementById('engineName');
+var engMenu  = document.getElementById('engineMenu');
+var sugBox   = document.getElementById('suggest');
+var historyBox = document.getElementById('history');
+var clearBtn  = document.getElementById('clear');
+
+/* ================= 工具 ================= */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+/* 面板高度适配浏览器：实时测量面板顶部到窗口底部的真实空间来限高 */
+function fitPanel(panel) {
+  var avail = window.innerHeight - panel.getBoundingClientRect().top - 12; // 底部留 12px 边距
+  panel.style.maxHeight = Math.max(120, Math.floor(avail)) + 'px';
+}
+window.addEventListener('resize', function() {
+  if (!sugBox.classList.contains('hidden')) fitPanel(sugBox);
+  if (!engMenu.classList.contains('hidden')) fitPanel(engMenu);
+});
+
+/* ================= 引擎菜单 ================= */
+function renderEngineMenu() {
+  var html = '';
+  ENGINES.forEach(function(e, i) {
+    html += '<li data-i="' + i + '" style="animation-delay:' + Math.min(i * 20, 160) + 'ms"'
+          + (i === cur ? ' class="sel"' : '') + '>'
+          + '<span class="mark"></span><span>' + esc(e.name) + '</span></li>';
+  });
+  engMenu.innerHTML = html;
+}
+function setEngine(i) {
+  cur = i;
+  engName.textContent = ENGINES[i].name;
+  try { localStorage.setItem(STORE_KEY, String(i)); } catch (e) {}
+  renderEngineMenu();
+}
+engBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  var opening = engMenu.classList.contains('hidden');
+  engBtn.classList.toggle('on');
+  engMenu.classList.toggle('hidden');
+  hideSuggest();
+  hideHistory();
+  if (opening) fitPanel(engMenu);
+});
+engMenu.addEventListener('click', function(e) {
+  e.stopPropagation();
+  var li = e.target.closest('li');
+  if (!li) return;
+  setEngine(+li.getAttribute('data-i'));
+  engBtn.classList.remove('on');
+  engMenu.classList.add('hidden');
+  kw.focus();
+});
+
+/* ================= 搜索 ================= */
+function doSearch(text) {
+  text = (text || '').trim();
+  if (!text) { kw.focus(); return; }
+  addHistory(text);   // 只有真正发起搜索才记录
+  hideSuggest();
+  hideHistory();
+  window.open(ENGINES[cur].url + encodeURIComponent(text), '_blank');
+}
+goBtn.addEventListener('click', function() { doSearch(kw.value); });
+
+/* ================= 搜索建议（JSONP） ================= */
+var timer = null;
+var reqId = 0;          // 请求序号，防止旧响应覆盖新响应
+var activeIdx = -1;     // 键盘高亮索引
+var sugItems = [];
+
+function hideSuggest() {
+  sugBox.classList.add('hidden');
+  sugBox.innerHTML = '';
+  sugItems = [];
+  activeIdx = -1;
+}
+function renderSuggest(list) {
+  sugItems = list;
+  activeIdx = -1;
+  if (!list.length) {
+    sugBox.innerHTML = '<li class="none">无建议</li>';
+  } else {
+    var html = '';
+    list.forEach(function(item, i) {
+      html += '<li style="animation-delay:' + Math.min(i * 25, 200) + 'ms">' + esc(item) + '</li>';
+    });
+    sugBox.innerHTML = html;
+  }
+  sugBox.classList.remove('hidden');
+  fitPanel(sugBox); // 按当前视口剩余空间限高
+}
+function markActive() {
+  var lis = sugBox.querySelectorAll('li:not(.none)');
+  lis.forEach(function(li, i) {
+    li.classList.toggle('active', i === activeIdx);
+  });
+}
+/* JSONP：参考工作目录中的示例文件 */
+function fetchSuggest(val) {
+  var id = ++reqId;
+  var cb = 'cb' + Date.now();
+  var script = document.createElement('script');
+  var cleanup = function() {
+    try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+    if (script.parentNode) script.parentNode.removeChild(script);
+  };
+  window[cb] = function(data) {
+    cleanup();
+    if (id !== reqId || kw.value.trim() !== val) return; // 已过期
+    renderSuggest((data && data.s) ? data.s : []);
+  };
+  script.onerror = cleanup;
+  script.src = 'https://suggestion.baidu.com/su?wd=' + encodeURIComponent(val) + '&cb=' + cb;
+  document.body.appendChild(script);
+}
+
+kw.addEventListener('input', function() {
+  clearTimeout(timer);
+  hideHistory();
+  updateClear();
+  var val = this.value.trim();
+  if (!val) { hideSuggest(); showHistory(); return; } // 清空后回到历史面板
+  timer = setTimeout(function() { fetchSuggest(val); }, 300); // 松手后 300ms 请求
+});
+
+/* 点击搜索框弹出搜索历史（用 mousedown 而非 focus，避免页面加载 autofocus 时误弹） */
+kw.addEventListener('mousedown', function() {
+  hideSuggest();
+  showHistory();
+});
+
+/* 清空按钮：有文字才显示，点击清空并回到历史面板 */
+function updateClear() {
+  clearBtn.classList.toggle('hidden', !kw.value);
+}
+clearBtn.addEventListener('mousedown', function(e) { e.preventDefault(); }); // 不让输入框失焦
+clearBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  kw.value = '';
+  updateClear();
+  hideSuggest();
+  showHistory();
+  kw.focus();
+});
+updateClear();
+
+/* 建议点击：直接搜索 */
+sugBox.addEventListener('mousedown', function(e) {  // mousedown 先于失焦，保证点击生效
+  var li = e.target.closest('li');
+  if (!li || li.className === 'none') return;
+  e.preventDefault();
+  doSearch(li.textContent);
+});
+
+/* ================= 搜索历史 =================
+   与旧版主页 x.html 完全兼容：同用 localStorage 键 searchHistory、
+   纯字符串数组、上限 50 条，并尊重旧版的 saveSearchHistory 开关。 */
+var HKEY = 'searchHistory';
+var OLD_KEY = 'jianjian_history'; // 本页早期用过的键，启动时一次性迁入官方键
+var HMAX = 50;
+
+function loadHistory() {
+  var v = [];
+  try {
+    var parsed = JSON.parse(localStorage.getItem(HKEY));
+    if (Array.isArray(parsed)) v = parsed;
+  } catch (e) {}
+  try {
+    var legacy = JSON.parse(localStorage.getItem(OLD_KEY));
+    if (Array.isArray(legacy)) {
+      legacy.forEach(function(item) {
+        if (typeof item === 'string' && v.indexOf(item) < 0) v.push(item);
+      });
+      if (legacy.length) {
+        localStorage.removeItem(OLD_KEY);
+        try { localStorage.setItem(HKEY, JSON.stringify(v)); } catch (e2) {}
+      }
+    }
+  } catch (e) {}
+  return v;
+}
+function saveHistory(list) {
+  try { localStorage.setItem(HKEY, JSON.stringify(list)); } catch (e) {}
+}
+function addHistory(text) {
+  if (localStorage.getItem('saveSearchHistory') === 'false') return; // 旧版的隐私开关
+  var list = loadHistory();
+  var i = list.indexOf(text);
+  if (i >= 0) list.splice(i, 1); // 重复搜索：提到最前，不重复存
+  list.unshift(text);
+  if (list.length > HMAX) list.length = HMAX;
+  saveHistory(list);
+}
+function renderHistory() {
+  var list = loadHistory();
+  var html = '';
+  if (list.length) {
+    html += '<li class="h-head"><span>搜索历史 ' + list.length + '/' + HMAX + '</span>'
+          + '<button type="button" id="clearHist">清空历史</button></li>';
+    list.forEach(function(item, i) {
+      html += '<li class="h-item" data-i="' + i + '" style="animation-delay:' + Math.min(i * 25, 200) + 'ms">'
+            + '<span class="h-text">' + esc(item) + '</span>'
+            + '<button type="button" class="del" data-i="' + i + '" title="删除">&times;</button></li>';
+    });
+  } else {
+    html = '<li class="none">暂无搜索记录</li>';
+  }
+  historyBox.innerHTML = html;
+}
+function showHistory() {
+  renderHistory();
+  historyBox.classList.remove('hidden');
+  fitPanel(historyBox); // 与建议面板同一套视口限高逻辑
+}
+function hideHistory() {
+  historyBox.classList.add('hidden');
+  historyBox.innerHTML = '';
+}
+/* 历史面板交互：删单条 / 一键清空 / 点记录直接搜 */
+historyBox.addEventListener('mousedown', function(e) {
+  var del = e.target.closest('.del');
+  if (del) {
+    e.stopPropagation();
+    e.preventDefault();
+    var list = loadHistory();
+    list.splice(+del.getAttribute('data-i'), 1);
+    saveHistory(list);
+    renderHistory(); // 面板保持打开，就地刷新
+    return;
+  }
+  if (e.target.closest('#clearHist')) {
+    e.stopPropagation();
+    e.preventDefault();
+    saveHistory([]);
+    renderHistory();
+    return;
+  }
+  var li = e.target.closest('li.h-item');
+  if (li) {
+    e.preventDefault();
+    doSearch(li.querySelector('.h-text').textContent);
+  }
+});
+
+/* ================= 键盘操作 ================= */
+kw.addEventListener('keydown', function(e) {
+  var open = !sugBox.classList.contains('hidden');
+  if (e.key === 'Enter') {
+    if (open && activeIdx >= 0 && sugItems[activeIdx]) {
+      doSearch(sugItems[activeIdx]);
+    } else {
+      doSearch(kw.value);
+    }
+  } else if (e.key === 'Escape') {
+    hideSuggest();
+    hideHistory();
+  } else if (open && sugItems.length) {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIdx = (activeIdx + 1) % sugItems.length;
+      markActive();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIdx = activeIdx <= 0 ? sugItems.length - 1 : activeIdx - 1;
+      markActive();
+    }
+  }
+});
+
+/* ================= 全局 ================= */
+document.addEventListener('mousedown', function(e) {
+  if (!e.target.closest('.engine')) {
+    engBtn.classList.remove('on');
+    engMenu.classList.add('hidden');
+  }
+  if (!e.target.closest('.bar') && !e.target.closest('#suggest') && !e.target.closest('#history')) {
+    hideSuggest();
+    hideHistory();
+  }
+});
+/* ================= 旧版主页切换（右侧滑入 / 滑出返回） ================= */
+var toggleEmbedBtn = document.getElementById('toggleEmbed');
+var embedBox   = document.getElementById('embed');
+var embedFrame = document.getElementById('embedFrame');
+var embedLoaded = false;
+
+toggleEmbedBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  var opening = !document.body.classList.contains('embed-open');
+  if (opening && !embedLoaded) {
+    embedFrame.src = 'x.html';
+    embedLoaded = true;
+  }
+  document.body.classList.toggle('embed-open', opening);
+  toggleEmbedBtn.title = opening ? '返回极简搜索' : '打开旧版主页';
+});
+
+/* 初始化 */
+setEngine(cur);
+</script>
+</body>
+</html>
